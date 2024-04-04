@@ -1,4 +1,4 @@
-const Building = require('../models/buildingModel');
+const Building = require('../models/building');
 
 module.exports = {
   getAllBuildings: async (req, res) => {

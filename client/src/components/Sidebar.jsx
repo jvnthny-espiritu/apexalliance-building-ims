@@ -26,7 +26,7 @@ export default function Sidebar() {
 					<div className='p-4 pb-5 flex justify-between items-center'>
 						<div className={`flex items-center`}>
 							<Logo className={`transition-all ease-in-out ${expanded ? 'h-10 w-10' : 'h-0 w-0' }`} />
-							<span className={`transition-all ease-in-out ${expanded ? "px-5 font-mono font-semibold text-xl" : "sr-only"}`}>Building Inventory</span>
+							<span className={`transition-all ease-in-out ${expanded ? "px-5 font-mono font-semibold" : "sr-only"}`}>Building Inventory</span>
 						</div>
 						<button onClick={() => setExpanded((curr) => !curr)} className='p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
 							<MdMenu className='h-7 w-7'/>
@@ -58,7 +58,7 @@ export default function Sidebar() {
 							</NavLink>
 						</li>
 						<li>
-							<button onClick={handleLogout} className='flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'>
+							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
 								<MdExitToApp className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Logout</span>
 							</button>

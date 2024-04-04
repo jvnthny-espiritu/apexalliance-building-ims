@@ -1,7 +1,7 @@
-const Asset = require('../models/assetModel');
+const Asset = require('../models/asset');
 
 module.exports = {
-  getAllEquipment: async (req, res) => {
+  getAllAsset: async (req, res) => {
     try {
       const asset = await Asset.find();
       res.json(asset);
@@ -9,7 +9,7 @@ module.exports = {
       res.status(500).json({ message: err.message });
     }
   },
-  createEquipment: async (req, res) => {
+  createAsset: async (req, res) => {
     const asset = new Asset({
       roomId: req.body.roomId,
       name: req.body.name,
@@ -22,13 +22,13 @@ module.exports = {
     });
 
     try {
-      const newEquipment = await asset.save();
-      res.status(201).json(newEquipment);
+      const newAsset = await asset.save();
+      res.status(201).json(newAsset);
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
   },
-  getEquipmentById: async (req, res) => {
+  getAssetById: async (req, res) => {
     try {
       const asset = await Asset.findById(req.params.id);
       if (!asset) {
@@ -39,7 +39,7 @@ module.exports = {
       res.status(500).json({ message: err.message });
     }
   },
-  updateEquipment: async (req, res) => {
+  updateAsset: async (req, res) => {
     try {
       const asset = await Asset.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!asset) {
@@ -50,7 +50,7 @@ module.exports = {
       res.status(400).json({ message: err.message });
     }
   },
-  deleteEquipment: async (req, res) => {
+  deleteAsset: async (req, res) => {
     try {
       const asset = await Asset.findByIdAndDelete(req.params.id);
       if (!asset) {

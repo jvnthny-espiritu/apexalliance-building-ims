@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const RoomCard = ({ room, onClick }) => {
   const getColorClass = (key) => {
@@ -23,7 +23,7 @@ const RoomCard = ({ room, onClick }) => {
 
   return (
     <button
-      className="p-5 w-auto bg-black-pearl-950 text-white shadow-md mb-2 m-2 rounded-lg"
+      className="p-5 w-auto bg-primary text-white shadow-md mb-2 m-2 rounded-lg"
       style={{ 
         width: '300px', 
         height: '150px',
