@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Building = require('../models/buildingModel');
-const Room = require('../models/roomModel');
-const Asset = require('../models/assetModel');
-const User = require('../models/userModel');
+const Building = require('../models/building');
+const Room = require('../models/room');
+const Asset = require('../models/asset');
+const User = require('../models/user');
 
 
 // Define routes for buildings
@@ -60,18 +60,18 @@ router.post('/rooms', async (req, res) => {
     }
 });
 
-// Define routes for equipment
-router.get('/equipment', async (req, res) => {
+// Define routes for asset
+router.get('/asset', async (req, res) => {
     try {
-        const equipment = await Equipment.find();
-        res.json(equipment);
+        const asset = await Asset.find();
+        res.json(asset);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-router.post('/equipment', async (req, res) => {
-    const equipment = new Equipment({
+router.post('/asset', async (req, res) => {
+    const asset = new Asset({
         roomId: req.body.roomId,
         name: req.body.name,
         type: req.body.type,
@@ -83,8 +83,35 @@ router.post('/equipment', async (req, res) => {
     });
 
     try {
-        const newEquipment = await equipment.save();
-        res.status(201).json(newEquipment);
+        const newAsset = await asset.save();
+        res.status(201).json(newAsset);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+router.get('/users', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/users', async (req, res) => {
+    const user = new User({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        role: req.body.role,
+        campus: req.body.campus,
+        hashedPassword: req.body.hashedPassword
+    });
+
+    try {
+        const newUser = await user.save();
+        res.status(201).json(newUser);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
