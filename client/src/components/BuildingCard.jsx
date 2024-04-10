@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const BuildingCard = ({ buildingName, year, numStory, totalRooms, uses, imgBuilding }) => {
   return (
     <div className="building-card card flex-shrink-0 w-full">
-      <Link to={'/'} className="card-content p-5 flex flex-col">
+      <Link to={'/catalog/room'} className="card-content p-5 flex flex-col">
         <div className='rounded-xl overflow-hidden'>
           <img src={imgBuilding} alt={`${buildingName}`} />
         </div>

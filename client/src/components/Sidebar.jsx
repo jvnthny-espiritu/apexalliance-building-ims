@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { MdDashboard, MdDescription, MdSettings, MdMenu, MdExitToApp } from 'react-icons/md';
-import { ReactComponent as Logo } from './logo.svg';
+import { MdDashboard, MdDescription, MdBook, MdSettings, MdMenu, MdExitToApp } from 'react-icons/md';
+import { ReactComponent as Logo } from '../assets/img/logo.svg';
 
 
 
@@ -18,6 +18,8 @@ export default function Sidebar() {
 
 	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'
 	const activeLinkClasses = 'border-l-4 bg-white bg-opacity-10 transition-colors duration-200'
+
+	const tooltipClasses = 'hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded-lg absolute left-0 ml-10 -mt-1';
   
 	return (
 		<aside className={`${sidebarBaseClasses} ${expanded ? sidebarExpandedClasses : sidebarCollapsedClasses}`}>
@@ -35,13 +37,19 @@ export default function Sidebar() {
 					<hr />
 					<ul className='mt-5 justify-center'>
 						<li>
-							<NavLink to='/' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses}>
+							<NavLink to='/' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Dashboard'>
 								<MdDashboard className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Dashboard</span>
 							</NavLink>
 						</li>
 						<li>
-							<NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses}>
+							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
+								<MdBook className='h-6 w-6 mx-4' />
+								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Catalog</span>
+							</NavLink>
+						</li>
+						<li>
+							<NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
 								<MdDescription className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Reports</span>
 							</NavLink>
@@ -52,7 +60,7 @@ export default function Sidebar() {
 					<hr />
 					<ul className='mb-4'>
 						<li>
-							<NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses}>
+							<NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
 								<MdSettings className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Settings</span>
 							</NavLink>

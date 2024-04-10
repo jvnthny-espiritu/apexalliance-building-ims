@@ -70,7 +70,7 @@ const buildings = [
 
 export default function BuildingPage() {
 	return (
-	  <div className="building-dashboard flex justify-center overflow-y-auto h-screen">
+	  <div className="flex-grow justify-center overflow-y-auto h-screen">
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-5 mx-20">
 		  {buildings.map((building, index) => (
 			<BuildingCard

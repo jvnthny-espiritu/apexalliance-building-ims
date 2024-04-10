@@ -50,13 +50,12 @@ export default function RoomPage() {
   const toggleFifthFloor = () => setIsFifthFloorOpen(!isFifthFloorOpen);
 
   return (
-    <div className="">
-      <div className="fixed">
+      <div className="flex-grow h-full">
         <div className="fixed">
         </div>
         
         {/* Main content */}
-        <div className="ml-1/4 p-4 overflow-y-auto h-screen w-auto "> 
+        <div className="p-4 h-screen w-auto "> 
           <div className="my-20 font-body ml-2"> 
             <div className="text-lg border-b-3 border-black "></div>
             <FloorSection
@@ -66,33 +65,32 @@ export default function RoomPage() {
               rooms={firstFloorRooms}
             />
             <FloorSection
-          floorName="Second Floor"
-          isOpen={isSecondFloorOpen}
-          toggleOpen={toggleSecondFloor}
-          rooms={secondFloorRooms}
-        />
+              floorName="Second Floor"
+              isOpen={isSecondFloorOpen}
+              toggleOpen={toggleSecondFloor}
+              rooms={secondFloorRooms}
+            />
             <FloorSection
-                floorName="Third Floor"
-                isOpen={isThirdFloorOpen}
-                toggleOpen={toggleThirdFloor}
-                rooms={thirdFloorRooms}
-              />
+              floorName="Third Floor"
+              isOpen={isThirdFloorOpen}
+              toggleOpen={toggleThirdFloor}
+              rooms={thirdFloorRooms}
+            />
             <FloorSection
-                floorName="Fourth Floor"
-                isOpen={isFourthFloorOpen}
-                toggleOpen={toggleFourthFloor}
-                rooms={fourthFloorRooms}
-              />
+              floorName="Fourth Floor"
+              isOpen={isFourthFloorOpen}
+              toggleOpen={toggleFourthFloor}
+              rooms={fourthFloorRooms}
+            />
             <FloorSection
-                floorName="Fifth Floor"
-                isOpen={isFifthFloorOpen}
-                toggleOpen={toggleFifthFloor}
-                rooms={fifthFloorRooms}
-              />
+              floorName="Fifth Floor"
+              isOpen={isFifthFloorOpen}
+              toggleOpen={toggleFifthFloor}
+              rooms={fifthFloorRooms}
+            />
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
@@ -100,7 +98,7 @@ function FloorSection({ floorName, isOpen, toggleOpen, rooms }) {
   const ArrowIcon = isOpen ? MdOutlineArrowDropUp : MdOutlineArrowDropDown;
 
   return (
-    <div className="mb-8"> 
+    <div className="w-full mb-8"> 
       <div className="flex items-center justify-between pb-1 border-b border-black">
         <h2 className="font-bold text-2xl border-black">{floorName}</h2>
         <ArrowIcon
@@ -109,7 +107,7 @@ function FloorSection({ floorName, isOpen, toggleOpen, rooms }) {
         />
       </div>
       
-      <div className={` ${isOpen ? "" : "h-0 overflow-hidden"}`}>
+      <div className={` ${isOpen ? "flex flex-wrap py-5" : "h-0 overflow-hidden"}`}>
         {rooms.map((room, index) => (
           <RoomCard key={index} room={room} />
         ))}

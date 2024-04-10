@@ -17,8 +17,8 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path='reports' element={<Report />} />
           <Route path='settings' element={<Settings />} />
-          <Route path='dashboard/building' element={<BuildingPage />} />
-          <Route path='dashboard/room' element={<RoomPage />} />
+          <Route path='catalog/building' element={<BuildingPage />} />
+          <Route path='catalog/room' element={<RoomPage />} />
         </Route>
         <Route path='/login' element={<Login />} />
       </Routes>

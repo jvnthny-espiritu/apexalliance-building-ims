@@ -22,7 +22,7 @@ const RoomCard = ({ room }) => {
   return (
     <>
       <div
-        className="p-3 bg-[#041527] text-white shadow-md mb-2 mx-5 rounded-lg cursor-pointer"
+        className="p-3 bg-[#041527] text-white shadow-md m-2 rounded-lg cursor-pointer"
         style={{
           width: '300px',
           height: '150px',

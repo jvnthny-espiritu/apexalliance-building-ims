@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import image from '../assets/img/building.jpg';
-import { ReactComponent as Logo } from '../components/logo.svg';
+import { ReactComponent as Logo } from '../assets/img/logo.svg';
 
 export default function Login() {
   const [username, setUsername] = useState('');
