@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 import Mainpage from './pages/Mainpage';
 import Dashboard from './pages/Dashboard';
-import Report from './pages/Report';
 import Settings from './pages/Settings';
 import Login from './pages/LoginPage';
 import BuildingPage from './pages/BuildingPage';
@@ -15,7 +14,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Mainpage />}>
           <Route index element={<Dashboard />} />
-          <Route path='reports' element={<Report />} />
           <Route path='settings' element={<Settings />} />
           <Route path='catalog/building' element={<BuildingPage />} />
           <Route path='catalog/room' element={<RoomPage />} />

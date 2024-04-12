@@ -12,21 +12,15 @@ export default function Sidebar() {
 		console.log("Logging out...");
 	};
 
-	const sidebarBaseClasses = 'h-screen transition-width ease-in-out duration-300';
-	const sidebarExpandedClasses = 'w-auto';
-	const sidebarCollapsedClasses = 'w-auto';
-
 	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'
 	const activeLinkClasses = 'border-l-4 bg-white bg-opacity-10 transition-colors duration-200'
-
-	const tooltipClasses = 'hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded-lg absolute left-0 ml-10 -mt-1';
   
 	return (
-		<aside className={`${sidebarBaseClasses} ${expanded ? sidebarExpandedClasses : sidebarCollapsedClasses}`}>
+		<div className={`h-screen sticky top-0 transition-width ease-in-out duration-300 ${expanded ? 'w-1/5' : 'w-auto' }`}>
 			<nav className='h-full flex flex-col justify-between px-5 bg-primary text-white'>
 				<div>
-					<div className='p-4 pb-5 flex justify-between items-center'>
-						<div className={`flex items-center`}>
+					<div className='w-full p-4 pb-5 inline-flex justify-between items-center'>
+						<div className={`inline-flex items-center`}>
 							<Logo className={`transition-all ease-in-out ${expanded ? 'h-10 w-10' : 'h-0 w-0' }`} />
 							<span className={`transition-all ease-in-out ${expanded ? "px-5 font-mono font-semibold" : "sr-only"}`}>Building Inventory</span>
 						</div>
@@ -46,12 +40,6 @@ export default function Sidebar() {
 							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
 								<MdBook className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Catalog</span>
-							</NavLink>
-						</li>
-						<li>
-							<NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
-								<MdDescription className='h-6 w-6 mx-4' />
-								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Reports</span>
 							</NavLink>
 						</li>
 					</ul>
@@ -74,6 +62,6 @@ export default function Sidebar() {
 					</ul>
 				</div>
 			</nav>
-		</aside>
+		</div>
 	);
 }
