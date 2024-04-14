@@ -33,7 +33,7 @@ const UserAccount = () => {
               <div>
                 <label
                   htmlFor="first_name"
-                  className="block text-lg  font-bold text-gray-900 dark:text-white"
+                  className="block text-lg  font-bold text-white"
                 >
                   First Name
                 </label>
@@ -47,7 +47,7 @@ const UserAccount = () => {
               <div>
                 <label
                   htmlFor="last_name"
-                  className=" text-lg font-bold text-gray-900 dark:text-white"
+                  className=" text-lg font-bold text-white"
                 >
                   Last Name
                 </label>
@@ -61,14 +61,14 @@ const UserAccount = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="text-lg font-bold text-gray-900 dark:text-white"
+                  className="text-lg font-bold text-white"
                 >
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
-                  className="mt-2 bg-transparent border border-white text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
+                  className="mt-2 bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-primary dark:white dark:text-white dark:focus:white dark:focus:border-white"
                   placeholder="email address"
                   required
                 />
@@ -81,7 +81,7 @@ const UserAccount = () => {
               <div>
                 <label
                   htmlFor="new_password"
-                  className="block mb-2 text-lg font-bold text-gray-900 dark:text-white"
+                  className="block mb-2 text-lg font-bold text-white"
                 >
                   New Password
                 </label>
@@ -89,7 +89,7 @@ const UserAccount = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     id="new_password"
-                    className="bg-transparent border border-white text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
+                    className="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
                     placeholder="new password"
                     required
                   />
@@ -105,7 +105,7 @@ const UserAccount = () => {
               <div>
                 <label
                   htmlFor="confirm_password"
-                  className="block mb-2 text-lg font-bold text-gray-900 dark:text-white"
+                  className="block mb-2 text-lg font-bold text-white"
                 >
                   Confirm Password
                 </label>
@@ -113,7 +113,7 @@ const UserAccount = () => {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     id="confirm_password"
-                    className="bg-transparent border border-white text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
+                    className="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
                     placeholder="confirm password"
                     required
                   />
@@ -134,13 +134,13 @@ const UserAccount = () => {
         <div className="flex">
           <button
             type="submit"
-            className="bg-transparent border border-white text-gray-900 text-sm rounded-lg p-2.5 mr-4 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
+            className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 mr-4 dark:bg-black-pearl-950 dark:white dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="bg-transparent border border-white text-gray-900 text-sm rounded-lg p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
+            className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 dark:bg-black-pearl-950 dark:white  dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
           >
             Save
           </button>
@@ -238,59 +238,31 @@ const ManageUser = () => {
             <FaCirclePlus />
           </button>
         </div>
-        <table className="divide-y divide-gray-200 mb-5 w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Name
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Campus
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Role
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Email
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Password
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user, index) => (
-              <UserRow key={index} user={user} />
-            ))}
-          </tbody>
-        </table>
+        <div className="max-w-full overflow-x-auto">
+          <table className="divide-y divide-gray-200 w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {users.map((user, index) => (
+                <UserRow key={index} user={user} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 };
 
-export default function Settings() {
+const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
 
   const handleItemClick = (item) => {
@@ -299,41 +271,39 @@ export default function Settings() {
 
   return (
     <div className="w-screen h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10 ">
+      <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10">
         SETTINGS
       </h2>
       <div className="flex flex-grow font-body mx-10 mb-10 bg-primary">
-        <div>
-          <nav className="border-r border-white h-full px-2 ">
-            <ul className="text-white font-semibold font-body">
-              <li
-                className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
-                  selectedItem === "account"
-                    ? "bg-white bg-opacity-5 border-l-4 border-white"
-                    : ""
-                }`}
-                onClick={() => handleItemClick("account")}
-              >
-                <Link to="/settings" className="ml-3">
-                  Account
-                </Link>
-              </li>
-              <div className="border-l border-white h-full"></div>
-              <li
-                className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
-                  selectedItem === "manageuser"
-                    ? "bg-white bg-opacity-5  border-l-4 pl-2 border-white   "
-                    : ""
-                }`}
-                onClick={() => handleItemClick("manageuser")}
-              >
-                <Link to="/settings" className="ml-3">
-                  Manage User
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
+        <nav className="border-r border-white h-full px-2 hidden md:block">
+          <ul className="text-white font-semibold font-body">
+            <li
+              className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                selectedItem === "account"
+                  ? "bg-white bg-opacity-5 border-l-4 border-white"
+                  : ""
+              }`}
+              onClick={() => handleItemClick("account")}
+            >
+              <Link to="/settings" className="ml-3">
+                Account
+              </Link>
+            </li>
+            <div className="border-l border-white h-full"></div>
+            <li
+              className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                selectedItem === "manageuser"
+                  ? "bg-white bg-opacity-5  border-l-4 pl-2 border-white   "
+                  : ""
+              }`}
+              onClick={() => handleItemClick("manageuser")}
+            >
+              <Link to="/settings" className="ml-3">
+                Manage User
+              </Link>
+            </li>
+          </ul>
+        </nav>
         <div className="ml-5 flex-grow">
           {selectedItem === "account" && <UserAccount />}
           {selectedItem === "manageuser" && <ManageUser />}
@@ -341,4 +311,6 @@ export default function Settings() {
       </div>
     </div>
   );
-}
+};
+
+export default Settings;

@@ -1,3 +1,4 @@
+//LOGIN PAGE
 import React, { useState } from 'react';
 import image from '../assets/img/building.jpg';
 import { ReactComponent as Logo } from '../assets/img/logo.svg';
@@ -57,7 +58,7 @@ export default function Login() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-900 focus:border-indigo-500 focus:z-10 sm:text-sm w-full"
+                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-gray-300 placeholder-gray-500 text-white focus:outline-none focus:ring-primary-900 focus:border-gray-500 focus:z-10 sm:text-sm w-full"
                   placeholder="Username"
                 />
               </div>
@@ -71,7 +72,7 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-white placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm w-full"
+                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-white placeholder-gray-500 text-white focus:outline-none focus:ring-indigo-500 focus:border-gray-500 focus:z-10 sm:text-sm w-full"
                   placeholder="Password"
                 />
               </div>
