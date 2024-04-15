@@ -1,4 +1,5 @@
 const Asset = require('../models/asset');
+const logActivity = require('../middleware/logger');
 
 module.exports = {
   getAllAsset: async (req, res) => {
@@ -23,6 +24,7 @@ module.exports = {
 
     try {
       const newAsset = await asset.save();
+      logActivity(req.user.id, 'added a new asset', newAsset._id, 'Asset');
       res.status(201).json(newAsset);
     } catch (err) {
       res.status(400).json({ message: err.message });
@@ -44,6 +46,8 @@ module.exports = {
       const asset = await Asset.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!asset) {
         return res.status(404).json({ message: 'Asset not found' });
+      } else {
+        logActivity(req.user.id, 'updated a new asset', newAsset._id, 'Asset');
       }
       res.json(asset);
     } catch (err) {
@@ -55,6 +59,8 @@ module.exports = {
       const asset = await Asset.findByIdAndDelete(req.params.id);
       if (!asset) {
         return res.status(404).json({ message: 'Asset not found' });
+      } else {
+        logActivity(req.user.id, 'deleted a new asset', newAsset._id, 'Asset');
       }
       res.json({ message: 'Asset deleted' });
     } catch (err) {

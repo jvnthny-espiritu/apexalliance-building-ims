@@ -1,4 +1,5 @@
 const Room = require('../models/room');
+const logActivity = require('../middleware/logger');
 
 module.exports = {
   getAllRooms: async (req, res) => {
@@ -21,6 +22,7 @@ module.exports = {
 
     try {
       const newRoom = await room.save();
+      logActivity(req.user.id, 'added a new room', newRoom._id, 'Room');
       res.status(201).json(newRoom);
     } catch (err) {
       res.status(400).json({ message: err.message });
@@ -42,6 +44,8 @@ module.exports = {
       const room = await Room.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!room) {
         return res.status(404).json({ message: 'Room not found' });
+      } else {
+        logActivity(req.user.id, 'updated a new room', newRoom._id, 'Room');
       }
       res.json(room);
     } catch (err) {
@@ -53,6 +57,8 @@ module.exports = {
       const room = await Room.findByIdAndDelete(req.params.id);
       if (!room) {
         return res.status(404).json({ message: 'Room not found' });
+      } else {
+        logActivity(req.user.id, 'deleted a new room', newRoom._id, 'Room');
       }
       res.json({ message: 'Room deleted' });
     } catch (err) {
