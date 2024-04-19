@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
 const UserAccount = () => {
   const user = {
     firstName: "John",
@@ -150,41 +151,7 @@ const UserAccount = () => {
   );
 };
 
-const UserRow = ({ user }) => {
-  return (
-    <tr>
-      <td className="py-4 whitespace-nowrap">
-        <div className="flex items-center">
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-          </div>
-        </div>
-      </td>
-      <td className="px-5 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">{user.campus}</div>
-      </td>
-      <td className="px-5 py-4 whitespace-nowrap">
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-900">
-          {user.role}
-        </span>
-      </td>
-      <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-        {user.email}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        **********
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-        <a href="#" className="text-indigo-600 hover:text-indigo-900">
-          Edit
-        </a>
-        <a href="#" className="ml-2 text-red-600 hover:text-red-900">
-          Delete
-        </a>
-      </td>
-    </tr>
-  );
-};
+
 
 const ManageUser = () => {
   const [users, setUsers] = useState([
@@ -193,30 +160,35 @@ const ManageUser = () => {
       campus: "Alangilan",
       role: "STAFF",
       email: "john.doe@example.com",
+      password:"123456",
     },
     {
       name: "John Doe",
       campus: "Alangilan",
       role: "STAFF",
       email: "john.doe@example.com",
+      password:"123456",
     },
     {
       name: "John Doe",
       campus: "Alangilan",
       role: "STAFF",
       email: "john.doe@example.com",
+      password:"123456",
     },
     {
       name: "John Doe",
       campus: "Alangilan",
       role: "STAFF",
       email: "john.doe@example.com",
+      password:"123456",
     },
     {
       name: "John Doe",
       campus: "Alangilan",
       role: "STAFF",
       email: "john.doe@example.com",
+      password:"123456",
     },
   ]);
 
@@ -238,27 +210,93 @@ const ManageUser = () => {
             <FaCirclePlus />
           </button>
         </div>
-        <div className="max-w-full overflow-x-auto">
+        <div className="overflow-x-auto"></div>
+        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <table className="divide-y divide-gray-200 w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user, index) => (
-                <UserRow key={index} user={user} />
+              {users.map((person) => (
+                <tr key ={person.name}>
+                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
+                    {person.name}
+                    <dl className="md:hidden font-normal">
+                      <dt className="sr-only">Role</dt>
+                      <dd className="text-gray-600">{person.role}</dd>
+                      <dt className="sr-only">Email</dt>
+                      <dd className="text-gray-500">{person.email}</dd>
+              </dl>
+                  </td>
+                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
+                    {person.campus}
+                  </td>
+                  <td className="hidden md:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
+                    {person.role}
+                  </td>
+                  <td className="hidden lg:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
+                    {person.email}
+                  </td>
+                  <td className=" hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
+                    {person.password}
+                  </td>
+                  <td className=" hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                      Edit
+                    </a>
+                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
+                      Delete
+                    </a>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
+        {/* card view up to the 'md:' breakpoint*/}
+        <div className="mt=10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:hidden ">
+          {users.map((person) => (
+            <div
+            key={person.email} className="relative flex items-center space-x-3 rounded-lg bg-white px-6 py-5 shadow rinf-1 ring-black ring-opacity-5">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center space-x-3">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {person.name}
+                  </p>
+                  <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                    {person.campus}
+                  </span>
+                </div>
+                <p className="mt-1 truncate text-sm text-gray-900">
+                  {person.role}
+                </p>
+                <p className="mt-1 truncate text-sm text-gray-700">
+                  {person.email}
+                </p>
+                <p className="mt-1 truncate text-sm text-gray-600">
+                  {person.password}
+                </p>
+                <td className= " flex-row  whitespace-nowrap text-sm font-medium">
+                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                      Edit
+                    </a>
+                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
+                      Delete
+                    </a>
+                  </td>
+              </div>
+            </div>
+          ))}
+        </div>
+        </div>
       </div>
-    </div>
   );
 };
 
@@ -274,39 +312,69 @@ const Settings = () => {
       <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10">
         SETTINGS
       </h2>
-      <div className="flex flex-grow font-body mx-10 mb-10 bg-primary">
-        <nav className="border-r border-white h-full px-2 hidden md:block">
-          <ul className="text-white font-semibold font-body">
-            <li
-              className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
-                selectedItem === "account"
-                  ? "bg-white bg-opacity-5 border-l-4 border-white"
-                  : ""
-              }`}
-              onClick={() => handleItemClick("account")}
-            >
-              <Link to="/settings" className="ml-3">
-                Account
-              </Link>
-            </li>
-            <div className="border-l border-white h-full"></div>
-            <li
-              className={`flex mt-3 m-0 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
-                selectedItem === "manageuser"
-                  ? "bg-white bg-opacity-5  border-l-4 pl-2 border-white   "
-                  : ""
-              }`}
-              onClick={() => handleItemClick("manageuser")}
-            >
-              <Link to="/settings" className="ml-3">
-                Manage User
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <div className="ml-5 flex-grow">
-          {selectedItem === "account" && <UserAccount />}
-          {selectedItem === "manageuser" && <ManageUser />}
+      <div className="block sm:hidden">
+        <div className="flex flex-col mx-10 mb-10 bg-primary overflow-x-auto">
+          <nav className="border-b border-white">
+            <ul className="flex text-white font-semibold font-body space-x-3 ">
+              <li
+                className={`flex mt-3 ml-2 py-2 pr-4  rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
+                  selectedItem === "account" ? "bg-white bg-opacity-5 border-b-2" : ""
+                }`}
+                onClick={() => handleItemClick("account")}
+              >
+                <Link to="/settings" className="ml-3">
+                  Account
+                </Link>
+              </li>
+              <li
+                className={`flex mt-3 py-2 px-3 pr-5 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
+                  selectedItem === "manageuser" ? "bg-white bg-opacity-5 border-b-2" : ""
+                }`}
+                onClick={() => handleItemClick("manageuser")}
+              >
+                <Link to="/settings" className="ml-3">
+                  Manage User
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <div className="ml-5 flex-grow">
+            {selectedItem === "account" && <UserAccount />}
+            {selectedItem === "manageuser" && <ManageUser />}
+          </div>
+        </div>
+      </div>
+      <div className="hidden sm:table-cell">
+        <div className="flex flex-grow font-body mx-10 mb-10 bg-primary overflow-x-auto">
+          <nav className="border-r border-white h-screen px-2 hidden md:block">
+            <ul className="text-white font-semibold font-body">
+              <li
+                className={`flex mt-3 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                  selectedItem === "account" ? "bg-white bg-opacity-5 border-l-4 border-white" : ""
+                }`}
+                onClick={() => handleItemClick("account")}
+              >
+                <Link to="/settings" className="ml-3">
+                  Account
+                </Link>
+              </li>
+              <div className="border-l border-white h-full"></div>
+              <li
+                className={`flex mt-3 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                  selectedItem === "manageuser" ? "bg-white bg-opacity-5 border-l-4 border-white" : ""
+                }`}
+                onClick={() => handleItemClick("manageuser")}
+              >
+                <Link to="/settings" className="ml-3">
+                  Manage User
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <div className="ml-5 flex-grow">
+            {selectedItem === "account" && <UserAccount />}
+            {selectedItem === "manageuser" && <ManageUser />}
+          </div>
         </div>
       </div>
     </div>
