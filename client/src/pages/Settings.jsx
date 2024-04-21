@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import AddUserModal from './AddUserModal';
 
 
 const UserAccount = () => {
@@ -24,7 +25,7 @@ const UserAccount = () => {
 
   return (
     <div className="py-5 -my-1 text-white mr-5">
-      <div className="mx-auto mr-5">
+      <div className="ml-2 mr-5">
         <h3 className="font-extrabold text-2xl mb-1">Account</h3>
         <p className="text-sm mb-2 text-gray-500">Account information</p>
         <hr className="mb-2 w-full mr-5" />
@@ -153,7 +154,10 @@ const UserAccount = () => {
 
 
 
-const ManageUser = () => {
+const ManageUser = ({toggleModal}) => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen((cur) => !cur);
+
   const [users, setUsers] = useState([
     {
       name: "John Doe",
@@ -194,7 +198,7 @@ const ManageUser = () => {
 
   return (
     <div className="my-4 text-white overflow-y-auto relative mr-10">
-      <div className="max-w-screen-lg mx-auto">
+      <div className="max-w-screen-lg ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
           Manage who has access to the system
@@ -206,9 +210,10 @@ const ManageUser = () => {
             placeholder="Search users..."
             className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
           />
-          <button className="rounded-full text-white p-2 ml-2">
+          <button onClick={handleOpen} className="rounded-full text-white p-2 ml-2 ">
             <FaCirclePlus />
           </button>
+          {open &&<AddUserModal toggleModal={toggleModal}/>}
         </div>
         <div className="overflow-x-auto"></div>
         <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -309,13 +314,13 @@ const Settings = () => {
 
   return (
     <div className="w-screen h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10">
+      <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10 ">
         SETTINGS
       </h2>
       <div className="block sm:hidden">
-        <div className="flex flex-col mx-10 mb-10 bg-primary overflow-x-auto">
+        <div className=" flex flex-col mx-4 mb-10 bg-primary overflow-x-auto">
           <nav className="border-b border-white">
-            <ul className="flex text-white font-semibold font-body space-x-3 ">
+            <ul className="pl-5 pr-5 flex text-white font-semibold font-body justify-between space-x-3 ">
               <li
                 className={`flex mt-3 ml-2 py-2 pr-4  rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "account" ? "bg-white bg-opacity-5 border-b-2" : ""
@@ -327,7 +332,7 @@ const Settings = () => {
                 </Link>
               </li>
               <li
-                className={`flex mt-3 py-2 px-3 pr-5 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
+                className={`flex mt-3 ml-2 py-2 pr-4  rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5  ${
                   selectedItem === "manageuser" ? "bg-white bg-opacity-5 border-b-2" : ""
                 }`}
                 onClick={() => handleItemClick("manageuser")}
@@ -345,8 +350,8 @@ const Settings = () => {
         </div>
       </div>
       <div className="hidden sm:table-cell">
-        <div className="flex flex-grow font-body mx-10 mb-10 bg-primary overflow-x-auto">
-          <nav className="border-r border-white h-screen px-2 hidden md:block">
+        <div className="py-2 flex flex-grow font-body mx-10 mb-10 bg-primary overflow-x-auto">
+          <nav className="px-2  py-3 border-r border-white max-h-full  hidden md:block">
             <ul className="text-white font-semibold font-body">
               <li
                 className={`flex mt-3 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
