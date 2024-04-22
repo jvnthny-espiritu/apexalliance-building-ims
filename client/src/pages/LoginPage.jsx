@@ -2,15 +2,27 @@
 import React, { useState } from 'react';
 import image from '../assets/img/building.jpg';
 import { ReactComponent as Logo } from '../assets/img/logo.svg';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const history = useHistory();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Username:', username);
-    console.log('Password:', password);
+    try {
+      // Make a POST request to login endpoint
+      const response = await axios.post('/api/auth/login', { email: username, password });
+      localStorage.setItem('token', response.data.token);
+      // Redirect to dashboard upon successful login
+      history.push('/dashboard');
+    } catch (err) {
+      console.error('Login failed:', err.response.data);
+      setError('Invalid username or password');
+      setPassword('');
+    }
   };
 
   return (
