@@ -47,27 +47,23 @@ const RoomModal = ({ room, toggleModal }) => {
     fetchAssets();
   }, [room._id, selectedType, selectedCondition, selectedDate]);
 
-  // Function to filter assets based on search query
   const filteredAssets = assets.filter(asset =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Function to handle type filter change
   const handleTypeChange = (e) => {
     setSelectedType(e.target.value);
   };
 
-  // Function to handle condition filter change
   const handleConditionChange = (e) => {
     setSelectedCondition(e.target.value);
   };
 
-  // Function to handle date filter change
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
 
-  // Function to render table rows for furniture assets
+
 const renderFurnitureRows = (data) => {
   return data.map((item, index) => (
     <tr key={index} className="text-center bg-white">
@@ -81,7 +77,6 @@ const renderFurnitureRows = (data) => {
   ));
 };
 
-  // Function to render table rows
   const renderAppliancesRows = (data) => {
     return data.map((item, index) => (
       <tr key={index} className="text-center bg-white">
@@ -96,10 +91,8 @@ const renderFurnitureRows = (data) => {
     ));
   };
 
-  // Filter assets for furniture
-  const furnitureAssets = filteredAssets.filter(asset => asset.type === 'Furniture');
 
-  // Filter assets for appliances
+  const furnitureAssets = filteredAssets.filter(asset => asset.type === 'Furniture');
   const applianceAssets = filteredAssets.filter(asset => asset.type === 'Appliances');
 
   return (
@@ -194,7 +187,6 @@ const renderFurnitureRows = (data) => {
             <p className="text-white">Loading...</p>
           ) : (
             <>
-              {/* Furniture Table */}
               {furnitureAssets.length > 0 && (
                 <>
                   <p className="text-xl text-white mb-2">Furniture</p>
@@ -226,7 +218,6 @@ const renderFurnitureRows = (data) => {
                 </>
               )}
 
-              {/* Appliances Table */}
               {applianceAssets.length > 0 && (
                 <>
                   <p className="text-xl text-white mt-4 mb-2">Appliances</p>
@@ -261,7 +252,6 @@ const renderFurnitureRows = (data) => {
                 </>
               )}
 
-              {/* No assets found message */}
               {filteredAssets.length === 0 && (
                 <p className="text-white">No assets found.</p>
               )}

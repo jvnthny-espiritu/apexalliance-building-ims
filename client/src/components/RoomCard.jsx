@@ -8,7 +8,6 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Define classes based on room type
   const getTypeClass = (type) => {
     switch (type) {
       case 'Classroom':
@@ -22,7 +21,6 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
     }
   };
 
-  // Define classes based on room status
   const getStatusClass = (status) => {
     switch (status) {
       case 'Available':
@@ -34,11 +32,9 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
     }
   };
 
-  // Check if the room matches the selected type and status
   const isMatchingType = selectedType ? room.type === selectedType : true;
   const isMatchingStatus = selectedStatus ? room.status === selectedStatus : true;
 
-  // Show the room card only if it matches the selected type and status
   if (!isMatchingType || !isMatchingStatus) {
     return null;
   }

@@ -20,7 +20,6 @@ const BuildingCard = ({ building }) => {
     fetchTotalRooms();
   }, [_id]);
 
-  // Mapping of purpose types to colors
   const purposeColors = {
     Classroom: 'bg-[#00B178]',
     Laboratory: 'bg-[#712EE1]',
