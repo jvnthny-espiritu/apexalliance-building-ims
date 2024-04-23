@@ -6,6 +6,9 @@ const roomsRoutes = require('./routes/rooms');
 const assetsRoutes = require('./routes/assets');
 const dashboardRoutes = require('./routes/dashboard');
 const filteringRoutes = require('./routes/filtering');
+const totalRoomsRoutes = require('./routes/totalRoom'); 
+const roomsFloorRoutes = require('./routes/roomFloor');
+const buildingByIdRoutes = require('./routes/buildingId');
 const authRoutes = require('./routes/auth');
 
 router.use('/auth', authRoutes);
