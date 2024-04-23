@@ -1,56 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactEcharts from "echarts-for-react"; 
 
-export default function BuildingDistribution() {
+const BuildingDistribution = () => {
+    const [buildingData, setBuildingData] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:5050/api/dashboard/building-distribution');
+                const data = await response.json();
+                setBuildingData(data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching building data:', error);
+                setError('Error fetching data');
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     const option = {
-      title: {
-          text: 'Building Distribution',
-          left: 'left',
-          textStyle: {
-              color: '#ffffff'
-          }
-      },
-      tooltip: {
-          trigger: 'item',
-      },
-      legend: {
-          orient: 'vertical',
-          left: 'right',
-          textStyle: {
-              color: '#ffffff'
-          }
-      },
-      series: [
-          {
-              name: 'No. of Building',
-              type: 'pie',
-              label: {
-                color: '#fff'
-              },
-              center: ['30%', '60%'],
-              data: [
-                { value: 1048, name: 'Alangilan' },
-                { value: 735, name: 'Pablo Borbon' },
-                { value: 580, name: 'ARASOF-Nasugbu' },
-                { value: 484, name: 'Balayan' },
-                { value: 300, name: 'Lemery' },
-                { value: 1048, name: 'Mabini' },
-                { value: 735, name: 'JPLPC-Malvar' },
-                { value: 580, name: 'Lipa' },
-                { value: 484, name: 'Rosario' },
-                { value: 300, name: 'San Juan' },
-                { value: 484, name: 'Lobo' }
-              ],
-              emphasis: {
-                  itemStyle: {
-                      shadowBlur: 10,
-                      shadowOffsetX: 0,
-                      shadowColor: 'rgba(0, 0, 0, 0.5)'
-                  }
-              }
-          }
-      ]
-  };
-  
+        title: {
+            text: 'Building Distribution',
+            left: 'left',
+            textStyle: {
+                color: '#ffffff'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'right',
+            textStyle: {
+                color: '#ffffff'
+            }
+        },
+        series: [
+            {
+                name: 'No. of Building',
+                type: 'pie',
+                label: {
+                    color: '#fff'
+                },
+                center: ['30%', '60%'],
+                data: Object.entries(buildingData).map(([campus, count]) => ({ value: count, name: campus })),
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+
     return <ReactEcharts option={option} />;
-}
+};
+
+export default BuildingDistribution;

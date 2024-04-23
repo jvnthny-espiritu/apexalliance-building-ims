@@ -2,7 +2,6 @@ import { Fragment, useState, useEffect } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
-
 const fetchCampusNames = async () => {
   return [
     "Alangilan",
@@ -16,22 +15,22 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function FilterCampus() {
+const FilterCampus = () => {
   const [selectedCampus, setSelectedCampus] = useState(null);
   const [campuss, setCampuss] = useState([]);
 
   useEffect(() => {
-    async function fetchCampuss() {
+    const fetchCampuss = async () => {
       try {
         const fetchedCampuss = await fetchCampusNames();
         setCampuss(fetchedCampuss);
       } catch (error) {
         console.error('Error fetching campuss:', error);
       }
-    }
+    };
 
     fetchCampuss();
-  }, []); 
+  }, []);
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -56,8 +55,8 @@ export default function FilterCampus() {
             {campuss.map((campusName, index) => (
               <Menu.Item key={index}>
                 {({ active }) => (
-                  <a
-                    href="#"
+                  <button
+                    type="button"
                     className={classNames(
                       active ? 'bg-gray-100 text-black-900' : 'text-black-700',
                       'block px-4 py-2 text-sm'
@@ -65,7 +64,7 @@ export default function FilterCampus() {
                     onClick={() => setSelectedCampus(campusName)}
                   >
                     {campusName}
-                  </a>
+                  </button>
                 )}
               </Menu.Item>
             ))}
@@ -74,4 +73,6 @@ export default function FilterCampus() {
       </Transition>
     </Menu>
   );
-}
+};
+
+export default FilterCampus;

@@ -6,7 +6,8 @@ const roomSchema = new mongoose.Schema({
   floor: Number,
   type: String,
   capacity: Number,
-  status: String
+  status: String,
+  dimension: String,
 }, { timestamps: true });
 
 const Room = mongoose.model('Room', roomSchema);

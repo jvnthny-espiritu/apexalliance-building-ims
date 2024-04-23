@@ -5,7 +5,8 @@ const buildingSchema = new mongoose.Schema({
   purpose: [String],
   numFloor: Number,
   campus: String,
-  numOfStory: Number
+  numOfStory: Number,
+  yearOfCompletion: Number
 }, { timestamps: true });
 
 const Building = mongoose.model('Building', buildingSchema);
