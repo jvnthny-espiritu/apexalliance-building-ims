@@ -5,14 +5,14 @@ const AddUserModal = ({ toggleModal }) => {
 
   const handleClose = () => {
     setClose(true);
-    if (typeof toggleModal === 'function') {
+    if (typeof toggleModal === "function") {
       toggleModal(); // Call toggleModal to close the modal from the parent component
     }
   };
 
   const colors = {
     administrator: "border-2 border-indigo-600",
-    staff: "border-2 border-red-600"
+    staff: "border-2 border-red-600",
   };
 
   // If close is true, don't render the modal
@@ -28,7 +28,9 @@ const AddUserModal = ({ toggleModal }) => {
           x
         </button>
         <div className="flex flex-col">
-          <h2 className="text-black text-xl font-bold mb-4">Account Registration</h2>
+          <h2 className="text-black text-xl font-bold mb-4">
+            Account Registration
+          </h2>
           <hr className="border-b-4 border-black mb-4" />
           <div className="mb-4">
             <div className="flex flex-col mb-4 md:flex-row md:mb-8">
@@ -50,8 +52,16 @@ const AddUserModal = ({ toggleModal }) => {
             </div>
             <h2 className="text-black mb-2">Role</h2>
             <div className="flex gap-4">
-              <button className={`px-4 py-2 ${colors.administrator} rounded-lg hover:text-white hover:bg-indigo-500`}>Administrator</button>
-              <button className={`px-4 py-2 ${colors.staff} rounded-lg hover:text-white hover:bg-red-500`}>Staff</button>
+              <button
+                className={`px-4 py-2 ${colors.administrator} rounded-lg hover:text-white hover:bg-indigo-500`}
+              >
+                Administrator
+              </button>
+              <button
+                className={`px-4 py-2 ${colors.staff} rounded-lg hover:text-white hover:bg-red-500`}
+              >
+                Staff
+              </button>
             </div>
           </div>
           <div className="flex flex-col mb-4">
@@ -61,19 +71,22 @@ const AddUserModal = ({ toggleModal }) => {
               className="border-b-2 border-black p-3 outline-none"
             />
           </div>
-          <div className="flex flex-col mb-4">
-            <label className="text-black">Password</label>
-            <input
-              type="text"
-              className="border-b-2 border-black p-3 outline-none"
-            />
-          </div>
-          <div className="flex flex-col mb-4">
-            <label className="text-black">Confirm Password</label>
-            <input
-              type="text"
-              className="border-b-2 border-black p-3 outline-none"
-            />
+          <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+            <div className="flex flex-col w-full md:w-1/2 md:pr-2">
+              <label className="text-black">Password</label>
+              <input
+                type="text"
+                className="border-b-2 border-black p-3 outline-none"
+                placeholder=""
+              />
+            </div>
+            <div className="flex flex-col w-full md:w-1/2 md:pl-2">
+              <label className="text-black">Confirm Password</label>
+              <input
+                type="text"
+                className="border-b-2 border-black p-3 outline-none"
+              />
+            </div>
           </div>
           <div className="flex justify-end">
             <button
