@@ -4,6 +4,7 @@ const router = express.Router();
 const Building = require('../models/building');
 const Room = require('../models/room');
 const Asset = require('../models/asset');
+const Activity = require('../models/activity');
 
 router.get('/all', async (req, res) => {
     try {
@@ -131,6 +132,15 @@ router.get('/total-rooms', async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
+router.get('/activity-log', async (req, res) => {
+    try {
+      const activities = await Activity.find().populate('user', 'firstName lastName'); // Populate user details if needed
+      res.json(activities);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
 
 
 module.exports = router;
