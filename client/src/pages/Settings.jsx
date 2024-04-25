@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from './AddUserModal';
-
 
 const UserAccount = () => {
   const user = {
@@ -152,49 +151,52 @@ const UserAccount = () => {
   );
 };
 
-
-
-const ManageUser = ({toggleModal}) => {
+const ManageUser = ({ toggleModal }) => {
   const [open, setOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [filterRole, setFilterRole] = useState('');
+  const [filterCampus, setFilterCampus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [availableCampuses, setAvailableCampuses] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5050/api/users')
+      .then(response => response.json())
+      .then(data => {
+        setUsers(data);
+        const campuses = [...new Set(data.map(user => user.campus))];
+        setAvailableCampuses(campuses);
+      })
+      .catch(error => console.error('Error fetching users:', error));
+  }, []);
+
   const handleOpen = () => setOpen((cur) => !cur);
 
-  const [users, setUsers] = useState([
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-  ]);
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:5050/api/users/${userId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        console.log('User deleted successfully');
+      } else {
+        console.error('Failed to delete user:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+  };  
+  
+  const filteredUsers = users.filter(user => {
+    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+    const role = user.role.toLowerCase();
+    const searchValue = searchTerm.toLowerCase();
+    return (
+      (filterRole ? user.role === filterRole : true) &&
+      (filterCampus ? user.campus === filterCampus : true) &&
+      (fullName.includes(searchValue) || role.includes(searchValue))
+    );
+  });
 
   return (
     <div className="my-4 text-white overflow-y-auto relative mr-10">
@@ -205,23 +207,41 @@ const ManageUser = ({toggleModal}) => {
         </p>
         <hr className="mb-2" />
         <div className="flex mb-2 items-center justify-end">
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
-          />
-          <button onClick={handleOpen} className="rounded-full text-white p-2 ml-2 ">
-            <FaCirclePlus />
-          </button>
-          {open &&<AddUserModal toggleModal={toggleModal}/>}
+          <div className="mr-4">
+            <select value={filterRole} onChange={e => setFilterRole(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Roles</option>
+              <option value="Staff">Staff</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div>
+            <select value={filterCampus} onChange={e => setFilterCampus(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Campuses</option>
+              {availableCampuses.map(campus => (
+                <option key={campus} value={campus}>{campus}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center ml-4">
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
+            />
+            <button onClick={handleOpen} className="rounded-full text-white p-2 ml-2">
+              <FaCirclePlus />
+            </button>
+            {open && <AddUserModal toggleModal={toggleModal} />}
+          </div>
         </div>
-        <div className="overflow-x-auto"></div>
         <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <table className="divide-y divide-gray-200 w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
                 <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                 <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
@@ -229,19 +249,13 @@ const ManageUser = ({toggleModal}) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((person) => (
-                <tr key ={person.name}>
+              {filteredUsers.map((person) => (
+                <tr key={person.email}>
                   <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.name}
-                    <dl className="md:hidden font-normal">
-                      <dt className="sr-only">Role</dt>
-                      <dd className="text-gray-600">{person.role}</dd>
-                      <dt className="sr-only">Email</dt>
-                      <dd className="text-gray-500">{person.email}</dd>
-              </dl>
+                    {person.firstName}
                   </td>
                   <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.campus}
+                    {person.lastName}
                   </td>
                   <td className="hidden md:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
                     {person.role}
@@ -250,13 +264,13 @@ const ManageUser = ({toggleModal}) => {
                     {person.email}
                   </td>
                   <td className=" hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.password}
+                    {person.hashedPassword}
                   </td>
                   <td className=" hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a href="#" className="text-indigo-600 hover:text-indigo-900">
                       Edit
                     </a>
-                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
+                    <a href="#" className="ml-2 text-red-600 hover:text-red-900" onClick={() => deleteUser(person._id)}>
                       Delete
                     </a>
                   </td>
@@ -265,43 +279,8 @@ const ManageUser = ({toggleModal}) => {
             </tbody>
           </table>
         </div>
-        {/* card view up to the 'md:' breakpoint*/}
-        <div className="mt=10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:hidden ">
-          {users.map((person) => (
-            <div
-            key={person.email} className="relative flex items-center space-x-3 rounded-lg bg-white px-6 py-5 shadow rinf-1 ring-black ring-opacity-5">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center space-x-3">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {person.name}
-                  </p>
-                  <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                    {person.campus}
-                  </span>
-                </div>
-                <p className="mt-1 truncate text-sm text-gray-900">
-                  {person.role}
-                </p>
-                <p className="mt-1 truncate text-sm text-gray-700">
-                  {person.email}
-                </p>
-                <p className="mt-1 truncate text-sm text-gray-600">
-                  {person.password}
-                </p>
-                <td className= " flex-row  whitespace-nowrap text-sm font-medium">
-                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                      Edit
-                    </a>
-                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
-                      Delete
-                    </a>
-                  </td>
-              </div>
-            </div>
-          ))}
-        </div>
-        </div>
       </div>
+    </div>
   );
 };
 

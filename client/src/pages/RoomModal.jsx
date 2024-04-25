@@ -147,7 +147,6 @@ const renderFurnitureRows = (data) => {
 
           <div className="flex justify-between mb-4">
             <div>
-              <span className="text-white mr-2">Type:</span>
               <select
                 value={selectedType}
                 onChange={handleTypeChange}
@@ -159,7 +158,6 @@ const renderFurnitureRows = (data) => {
               </select>
             </div>
             <div>
-              <span className="text-white mr-2">Condition:</span>
               <select
                 value={selectedCondition}
                 onChange={handleConditionChange}
@@ -173,7 +171,6 @@ const renderFurnitureRows = (data) => {
               </select>
             </div>
             <div>
-              <span className="text-white mr-2">Date:</span>
               <input
                 type="date"
                 value={selectedDate}

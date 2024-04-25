@@ -83,7 +83,6 @@ function TypeFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Type:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handleTypeChange}
@@ -104,7 +103,6 @@ function StatusFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Status:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handleStatusChange}

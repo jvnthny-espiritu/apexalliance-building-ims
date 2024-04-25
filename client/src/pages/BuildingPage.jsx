@@ -100,7 +100,6 @@ function BuildingPage() {
 function CampusFilter({ campuses, onChange }) {
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Campus:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={(e) => onChange(e.target.value)}
@@ -123,7 +122,6 @@ function PurposeFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Purpose:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handlePurposeChange}
