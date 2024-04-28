@@ -44,11 +44,11 @@ function RoomPage() {
   }));
 
   return (
-    <div className=" overflow-y-auto h-screen w-auto">
-      <div className="flex w-auto ">
-        <div className="flex bg-primary justify-between items-center w-screen p-5 pb-5">
+    <div className=" overflow-y-auto h-screen w-auto sticky top-0">
+      <div className="flex w-auto sticky top-0 z-10">
+        <div className="flex  bg-primary justify-between items-center w-screen p-5 ">
           <h1 className="font-bold text-2xl text-white">Room Catalog</h1>
-          <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 ">
             <TypeFilter onChange={setSelectedType} />
             <StatusFilter onChange={setSelectedStatus} />
             <div className="relative">
@@ -59,12 +59,39 @@ function RoomPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
               />
-              <AiOutlineSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
         </div>
       </div>
-      <div className="">
+      {/*MOBILE RESPONSIVENESS*/}
+      <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
+        <div className="flex space-x-4 mb-4 sticky top-0">
+          <div className="relative">
+            <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
+            <input
+              type="text"
+              placeholder="Search rooms..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg"
+            />
+          </div>
+        </div>
+        <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
+          <TypeFilter
+            className="text-sm md:text-base lg:text-lg"
+            onChange={setSelectedType}
+          />
+          <StatusFilter
+            className="text-sm md:text-base lg:text-lg"
+            onChange={setSelectedStatus}
+          />
+        </div>
+      </div>
+
+      {/*MOBILE RESPONSIVENESS*/}
+
+      <div className="mx-3">
         {filteredFloors.length > 0 ? (
           filteredFloors.map((floor, index) => (
             <FloorSection
@@ -90,7 +117,6 @@ function TypeFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Type:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handleTypeChange}
@@ -111,7 +137,6 @@ function StatusFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-white">Filter by Status:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handleStatusChange}
@@ -125,4 +150,3 @@ function StatusFilter({ onChange }) {
 }
 
 export default RoomPage;
-
