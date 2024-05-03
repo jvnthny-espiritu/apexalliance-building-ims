@@ -3,37 +3,48 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
+  fullName:  {
+    type: String,
+    required: [true, "Your full name is required"],
+  },
+  username: {
+    type: String,
+    required: [true, "Your username is required"],
+  },
   email: {
     type: String,
-    required: true,
+    required: [true, "Your email is required"],
     unique: true,
     lowercase: true,
     validate: (value) => {
       return validator.isEmail(value);
     }
   },
+  campus: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Campus"
+  },
   role: {
     type: String,
     enum: ['admin', 'user'],
     default: 'user'
   },
-  campus: String,
-  password: String
+  password: {
+    type: String,
+    required: true
+  }
 }, { timestamps: true });
 
-// Hash password before saving to the database
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     return next();
   }
   try {
-    const hashedPassword = await bcrypt.hash(this.password, 10);
-    this.password = hashedPassword;
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 

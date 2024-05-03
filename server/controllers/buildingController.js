@@ -7,60 +7,63 @@ module.exports = {
       const buildings = await Building.find();
       res.json(buildings);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+  
   createBuilding: async (req, res) => {
-    const building = new Building({
-      name: req.body.name,
-      purpose: req.body.purpose,
-      campus: req.body.campus,
-      numOfStory: req.body.numOfStory
-    });
-
+    const { name, purpose, campus, numOfStory } = req.body;
+    
     try {
-      const newBuilding = await building.save();
+      const newBuilding = await Building.create({ name, purpose, campus, numOfStory });
       logActivity(req.user.id, 'added a new building', newBuilding._id, 'Building');
       res.status(201).json(newBuilding);
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(400).json({ error: err.message });
     }
   },
+  
   getBuildingById: async (req, res) => {
+    const { id } = req.params;
+    
     try {
-      const building = await Building.findById(req.params.id);
+      const building = await Building.findById(id);
       if (!building) {
-        return res.status(404).json({ message: 'Building not found' });
+        return res.status(404).json({ error: 'Building not found' });
       }
       res.json(building);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+  
   updateBuilding: async (req, res) => {
+    const { id } = req.params;
+    
     try {
-      const building = await Building.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!building) {
-        return res.status(404).json({ message: 'Building not found' });
-      } else {
-        logActivity(req.user.id, 'updated a building', building._id, 'Building');
+      const updatedBuilding = await Building.findByIdAndUpdate(id, req.body, { new: true });
+      if (!updatedBuilding) {
+        return res.status(404).json({ error: 'Building not found' });
       }
-      res.json(building);
+      logActivity(req.user.id, 'updated a building', updatedBuilding._id, 'Building');
+      res.json(updatedBuilding);
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(400).json({ error: err.message });
     }
   },
+  
   deleteBuilding: async (req, res) => {
+    const { id } = req.params;
+    
     try {
-      const building = await Building.findByIdAndDelete(req.params.id);
-      if (!building) {
-        return res.status(404).json({ message: 'Building not found' });
-      } else {
-        logActivity(req.user.id, 'deleted a building', building._id, 'Building');
+      const deletedBuilding = await Building.findByIdAndDelete(id);
+      if (!deletedBuilding) {
+        return res.status(404).json({ error: 'Building not found' });
       }
+      logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
       res.json({ message: 'Building deleted' });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

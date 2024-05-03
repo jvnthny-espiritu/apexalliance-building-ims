@@ -2,69 +2,68 @@ const Asset = require('../models/asset');
 const logActivity = require('../middleware/logger');
 
 module.exports = {
-  getAllAsset: async (req, res) => {
+  getAllAssets: async (req, res) => {
     try {
-      const asset = await Asset.find();
-      res.json(asset);
+      const assets = await Asset.find();
+      res.json(assets);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+
   createAsset: async (req, res) => {
-    const asset = new Asset({
-      roomId: req.body.roomId,
-      name: req.body.name,
-      type: req.body.type,
-      quantity: req.body.quantity,
-      serialNumber: req.body.serialNumber,
-      purchaseDate: req.body.purchaseDate,
-      condition: req.body.condition,
-      electricConsumption: req.body.electricConsumption
-    });
+    const { roomId, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption } = req.body;
 
     try {
-      const newAsset = await asset.save();
+      const newAsset = await Asset.create({ roomId, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption });
       logActivity(req.user.id, 'added a new asset', newAsset._id, 'Asset');
       res.status(201).json(newAsset);
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(400).json({ error: err.message });
     }
   },
+
   getAssetById: async (req, res) => {
+    const { id } = req.params;
+
     try {
-      const asset = await Asset.findById(req.params.id);
+      const asset = await Asset.findById(id);
       if (!asset) {
-        return res.status(404).json({ message: 'Asset not found' });
+        return res.status(404).json({ error: 'Asset not found' });
       }
       res.json(asset);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+
   updateAsset: async (req, res) => {
+    const { id } = req.params;
+
     try {
-      const asset = await Asset.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!asset) {
-        return res.status(404).json({ message: 'Asset not found' });
-      } else {
-        logActivity(req.user.id, 'updated a new asset', newAsset._id, 'Asset');
+      const updatedAsset = await Asset.findByIdAndUpdate(id, req.body, { new: true });
+      if (!updatedAsset) {
+        return res.status(404).json({ error: 'Asset not found' });
       }
-      res.json(asset);
+      logActivity(req.user.id, 'updated an asset', updatedAsset._id, 'Asset');
+      res.json(updatedAsset);
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      res.status(400).json({ error: err.message });
     }
   },
+
   deleteAsset: async (req, res) => {
+    const { id } = req.params;
+
     try {
-      const asset = await Asset.findByIdAndDelete(req.params.id);
-      if (!asset) {
-        return res.status(404).json({ message: 'Asset not found' });
-      } else {
-        logActivity(req.user.id, 'deleted a new asset', newAsset._id, 'Asset');
+      const deletedAsset = await Asset.findByIdAndDelete(id);
+      if (!deletedAsset) {
+        return res.status(404).json({ error: 'Asset not found' });
       }
+      logActivity(req.user.id, 'deleted an asset', deletedAsset._id, 'Asset');
       res.json({ message: 'Asset deleted' });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

@@ -1,52 +1,49 @@
-//LOGIN PAGE
 import React, { useState } from 'react';
-import image from '../assets/img/building.jpg';
-import { ReactComponent as Logo } from '../assets/img/logo.svg';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { jwtDecode } from "jwt-decode";
+import { login } from '../../_actions/authActions';
+import { useNavigate } from 'react-router-dom';
+import image from '../../assets/img/building.jpg';
+import { ReactComponent as Logo } from '../../assets/img/logo.svg';
 
-export default function Login() {
+const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Make a POST request to login endpoint
-      const response = await axios.post('/api/auth/login', { email: username, password });
-      localStorage.setItem('token', response.data.token);
-      // Redirect to dashboard upon successful login
-      history.push('/dashboard');
-    } catch (err) {
-      console.error('Login failed:', err.response.data);
-      setError('Invalid username or password');
-      setPassword('');
+      const actionResult = await dispatch(login({ username, password }));
+      if (actionResult.success) {
+        localStorage.setItem('token', actionResult.token);
+        const user = jwtDecode(actionResult.token);
+        dispatch({ type: 'SET_USER', payload: user });
+        if (user.role === 'admin') {
+          navigate('/');
+        } else {
+          navigate('/');
+        }
+      } else {
+        console.error("Login failed:", actionResult.message);
+      }
+    } catch (error) {
+      console.error("Login failed:", error.response ? error.response.data : error);
     }
   };
 
   return (
     <div
+      className="min-h-screen flex items-center justify-center"
       style={{ 
         backgroundImage: `url(${image})`, 
         backgroundSize: 'cover', 
         backgroundPosition: 'center',
         position: 'relative'
       }}
-      className="min-h-screen flex items-center justify-center"
     >
-      <div 
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-          backdropFilter: 'blur(5px)',
-          zIndex: 1 
-        }}
-      />
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-md z-[1]" />
       <div className="bg-primary opacity-95 px-20 py-40 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2 }}>
         <div className="max-w-md">
           <div className="flex justify-center mb-6">
@@ -105,4 +102,6 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch } from 'react-icons/ai';
 
 const RoomModal = ({ room, toggleModal }) => {
   const [assets, setAssets] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const colors = {
@@ -39,7 +39,7 @@ const RoomModal = ({ room, toggleModal }) => {
         setAssets(data);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching assets:", error);
+        console.error('Error fetching assets:', error);
         setIsLoading(false);
       }
     };
@@ -47,7 +47,7 @@ const RoomModal = ({ room, toggleModal }) => {
     fetchAssets();
   }, [room._id, selectedType, selectedCondition, selectedDate]);
 
-  const filteredAssets = assets.filter((asset) =>
+  const filteredAssets = assets.filter(asset =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -63,18 +63,19 @@ const RoomModal = ({ room, toggleModal }) => {
     setSelectedDate(e.target.value);
   };
 
-  const renderFurnitureRows = (data) => {
-    return data.map((item, index) => (
-      <tr key={index} className="text-center bg-white">
-        <td>{item.name}</td>
-        <td>{item.type}</td>
-        <td>{item.quantity}</td>
-        <td>{item.serialNumber}</td>
-        <td>{item.purchaseDate}</td>
-        <td>{item.condition}</td>
-      </tr>
-    ));
-  };
+
+const renderFurnitureRows = (data) => {
+  return data.map((item, index) => (
+    <tr key={index} className="text-center bg-white">
+      <td>{item.name}</td>
+      <td>{item.type}</td>
+      <td>{item.quantity}</td>
+      <td>{item.serialNumber}</td>
+      <td>{item.purchaseDate}</td>
+      <td>{item.condition}</td>
+    </tr>
+  ));
+};
 
   const renderAppliancesRows = (data) => {
     return data.map((item, index) => (
@@ -90,16 +91,14 @@ const RoomModal = ({ room, toggleModal }) => {
     ));
   };
 
-  const furnitureAssets = filteredAssets.filter(
-    (asset) => asset.type === "Furniture"
-  );
-  const applianceAssets = filteredAssets.filter(
-    (asset) => asset.type === "Appliances"
-  );
+
+  const furnitureAssets = filteredAssets.filter(asset => asset.type === 'Furniture');
+  const applianceAssets = filteredAssets.filter(asset => asset.type === 'Appliances');
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50">
       <div className="relative bg-primary text-white p-8 rounded-lg max-w-5xl w-full">
+
         <button
           className="absolute top-0 right-5 m-2 text-white text-xl cursor-pointer"
           onClick={toggleModal}
@@ -113,9 +112,7 @@ const RoomModal = ({ room, toggleModal }) => {
             <p className="mr-2">Type:</p>
             <p
               className={`px-3 text-center mb-2 mr-2 rounded-xl ${
-                room.type && colors.hasOwnProperty(room.type.toLowerCase())
-                  ? colors[room.type.toLowerCase()]
-                  : ""
+                room.type && colors.hasOwnProperty(room.type.toLowerCase()) ? colors[room.type.toLowerCase()] : ''
               }`}
             >
               {room.type}
@@ -125,9 +122,7 @@ const RoomModal = ({ room, toggleModal }) => {
             <p className="mr-2">Status:</p>
             <p
               className={`px-3 text-center mb-2 rounded-xl ${
-                room.status && colors.hasOwnProperty(room.status.toLowerCase())
-                  ? colors[room.status.toLowerCase()]
-                  : ""
+                room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ''
               }`}
             >
               {room.status}
@@ -138,6 +133,7 @@ const RoomModal = ({ room, toggleModal }) => {
         <hr className="border-white w-full mt-4 mb-4" />
         <p className="text- mt-4 text-4xl">Assets</p>
         <div className="mt-4 overflow-auto">
+
           <div className="relative mb-4">
             <input
               type="text"
@@ -149,40 +145,43 @@ const RoomModal = ({ room, toggleModal }) => {
             <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
 
-            <div className="flex flex-wrap justify-between mb-4">
-              <div className="flex pb-4 pr-4">
-                <select
-                  value={selectedType}
-                  onChange={handleTypeChange}
-                  className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-                >
-                  <option value="">All Types</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Appliances">Appliances</option>
-                </select>
-              </div>
-              <div className="flex pb-4">
-                <select
-                  value={selectedCondition}
-                  onChange={handleConditionChange}
-                  className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-                >
-                  <option value="">All Conditions</option>
-                  <option value="Working">Working</option>
-                  <option value="Not Working">Not Working</option>
-                  <option value="Good">Good</option>
-                  <option value="Bad">Bad</option>
-                </select>
-              </div>
-              <div className="flex">
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-                />
-              </div>
+          <div className="flex justify-between mb-4">
+            <div>
+              <span className="text-white mr-2">Type:</span>
+              <select
+                value={selectedType}
+                onChange={handleTypeChange}
+                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
+              >
+                <option value="">All Types</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Appliances">Appliances</option>
+              </select>
             </div>
+            <div>
+              <span className="text-white mr-2">Condition:</span>
+              <select
+                value={selectedCondition}
+                onChange={handleConditionChange}
+                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
+              >
+                <option value="">All Conditions</option>
+                <option value="Working">Working</option>
+                <option value="Not Working">Not Working</option>
+                <option value="Good">Good</option>
+                <option value="Bad">Bad</option>
+              </select>
+            </div>
+            <div>
+              <span className="text-white mr-2">Date:</span>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={handleDateChange}
+                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
+              />
+            </div>
+          </div>
 
           {isLoading ? (
             <p className="text-white">Loading...</p>

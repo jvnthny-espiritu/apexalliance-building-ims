@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RoomModal from '../pages/RoomModal';
+import RoomModal from '../components/modals/RoomModal';
 
 const RoomCard = ({ room, selectedType, selectedStatus }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);

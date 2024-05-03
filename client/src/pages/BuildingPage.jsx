@@ -66,28 +66,9 @@ function BuildingPage() {
 
   return (
     <div className="building-dashboard overflow-y-auto h-screen">
-      <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen">
-        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog
-        <div className="flex flex-wrap left-10 text-sm mt-10 lg:hidden font-normal">
-          <div className="relative space-x-4 mb-4">
-            <input
-              type="text"
-              placeholder="Search buildings..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-            />
-            <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          </div>
-          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-            <PurposeFilter onChange={setSelectedPurpose} />
-            <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
-          </div>
-         </div>
-        </h1>
-        
-        
-        <div className="flex fixed items-center space-x-4 right-10 hidden lg:flex">
+      <div className="flex w-full flex-col md:flex-row bg-gray-800 justify-between items-center p-5">
+        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5">Building Catalog</h1>
+        <div className="flex items-center space-x-4">
           <PurposeFilter onChange={setSelectedPurpose} />
           <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
           <div className="relative">
@@ -102,7 +83,7 @@ function BuildingPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center items-center mt-10 mx-5">
+      <div className="flex flex-wrap justify-center items-center mt-5 mx-5">
         {filteredBuildings.length === 0 && (
           <p className="text-white">No buildings found.</p>
         )}
@@ -119,6 +100,7 @@ function BuildingPage() {
 function CampusFilter({ campuses, onChange }) {
   return (
     <div className="flex items-center space-x-2">
+      <span className="text-white">Filter by Campus:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={(e) => onChange(e.target.value)}
@@ -141,6 +123,7 @@ function PurposeFilter({ onChange }) {
 
   return (
     <div className="flex items-center space-x-2">
+      <span className="text-white">Filter by Purpose:</span>
       <select
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={handlePurposeChange}
