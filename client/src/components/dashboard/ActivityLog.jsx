@@ -72,12 +72,13 @@ const ActivityLog = () => {
   ];
 
 
+
   return (
-    <div className="flex-grow-1 h-[500px] ml-2 px-6 py-5 rounded-lg shadow-md bg-primary ">
+    <div className="flex-grow-1 h-fit ml-2 px-6 py-5 rounded-lg shadow-md bg-primary overflow-hidden">
       <h3 className="text-2xl font-black font-body text-white my-5">Activity Log</h3>
-      <div className="overflow-y-auto">
+      <div className="h-[860px] mb-5 overflow-y-scroll">
         {activities.map((activity, index) => (
-          <div key={index} className="bg-slate-800/50 rounded-lg overflow-hidden shadow-md block mb-4 mx-4 hover:bg-slate-700">
+          <div key={index} className="bg-slate-800/50 rounded-lg shadow-md block mb-4 mx-4 hover:bg-slate-700">
             <div className="flex flex-col space-y-2 p-4">
               <div className="flex justify-between items-center">
                 <p className="text-white font-black">{activity.username}</p>

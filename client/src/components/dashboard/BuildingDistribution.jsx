@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import ReactEcharts from "echarts-for-react"; 
+import api from '../../services/api';
 
 const BuildingDistribution = () => {
-    const [buildingData, setBuildingData] = useState({});
+    const [buildingData, setBuildingData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/dashboard/building-distribution');
-                const data = await response.json();
-                setBuildingData(data);
+                const response = await api.get('/dashboard/building-distribution');
+                setBuildingData(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching building data:', error);
@@ -52,7 +52,7 @@ const BuildingDistribution = () => {
                     color: '#fff'
                 },
                 center: ['30%', '60%'],
-                data: Object.entries(buildingData).map(([campus, count]) => ({ value: count, name: campus })),
+                data: buildingData,
                 emphasis: {
                     itemStyle: {
                         shadowBlur: 10,

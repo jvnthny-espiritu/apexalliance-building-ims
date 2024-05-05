@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BuildingDistribution from '../../components/dashboard/BuildingDistribution'; 
 import RoomTypeDistribution from '../../components/dashboard/RoomTypeDistribution';
 import ActivityLog from '../../components/dashboard/ActivityLog';
+import api from '../../services/api';
 
 export default function Dashboard() {
     const [totalBuildings, setTotalBuildings] = useState(null);
@@ -9,30 +10,26 @@ export default function Dashboard() {
     const [totalAssets, setTotalAssets] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const buildingsResponse = await fetch('http://localhost:5050/api/dashboard/total-buildings');
-                const buildingsData = await buildingsResponse.json();
-                setTotalBuildings(buildingsData.Buildings);
+      const fetchData = async () => {
+          try {
+              const buildingsResponse = await api.get('/dashboard/total-buildings');
+              setTotalBuildings(buildingsResponse.data.Buildings);
 
-                const roomsResponse = await fetch('http://localhost:5050/api/dashboard/total-rooms');
-                const roomsData = await roomsResponse.json();
-                setTotalRooms(roomsData.Rooms);
+              // const roomsResponse = await api.get('/dashboard/total-rooms');
+              // setTotalRooms(roomsResponse.data.Rooms);
 
-                const assetsResponse = await fetch('http://localhost:5050/api/dashboard/total-assets');
-                const assetsData = await assetsResponse.json();
-                setTotalAssets(assetsData.totalAssets);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
+              const assetsResponse = await api.get('/dashboard/total-assets');
+              setTotalAssets(assetsResponse.data.totalAssets);
+          } catch (error) {
+              console.error('Error fetching data:', error);
+          }
+      };
+      fetchData();
+  }, []);
 
     return (
-        <div className='flex-grow h-full px-10 pb-10'>
-            <div className='flex h-20 w-full p-5 pb-5 mt-5 rounded-lg items-center bg-primary text-white'>
+        <div className='flex-grow h-full p-5'>
+            <div className='flex h-20 w-full p-5 pb-5 rounded-lg items-center bg-primary text-white'>
                 <h1 className='font-bold text-2xl'>Dashboard</h1>
             </div>
             <div className='flex mt-2'>
@@ -54,10 +51,11 @@ export default function Dashboard() {
                       <BuildingDistribution />
                     </div>
                     <div className='w-[640px] h-96 p-5 bg-primary rounded-lg'>
-                      <RoomTypeDistribution />
+                      {/* <RoomTypeDistribution /> */}
+                      UNAVAILABLE
                     </div>
                 </div>
-                <div className='flex'>
+                <div>
                   <ActivityLog />
                 </div>
             </div>

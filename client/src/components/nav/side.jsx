@@ -8,8 +8,8 @@ import { ReactComponent as Logo } from '../../assets/img/logo.svg';
 export default function Sidebar() {
 	const [expanded, setExpanded] = useState(true);
 	const [disableToggle, setDisableToggle] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 			const handleResize = () => {
@@ -63,7 +63,7 @@ export default function Sidebar() {
 							</NavLink>
 						</li>
 						<li>
-							<NavLink to='/admin/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
+							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
 								<MdBook className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Catalog</span>
 							</NavLink>

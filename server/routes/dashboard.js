@@ -7,40 +7,63 @@ const Activity = require('../models/activity');
 
 router.get('/building-distribution', async (req, res) => {
     try {
-        const buildings = await Building.find();
-        const buildingDistribution = {};
-
-        buildings.forEach(building => {
-            buildingDistribution[building.campus] = (buildingDistribution[building.campus] || 0) + 1;
-        });
-
-        res.json(buildingDistribution);
+        const buildingDistribution = await Building.aggregate([
+            { $group: { _id: "$campus", count: { $sum: 1 } } }
+        ]);
+        const data = buildingDistribution.map(item => ({ name: item._id, value: item.count }));
+        res.json(data);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
+
 router.get('/room-distribution', async (req, res) => {
     try {
-        const rooms = await Room.find().populate('buildingId', 'campus');
-        const roomDistribution = {};
-
-        rooms.forEach(room => {
-            // Check if buildingId is populated and not null before accessing campus
-            if (room.buildingId && room.buildingId.campus) {
-                const campus = room.buildingId.campus;
-                if (!roomDistribution[campus]) {
-                    roomDistribution[campus] = {
-                        laboratory: 0,
-                        classroom: 0,
-                        administrative: 0
-                    };
+        const roomDistribution = await Room.aggregate([
+            {
+                $lookup: {
+                    from: "buildings",
+                    localField: "buildingId",
+                    foreignField: "_id",
+                    as: "buildingDetails"
                 }
-                roomDistribution[campus][room.type.toLowerCase()]++;
+            },
+            {
+                $unwind: "$buildingDetails"
+            },
+            {
+                $group: {
+                    _id: {
+                        campus: "$buildingDetails.campus",
+                        type: "$type"
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.campus",
+                    types: {
+                        $push: {
+                            type: "$_id.type",
+                            count: "$count"
+                        }
+                    }
+                }
             }
+        ]);
+
+        const result = {};
+        roomDistribution.forEach(item => {
+            const types = {};
+            item.types.forEach(type => {
+                types[type.type.toLowerCase()] = type.count;
+            });
+            result[item._id] = types;
         });
 
-        res.json(roomDistribution);
+        res.json(result);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

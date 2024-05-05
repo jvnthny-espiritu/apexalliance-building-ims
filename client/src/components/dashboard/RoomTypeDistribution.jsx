@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ReactEcharts from "echarts-for-react"; 
+import api from '../../services/api';
 
 const RoomTypeDistribution = () => {
     const [roomData, setRoomData] = useState({});
+    console.log(roomData);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/dashboard/room-distribution');
-                const data = await response.json();
-                setRoomData(data);
+                const response = await api.get('/dashboard/room-distribution');
+                setRoomData(response.data);
             } catch (error) {
                 console.error('Error fetching room data:', error);
             }
@@ -18,37 +19,17 @@ const RoomTypeDistribution = () => {
         fetchData();
     }, []);
 
-    const series = [
-        {
-            data: [],
-            type: 'bar',
-            stack: 'a',
-            name: 'Administrative',
-            barWidth: '20%'
-        },
-        {
-            data: [],
-            type: 'bar',
-            stack: 'a',
-            name: 'Classroom',
-            barWidth: '20%'
-        },
-        {
-            data: [],
-            type: 'bar',
-            stack: 'a',
-            name: 'Laboratory',
-            barWidth: '20%'
-        }
-    ];
-
-    if (roomData) {
-        Object.entries(roomData).forEach(([campus, types]) => {
-            series[0].data.push(types.administrative);
-            series[1].data.push(types.classroom);
-            series[2].data.push(types.laboratory);
-        });
-    }
+    const series = Object.keys(roomData).map(campus => ({
+        name: campus,
+        type: 'bar',
+        stack: 'a',
+        data: [
+            roomData[campus].administrative || 0,
+            roomData[campus].classroom || 0,
+            roomData[campus].laboratory || 0
+        ],
+        barWidth: '20%'
+    }));
 
     const option = {
         title: {
