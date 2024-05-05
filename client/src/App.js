@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Dashboard from './pages/admin/Dashboard';
@@ -10,47 +10,48 @@ import Sidebar from './components/nav/side';
 import Bottombar from './components/nav/bottom';
 import Topbar from './components/nav/top';
 
-
 const App = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
 
   useEffect(() => {
-      const handleResize = () => {
-          setIsMobile(window.innerWidth < 900);
-      };
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 900);
+    };
 
-      window.addEventListener('resize', handleResize);
-      return () => {
-          window.removeEventListener('resize', handleResize);
-      };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
     <Routes>
       {isLoggedIn && user && user.role === 'admin' && (
-        <Route path="/" element={
+        <Route path="/admin/*" element={
           <div className="flex h-full w-screen">
             {isMobile ? <Bottombar /> : <Sidebar />}
             <div className="flex-1">
-                <Outlet />
+              <Outlet />
             </div>
-          </div>}>
+          </div>
+        }>
           <Route index element={<Dashboard />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="settings/*" element={<Settings />} />
           <Route path="catalog/building" element={<BuildingPage />} />
           <Route path="catalog/room/:buildingId" element={<RoomPage />} />
         </Route>
       )}
 
       {isLoggedIn && user && user.role === 'user' && (
-        <Route path="/" element={
+        <Route path="/user/*" element={
           <div className="flex h-full w-screen">
             <Topbar />
             <div className="flex-1">
-                <Outlet />
+              <Outlet />
             </div>
-          </div>}>
+          </div>
+        }>
           <Route index element={<BuildingPage />} />
           {/* <Route path="/rooms" element={<Settings />} /> SAMPLE */}
         </Route>
