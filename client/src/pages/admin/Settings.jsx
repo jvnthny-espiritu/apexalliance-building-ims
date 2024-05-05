@@ -327,7 +327,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("account")}
               >
-                <Link to="/settings" className="ml-3">
+                <Link to="/admin/settings/account" className="ml-3">
                   Account
                 </Link>
               </li>
@@ -337,7 +337,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("manageuser")}
               >
-                <Link to="/settings" className="ml-3">
+                <Link to="/admin/settings/manageuser" className="ml-3">
                   Manage User
                 </Link>
               </li>
@@ -359,7 +359,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("account")}
               >
-                <Link to="/settings" className="ml-3">
+                <Link to="/admin/settings/account" className="ml-3">
                   Account
                 </Link>
               </li>
@@ -370,7 +370,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("manageuser")}
               >
-                <Link to="/settings" className="ml-3">
+                <Link to="/admin/settings/manageuser" className="ml-3">
                   Manage User
                 </Link>
               </li>
