@@ -14,17 +14,20 @@ module.exports = {
 
   createUser: async (req, res) => {
     const { fullName, username, email, role, campus, password } = req.body;
+    console.log("Received request body:", req.body);
     try {
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.json({ message: "User already exists" });
+        return res.status(400).json({ message: "User already exists" });
       }
       const newUser = await User.create({ fullName, username, email, role, campus, password });
       res.status(201).json(newUser);
     } catch (err) {
-      res.status(400).json({ message: err.message });
+      console.error('Error creating user:', err);
+      res.status(500).json({ message: "Failed to create user", error: err.message });
     }
   },
+  
   
   getUserById: async (req, res) => {
     try {

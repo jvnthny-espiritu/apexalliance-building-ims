@@ -307,10 +307,19 @@ const ManageUser = ({toggleModal}) => {
 
 const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
+  const [open, setOpen] = useState(false);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
+
+  const toggleModal = () => {
+    setOpen((prevOpen) => {
+      console.log("Modal toggle state:", !prevOpen);
+      return !prevOpen;
+    });
+  };
+  
 
   return (
     <div className="w-screen h-screen overflow-y-auto flex flex-col">
@@ -327,7 +336,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("account")}
               >
-                <Link to="/admin/settings/account" className="ml-3">
+                <Link to="/settings" className="ml-3">
                   Account
                 </Link>
               </li>
@@ -337,7 +346,7 @@ const Settings = () => {
                 }`}
                 onClick={() => handleItemClick("manageuser")}
               >
-                <Link to="/admin/settings/manageuser" className="ml-3">
+                <Link to="/settings" className="ml-3">
                   Manage User
                 </Link>
               </li>
@@ -345,7 +354,7 @@ const Settings = () => {
           </nav>
           <div className="ml-5 flex-grow">
             {selectedItem === "account" && <UserAccount />}
-            {selectedItem === "manageuser" && <ManageUser />}
+            {selectedItem === "manageuser" && <ManageUser toggleModal={toggleModal} />}
           </div>
         </div>
       </div>
@@ -378,10 +387,11 @@ const Settings = () => {
           </nav>
           <div className="ml-5 flex-grow">
             {selectedItem === "account" && <UserAccount />}
-            {selectedItem === "manageuser" && <ManageUser />}
+            {selectedItem === "manageuser" && <ManageUser toggleModal={toggleModal} />}
           </div>
         </div>
       </div>
+      {open && <AddUserModal toggleModal={toggleModal} />}
     </div>
   );
 };
