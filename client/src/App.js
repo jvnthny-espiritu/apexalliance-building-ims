@@ -27,7 +27,7 @@ const App = () => {
 
   return (
     <Routes>
-      {isLoggedIn && user && user.role === 'admin' && (
+      {isLoggedIn && user && user.role === 'administrator' && (
         <Route path="/admin/*" element={
           <div className="flex h-full w-screen">
             {isMobile ? <Bottombar /> : <Sidebar />}
@@ -43,7 +43,7 @@ const App = () => {
         </Route>
       )}
 
-      {isLoggedIn && user && user.role === 'user' && (
+      {isLoggedIn && user && user.role === 'staff' && (
         <Route path="/user/*" element={
           <div className="flex h-full w-screen">
             <Topbar />
@@ -66,7 +66,7 @@ const App = () => {
       )}
 
       {isLoggedIn && (
-        <Route path="*" element={<Navigate to={user.role === 'admin' ? "/admin" : "/user"} />} />
+        <Route path="*" element={<Navigate to={user.role === 'administrator' ? "/admin" : "/user"} />} />
       )}
     </Routes>
   );
