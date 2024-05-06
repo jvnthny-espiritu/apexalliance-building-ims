@@ -28,7 +28,7 @@ const App = () => {
   return (
     <Routes>
       {isLoggedIn && user && user.role === 'administrator' && (
-        <Route path="/admin/*" element={
+        <Route path="/" element={
           <div className="flex h-full w-screen">
             {isMobile ? <Bottombar /> : <Sidebar />}
             <div className="flex-1">
@@ -66,7 +66,7 @@ const App = () => {
       )}
 
       {isLoggedIn && (
-        <Route path="*" element={<Navigate to={user.role === 'administrator' ? "/admin" : "/user"} />} />
+        <Route path="*" element={<Navigate to={user.role === 'administrator' ? "/" : "/"} />} />
       )}
     </Routes>
   );

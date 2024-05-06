@@ -3,7 +3,7 @@ import { MdEdit } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 const BuildingCard = ({ building }) => {
-  const { _id, name, campus, yearOfCompletion, numFloor, purpose, imgBuilding } = building;
+  const { _id, name, campus, yearOfCompletion, numFloor, purpose } = building;
   const [totalRooms, setTotalRooms] = useState(0);
 
   useEffect(() => {

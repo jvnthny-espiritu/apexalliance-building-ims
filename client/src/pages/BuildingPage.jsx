@@ -18,10 +18,10 @@ function BuildingPage() {
     const fetchCampuses = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/building');
+        const response = await api.get('/campus');
         const data = response.data;
-        const uniqueCampuses = [...new Set(data.map(building => building.campus))];
-        setCampuses(uniqueCampuses);
+        const campusNames = data.map(campus => campus.name);
+        setCampuses(campusNames);
       } catch (error) {
         console.error('Error fetching campuses:', error);
         setError('Error fetching campuses');
@@ -29,7 +29,7 @@ function BuildingPage() {
         setLoading(false);
       }
     };
-
+  
     fetchCampuses();
   }, []);
 
@@ -75,7 +75,7 @@ function BuildingPage() {
   };
 
   return (
-    <div className="building-dashboard overflow-y-auto h-screen">
+    <div className="overflow-y-auto h-screen">
       <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen">
         <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog
         <div className="flex flex-wrap left-10 text-sm mt-10 lg:hidden font-normal">

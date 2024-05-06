@@ -13,8 +13,7 @@ module.exports = {
   addCampus: async (req, res) => {
     const { name } = req.body;
     try {
-      const campus = new Campus({ name });
-      await campus.save();
+      const campus = await Campus.create({ name });
       res.status(201).json(campus);
     } catch (err) {
       res.status(400).json({ message: err.message });

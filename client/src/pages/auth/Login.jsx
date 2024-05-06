@@ -20,7 +20,7 @@ const Login = () => {
         localStorage.setItem('token', actionResult.token);
         const user = jwtDecode(actionResult.token);
         dispatch({ type: 'SET_USER', payload: user });
-        if (user.role === 'admin') {
+        if (user.role === 'administrator') {
           navigate('/');
         } else {
           navigate('/');
