@@ -74,7 +74,7 @@ const ActivityLog = () => {
 
 
   return (
-    <div className="flex-grow-1 h-fit ml-2 px-6 py-5 rounded-lg shadow-md bg-primary overflow-hidden">
+    <div className="flex-grow-1 h-fit px-6 py-5 rounded-lg shadow-md bg-primary overflow-hidden">
       <h3 className="text-2xl font-black font-body text-white my-5">Activity Log</h3>
       <div className="h-[860px] mb-5 overflow-y-scroll">
         {activities.map((activity, index) => (

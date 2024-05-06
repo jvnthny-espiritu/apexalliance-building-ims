@@ -59,13 +59,13 @@ export default function Sidebar() {
 						<li>
 							<NavLink to='/' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Dashboard'>
 								<MdDashboard className='h-6 w-6 mx-4' />
-								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Dashboard</span>
+								<span className={`${expanded ? "" : "sr-only"}`}>Dashboard</span>
 							</NavLink>
 						</li>
 						<li>
 							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
 								<MdBook className='h-6 w-6 mx-4' />
-								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Catalog</span>
+								<span className={`${expanded ? "" : "sr-only"}`}>Catalog</span>
 							</NavLink>
 						</li>
 					</ul>
@@ -76,13 +76,13 @@ export default function Sidebar() {
 						<li>
 							<NavLink to='/admin/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
 								<MdSettings className='h-6 w-6 mx-4' />
-								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Settings</span>
+								<span className={`${expanded ? "" : "sr-only"}`}>Settings</span>
 							</NavLink>
 						</li>
 						<li>
 							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
 								<MdExitToApp className='h-6 w-6 mx-4' />
-								<span className={`${expanded ? "ml-4" : "sr-only"}`}>Logout</span>
+								<span className={`${expanded ? "" : "sr-only"}`}>Logout</span>
 							</button>
 						</li>
 					</ul>

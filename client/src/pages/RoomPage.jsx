@@ -1,16 +1,15 @@
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import FloorSection from '../components/FloorSection';
-import { AiOutlineSearch } from 'react-icons/ai';
-import api from '../services/api' ;
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import FloorSection from "../components/FloorSection";
+import { AiOutlineSearch } from "react-icons/ai";
+import api from "../services/api";
 
 function RoomPage() {
   const { buildingId } = useParams();
   const [floors, setFloors] = useState([]);
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -24,31 +23,31 @@ function RoomPage() {
         }
 
         if (selectedStatus) {
-          apiUrl += `${selectedType ? '&' : '?'}status=${selectedStatus}`;
+          apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
         }
 
         const response = await api.get(apiUrl);
         const data = await response.json();
         setFloors(data);
       } catch (error) {
-        console.error('Error fetching floors:', error);
+        console.error("Error fetching floors:", error);
       }
     };
 
     fetchFloors();
   }, [buildingId, selectedType, selectedStatus, location.search]);
 
-  const filteredFloors = floors.map(floor => ({
+  const filteredFloors = floors.map((floor) => ({
     ...floor,
-    rooms: floor.rooms.filter(room =>
+    rooms: floor.rooms.filter((room) =>
       room.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    ),
   }));
 
   return (
     <div className=" overflow-y-auto h-screen sticky">
-      <div className="flex w-auto sticky top-0 z-10">
-        <div className="flex bg-primary justify-between items-center w-screen p-5 ">
+      <div className="flex sticky top-0 z-10">
+        <div className="flex bg-primary justify-between items-center p-5 max-w-screen-auto w-full">
           <h1 className="font-bold text-2xl text-white">Room Catalog</h1>
           <div className="hidden md:flex items-center space-x-4 ">
             <TypeFilter onChange={setSelectedType} />

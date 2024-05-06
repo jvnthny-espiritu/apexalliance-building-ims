@@ -7,7 +7,7 @@ export default function Bottombar() {
     const activeLinkClasses = 'bg-white bg-opacity-10 transition-colors duration-200';
 
     return (
-        <div className="fixed bottom-0 left-0 w-full bg-primary text-white flex justify-around">
+        <div className="fixed bottom-0 left-0 w-full bg-primary text-white flex justify-around z-10">
             <NavLink to="/" className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses}>
                 <MdDashboard className="h-6 w-6" />
             </NavLink>
