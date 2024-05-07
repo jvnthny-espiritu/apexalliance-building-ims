@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from 'react-icons/ai';
+import api from '../../services/api.js'
 
 const RoomModal = ({ room, toggleModal }) => {
   const [assets, setAssets] = useState([]);
@@ -20,7 +21,7 @@ const RoomModal = ({ room, toggleModal }) => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        let apiUrl = `http://localhost:5050/api/filtering/assets?roomId=${room._id}`;
+        let apiUrl = `/room/${room._id}/assets`;
 
         if (selectedType) {
           apiUrl += `&type=${selectedType}`;
@@ -34,9 +35,8 @@ const RoomModal = ({ room, toggleModal }) => {
           apiUrl += `&date=${selectedDate}`;
         }
 
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        setAssets(data);
+        const response = await api.get(apiUrl);
+        setAssets(response.data);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching assets:', error);

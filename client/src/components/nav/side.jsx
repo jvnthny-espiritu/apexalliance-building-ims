@@ -74,7 +74,7 @@ export default function Sidebar() {
 					<hr />
 					<ul className='mb-4'>
 						<li>
-							<NavLink to='/admin/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
+							<NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
 								<MdSettings className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Settings</span>
 							</NavLink>

@@ -7,7 +7,7 @@ const getOrdinalIndicator = (number) => {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
-const FloorSection = ({ floorName, rooms, selectedType, selectedStatus }) => {
+const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleCollapse = () => {

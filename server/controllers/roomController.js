@@ -1,10 +1,12 @@
 const Room = require('../models/room');
+const Asset = require('../models/asset');
 const logActivity = require('../middleware/logger');
 
 module.exports = {
   getAllRooms: async (req, res) => {
     try {
       const rooms = await Room.find();
+      console.log(rooms);
       res.json(rooms);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -67,33 +69,17 @@ module.exports = {
     }
   },
 
-  getRoomsByBuildingAndFloor: async (req, res) => {
+  getAssetByRoom: async (req, res) => {
+    const room = req.params.id;
     try {
-      // Validate buildingId parameter
-      const buildingId = req.params.id;
-      if (!buildingId) {
-        return res.status(400).json({ error: 'Building ID is required' });
+      if (!room) {
+        return res.status(400).json({ error: 'Room ID is required' });
       }
-
-      // Fetch rooms by building ID
-      const rooms = await Room.find({ buildingId });
-
-      // Group rooms by floor
-      const floors = rooms.reduce((acc, room) => {
-        if (!acc[room.floor]) {
-          acc[room.floor] = { buildingFloor: room.floor, rooms: [] };
-        }
-        acc[room.floor].rooms.push(room);
-        return acc;
-      }, {});
-
-      const floorsArray = Object.values(floors);
-
-      // Return floors data
-      res.json(floorsArray);
-    } catch (error) {
-      console.error('Error fetching floors by building:', error);
-      res.status(500).json({ error: 'An error occurred while fetching floors by building' });
+        const assets = await Asset.find({ room });
+        res.json(assets);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

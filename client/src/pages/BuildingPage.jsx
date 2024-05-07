@@ -77,7 +77,7 @@ function BuildingPage() {
   return (
     <div className="overflow-y-auto h-screen">
       <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen">
-        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog
+        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog</h1>
         <div className="flex flex-wrap left-10 text-sm mt-10 lg:hidden font-normal">
           <div className="relative space-x-4 mb-4">
             <input
@@ -89,14 +89,11 @@ function BuildingPage() {
             />
             <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
-
           <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
             <PurposeFilter onChange={setSelectedPurpose} />
             <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
           </div>
-         </div>
-        </h1>
-        
+        </div>
         
         <div className="flex fixed items-center space-x-4 right-10 hidden lg:flex">
           <PurposeFilter onChange={setSelectedPurpose} />

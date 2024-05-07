@@ -8,5 +8,6 @@ router.post('/', buildingController.createBuilding);
 router.get('/:id', buildingController.getBuildingById);
 router.put('/:id', buildingController.updateBuilding);
 router.delete('/:id', buildingController.deleteBuilding);
+router.get('/:id/rooms', buildingController.getRoomByFloor);
 
 module.exports = router;

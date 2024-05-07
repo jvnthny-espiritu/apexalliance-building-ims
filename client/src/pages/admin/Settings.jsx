@@ -307,11 +307,11 @@ const Settings = () => {
 
   return (
     <div className="w-screen h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10 ">
+      <h2 className="font-body text-2xl font-extrabold pt-5 mb-5 px-10 ">
         SETTINGS
       </h2>
       <div className="block sm:hidden">
-        <div className=" flex flex-col mx-4 mb-10 bg-primary overflow-x-auto">
+        <div className="w-screen flex flex-col mx-4 mb-10 bg-primary overflow-x-auto">
           <nav className="border-b border-white">
             <ul className="pl-5 pr-5 flex text-white font-semibold font-body justify-between space-x-3 ">
               <li

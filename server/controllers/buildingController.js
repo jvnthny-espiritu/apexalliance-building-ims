@@ -1,4 +1,5 @@
 const Building = require('../models/building');
+const Room = require('../models/room');
 const logActivity = require('../middleware/logger');
 
 module.exports = {
@@ -64,6 +65,28 @@ module.exports = {
       res.json({ message: 'Building deleted' });
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  getRoomByFloor: async (req, res) => {
+    const building = req.params.id;
+    try {
+      if (!building) {
+        return res.status(400).json({ error: 'Building ID is required' });
+      }
+      const rooms = await Room.find({ building });
+      const roomsByFloor = rooms.reduce((acc, room) => {
+        const floor = room.floor;
+        if (!acc[floor]) {
+          acc[floor] = [];
+        }
+        acc[floor].push(room);
+        return acc;
+      }, {});
+      res.json(roomsByFloor);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      res.status(500).json({ error: 'An error occurred while fetching rooms' });
     }
   }
 };
