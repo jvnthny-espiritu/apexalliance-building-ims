@@ -38,7 +38,7 @@ const BuildingCard = ({ building }) => {
   };
 
   return (
-    <div className="w-[300px] h-[150px] my-20">
+    <div className="w-[300px] h-[150px] my-16 md:my-20">
       <div className="bg-primary rounded-xl shadow-lg flex-shrink-0">
         <Link to={`/catalog/room/${_id}`} className="p-3 md:p-5 flex flex-col"> {/* Link to RoomPage with building ID */}
           <div className='building-name text-white text-[24px] md:text-2xl lg:text-[24px] font-black font-body mt-3'>
