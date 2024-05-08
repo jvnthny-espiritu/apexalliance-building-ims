@@ -29,7 +29,6 @@ function BuildingPage() {
         setLoading(false);
       }
     };
-  
     fetchCampuses();
   }, []);
 
@@ -75,9 +74,9 @@ function BuildingPage() {
   };
 
   return (
-    <div className="overflow-y-auto h-screen">
+    <div className="building-dashboard overflow-y-auto h-screen">
       <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen">
-        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog</h1>
+        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5 my-auto">Building Catalog
         <div className="flex flex-wrap left-10 text-sm mt-10 lg:hidden font-normal">
           <div className="relative space-x-4 mb-4">
             <input
@@ -93,7 +92,9 @@ function BuildingPage() {
             <PurposeFilter onChange={setSelectedPurpose} />
             <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
           </div>
-        </div>
+         </div>
+        </h1>
+        
         
         <div className="flex fixed items-center space-x-4 right-10 hidden lg:flex">
           <PurposeFilter onChange={setSelectedPurpose} />

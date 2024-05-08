@@ -48,26 +48,54 @@ function RoomPage() {
   }));
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex bg-primary justify-between items-center p-5 md:p-17 lg:p-5">
-        <h1 className="font-bold text-2xl text-white mb-3 md:mb-0 md:mr-5">Room Catalog</h1>
-        <div className="flex space-x-4">
-          <TypeFilter onChange={setSelectedType} />
-          <StatusFilter onChange={setSelectedStatus} />
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search room..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-            />
-            <AiOutlineSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+    <div className=" overflow-y-auto h-screen w-auto sticky top-0">
+      <div className="flex w-auto sticky top-0 z-10">
+        <div className="flex  bg-primary justify-between items-center w-screen p-5 ">
+          <h1 className="font-bold text-2xl text-white">Room Catalog</h1>
+          <div className="hidden md:flex items-center space-x-4 ">
+            <TypeFilter onChange={setSelectedType} />
+            <StatusFilter onChange={setSelectedStatus} />
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search rooms..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+              />
+            </div>
           </div>
         </div>
       </div>
+      {/*MOBILE RESPONSIVENESS*/}
+      <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
+        <div className="flex space-x-4 mb-4 sticky top-0">
+          <div className="relative">
+            <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
+            <input
+              type="text"
+              placeholder="Search rooms..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg"
+            />
+          </div>
+        </div>
+        <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
+          <TypeFilter
+            className="text-sm md:text-base lg:text-lg"
+            onChange={setSelectedType}
+          />
+          <StatusFilter
+            className="text-sm md:text-base lg:text-lg"
+            onChange={setSelectedStatus}
+          />
+        </div>
+      </div>
 
-      <div className="flex-grow overflow-y-auto px-5">
+      {/*MOBILE RESPONSIVENESS*/}
+
+      <div className="mx-3">
         {filteredFloors.length > 0 ? (
           filteredFloors.map((floor, index) => (
             <FloorSection
@@ -79,7 +107,7 @@ function RoomPage() {
             />
           ))
         ) : (
-          <p className="text-center">No rooms found for this building.</p>
+          <p>No rooms found for this building.</p>
         )}
       </div>
     </div>
