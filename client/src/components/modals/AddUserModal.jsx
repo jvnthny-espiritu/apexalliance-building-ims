@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import api from '../../services/api';
+import api from "../../services/api";
 
-const AddUserModal = ({ isOpen, toggleModal }) => {
+const AddUserModal = ({ toggleModal }) => {
   const [formData, setFormData] = useState({
     fullName: {
       firstName: "",
@@ -13,25 +13,9 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
     password: "",
   });
 
+  const [close, setClose] = useState(false); // modal visibility
+
   const modalRef = useRef();
-
-  useEffect(() => {
-    const handleEscapeKeyPress = (event) => {
-      if (event.key === "Escape") {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscapeKeyPress);
-    } else {
-      document.removeEventListener("keydown", handleEscapeKeyPress);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscapeKeyPress);
-    };
-  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,9 +47,7 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
   };
 
   const handleClose = () => {
-    if (typeof toggleModal === "function") {
-      toggleModal(); // Close modal if toggleModal prop is provided
-    }
+    setClose(true); 
   };
 
   const handleRoleChange = (role) => {
@@ -74,13 +56,15 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
       role: role,
     }));
   };
-  
+
+  if (close) return null; 
+
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10">
       <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl">
         <button
           className="absolute top-0 right-5 m-2 text-black text-xl cursor-pointer"
-          onClick={handleClose}
+          onClick={handleClose} // Update onClick to call handleClose
         >
           x
         </button>
@@ -114,6 +98,16 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
                 </div>
               </div>
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+                <div className="flex flex-col w-full md:w-1/2 md:pl-2 lg:mr-5">
+                  <label className="text-black">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    className="border-b-2 border-black p-3 outline-none"
+                  />
+                </div>
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black">Role</label>
                   <div className="flex gap-4">
@@ -140,16 +134,6 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
                       Staff
                     </button>
                   </div>
-                </div>
-                <div className="flex flex-col w-full md:w-1/2 md:pl-2">
-                  <label className="text-black">Username</label>
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className="border-b-2 border-black p-3 outline-none"
-                  />
                 </div>
               </div>
             </div>
