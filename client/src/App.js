@@ -27,7 +27,7 @@ const App = () => {
 
   return (
     <Routes>
-      {isLoggedIn && user && user.role === 'administrator' && (
+      {isLoggedIn && user && user.role === 'Administrator' && (
         <Route path="/" element={
           <div className="flex h-full w-screen">
             {isMobile ? <Bottombar /> : <Sidebar />}
@@ -37,13 +37,13 @@ const App = () => {
           </div>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="settings/*" element={<Settings />} />
+          <Route path="/admin/settings/*" element={<Settings />} />
           <Route path="catalog/building" element={<BuildingPage />} />
           <Route path="catalog/room/:buildingId" element={<RoomPage />} />
         </Route>
       )}
 
-      {isLoggedIn && user && user.role === 'staff' && (
+      {isLoggedIn && user && user.role === 'Staff' && (
         <Route path="/user/*" element={
           <div className="flex h-full w-screen">
             <Topbar />
@@ -61,12 +61,14 @@ const App = () => {
         <Route path="/login" element={<Login />} />
       )}
 
+      {/* Redirect to /login when not logged in */}
       {!isLoggedIn && (
-        <Route path="/*" element={<Navigate to='/login' />} />
+        <Route path="/" element={<Navigate to='/login' />} />
       )}
 
+      {/* Redirect to appropriate dashboard based on user role */}
       {isLoggedIn && (
-        <Route path="*" element={<Navigate to={user.role === 'administrator' ? "/" : "/"} />} />
+        <Route path="*" element={<Navigate to={user.role === 'Administrator' ? "/" : "/user"} />} />
       )}
     </Routes>
   );

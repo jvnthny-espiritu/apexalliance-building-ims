@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from '../../services/api';
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from '../../components/modals/AddUserModal';
-
 
 const UserAccount = () => {
   const user = {
@@ -152,49 +152,64 @@ const UserAccount = () => {
   );
 };
 
+const ManageUser = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [filterRole, setFilterRole] = useState('');
+  const [filterCampus, setFilterCampus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [availableCampuses, setAvailableCampuses] = useState([]);
+
+  const toggleModal = () => {
+    setIsOpen(prev => !prev);
+  };
 
 
-const ManageUser = ({toggleModal}) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen((cur) => !cur);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/user"); // Fetch users from your API endpoint
+        setUsers(response.data); // Set the fetched users to the state
+        const campuses = [...new Set(response.data.map(user => user.campus.name))];
+        setAvailableCampuses(campuses);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-  const [users, setUsers] = useState([
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-    {
-      name: "John Doe",
-      campus: "Alangilan",
-      role: "STAFF",
-      email: "john.doe@example.com",
-      password:"123456",
-    },
-  ]);
+    fetchUsers(); // Fetch users when the component mounts
+  }, []);
+
+  const handleEdit = (userId) => {
+    // Implement the edit functionality here
+    console.log(`Editing user with ID: ${userId}`);
+  };
+  
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await api.delete(`/user/${userId}`); // Delete user using your API
+      if (response.ok) {
+        console.log('User deleted successfully');
+        setUsers(users.filter(user => user._id !== userId));
+      } else {
+        console.error('Failed to delete user:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error.message);
+    }
+  };  
+
+  const filteredUsers = users.filter(user => {
+    const fullName = `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
+    const role = user.role.toLowerCase();
+    const searchValue = searchTerm.toLowerCase();
+    return (
+      (filterRole ? user.role === filterRole : true) &&
+      (filterCampus ? user.campus.name === filterCampus : true) &&
+      (fullName.includes(searchValue) || role.includes(searchValue))
+    );
+  });
 
   return (
     <div className="my-4 text-white overflow-y-auto relative mr-10">
@@ -205,105 +220,74 @@ const ManageUser = ({toggleModal}) => {
         </p>
         <hr className="mb-2" />
         <div className="flex mb-2 items-center justify-end">
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
-          />
-          <button onClick={handleOpen} className="rounded-full text-white p-2 ml-2 ">
-            <FaCirclePlus />
-          </button>
-          {open &&<AddUserModal toggleModal={toggleModal}/>}
+          <div className="mr-4">
+            <select value={filterRole} onChange={e => setFilterRole(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Roles</option>
+              <option value="Staff">Staff</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+          </div>
+          <div>
+            <select value={filterCampus} onChange={e => setFilterCampus(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Campuses</option>
+              {availableCampuses.map(campus => (
+                <option key={campus} value={campus}>{campus}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center ml-4">
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
+            />
+             <button onClick={toggleModal} className="rounded-full text-white p-2 ml-2 ">
+              <FaCirclePlus />
+            </button>
+            {isOpen && <AddUserModal isOpen={isOpen} toggleModal={toggleModal}/>}
+          </div>
         </div>
-        <div className="overflow-x-auto"></div>
         <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <table className="divide-y divide-gray-200 w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
-                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((person) => (
-                <tr key ={person.name}>
-                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.name}
-                    <dl className="md:hidden font-normal">
-                      <dt className="sr-only">Role</dt>
-                      <dd className="text-gray-600">{person.role}</dd>
-                      <dt className="sr-only">Email</dt>
-                      <dd className="text-gray-500">{person.email}</dd>
-              </dl>
-                  </td>
-                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.campus}
-                  </td>
-                  <td className="hidden md:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.role}
-                  </td>
-                  <td className="hidden lg:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.email}
-                  </td>
-                  <td className=" hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {person.password}
-                  </td>
-                  <td className=" hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
+              {filteredUsers.map((user) => (
+                <tr key={user._id}>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.fullName.firstName} {user.fullName.lastName}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.campus.name}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.role}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.email}</td>
+
+                  <td className="px-4 py-3 text-gray-500 text-sm">
+                    <button onClick={() => handleEdit(user._id)} className="text-indigo-600 hover:text-indigo-900">
                       Edit
-                    </a>
-                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
+                    </button>
+                    <button onClick={() => deleteUser(user._id)} className="ml-2 text-red-600 hover:text-red-900">
                       Delete
-                    </a>
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        {/* card view up to the 'md:' breakpoint*/}
-        <div className="mt=10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:hidden ">
-          {users.map((person) => (
-            <div
-            key={person.email} className="relative flex items-center space-x-3 rounded-lg bg-white px-6 py-5 shadow rinf-1 ring-black ring-opacity-5">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center space-x-3">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {person.name}
-                  </p>
-                  <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                    {person.campus}
-                  </span>
-                </div>
-                <p className="mt-1 truncate text-sm text-gray-900">
-                  {person.role}
-                </p>
-                <p className="mt-1 truncate text-sm text-gray-700">
-                  {person.email}
-                </p>
-                <p className="mt-1 truncate text-sm text-gray-600">
-                  {person.password}
-                </p>
-                <td className= " flex-row  whitespace-nowrap text-sm font-medium">
-                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                      Edit
-                    </a>
-                    <a href="#" className="ml-2 text-red-600 hover:text-red-900">
-                      Delete
-                    </a>
-                  </td>
-              </div>
-            </div>
-          ))}
-        </div>
-        </div>
       </div>
+    </div>
   );
 };
+
+
 
 const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
@@ -322,12 +306,12 @@ const Settings = () => {
   
 
   return (
-    <div className=" h-screen overflow-y-auto flex flex-col">
+    <div className="w-screen h-screen overflow-y-auto flex flex-col">
       <h2 className="font-body text-2xl font-extrabold pt-5 mb-1 px-10 ">
         SETTINGS
       </h2>
       <div className="block sm:hidden">
-        <div className=" flex flex-col mx-4 mb-20 bg-primary">
+        <div className=" flex flex-col mx-4 mb-10 bg-primary overflow-x-auto">
           <nav className="border-b border-white">
             <ul className="pl-5 pr-5 flex text-white font-semibold font-body justify-between space-x-3 ">
               <li

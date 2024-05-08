@@ -1,21 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
-import api from "../../services/api";
+import api from '../../services/api';
 
-const AddUserModal = ({ toggleModal }) => {
+const AddUserModal = ({ isOpen, toggleModal }) => {
   const [formData, setFormData] = useState({
     fullName: {
       firstName: "",
       lastName: "",
     },
-    role: "staff",
+    role: "Staff",
     username: "",
     email: "",
     password: "",
+    campus: "", 
   });
 
-  const [close, setClose] = useState(false); // modal visibility
+  const [campuses, setCampuses] = useState([]); 
 
   const modalRef = useRef();
+
+  useEffect(() => {
+    const fetchCampuses = async () => {
+      try {
+        const response = await api.get("/campus");
+        setCampuses(response.data); 
+      } catch (error) {
+        console.error("Error fetching campuses:", error);
+      }
+    };
+
+    if (isOpen) {
+      fetchCampuses(); 
+    }
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +63,9 @@ const AddUserModal = ({ toggleModal }) => {
   };
 
   const handleClose = () => {
-    setClose(true); 
+    if (typeof toggleModal === "function") {
+      toggleModal(); 
+    }
   };
 
   const handleRoleChange = (role) => {
@@ -56,15 +74,13 @@ const AddUserModal = ({ toggleModal }) => {
       role: role,
     }));
   };
-
-  if (close) return null; 
-
+  
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10">
       <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl">
         <button
           className="absolute top-0 right-5 m-2 text-black text-xl cursor-pointer"
-          onClick={handleClose} // Update onClick to call handleClose
+          onClick={handleClose}
         >
           x
         </button>
@@ -98,7 +114,55 @@ const AddUserModal = ({ toggleModal }) => {
                 </div>
               </div>
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
-                <div className="flex flex-col w-full md:w-1/2 md:pl-2 lg:mr-5">
+                <div className="flex flex-col w-full md:w-1/2 md:pr-2">
+                  <label className="text-black">Role</label>
+                  <div className="flex gap-4">
+                    <button
+                      className={`px-4 py-2 ${
+                        formData.role === "Administrator"
+                          ? "bg-indigo-500 text-white"
+                          : "border border-primary text-black"
+                      } rounded-lg`}
+                      onClick={() => handleRoleChange("Administrator")}
+                      type="button"
+                    >
+                      Administrator
+                    </button>
+                    <button
+                      className={`px-4 py-2 ${
+                        formData.role === "Staff"
+                          ? "bg-red-500 text-white"
+                          : "border border-primary text-black"
+                      } rounded-lg`}
+                      onClick={() => handleRoleChange("Staff")}
+                      type="button"
+                    >
+                      Staff
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col mb-4">
+              <label className="text-black">Campus</label>
+              <select
+                name="campus"
+                value={formData.campus}
+                onChange={handleChange}
+                className="border-b-2 border-black p-3 outline-none"
+              >
+                <option value="">Select Campus</option>
+                {campuses.length > 0 ? (
+                  campuses.map((campus) => (
+                    <option key={campus._id} value={campus._id}>
+                      {campus.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">Loading Campuses...</option>
+                )}
+
+              </select>
+            </div>
+                <div className="flex flex-col w-full md:w-1/2 md:pl-2">
                   <label className="text-black">Username</label>
                   <input
                     type="text"
@@ -107,33 +171,6 @@ const AddUserModal = ({ toggleModal }) => {
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
-                </div>
-                <div className="flex flex-col w-full md:w-1/2 md:pr-2">
-                  <label className="text-black">Role</label>
-                  <div className="flex gap-4">
-                    <button
-                      className={`px-4 py-2 ${
-                        formData.role === "administrator"
-                          ? "bg-indigo-500 text-white"
-                          : "border border-primary text-black"
-                      } rounded-lg`}
-                      onClick={() => handleRoleChange("administrator")}
-                      type="button"
-                    >
-                      Administrator
-                    </button>
-                    <button
-                      className={`px-4 py-2 ${
-                        formData.role === "staff"
-                          ? "bg-red-500 text-white"
-                          : "border border-primary text-black"
-                      } rounded-lg`}
-                      onClick={() => handleRoleChange("staff")}
-                      type="button"
-                    >
-                      Staff
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
