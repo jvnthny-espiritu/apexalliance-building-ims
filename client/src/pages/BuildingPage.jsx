@@ -111,12 +111,12 @@ function BuildingPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center items-center mt-10 mx-5">
+      <div className="flex flex-wrap md:justify-center lg:justify-normal mt-16 mx-8">
         {filteredBuildings.length === 0 && (
           <p className="text-white">No buildings found.</p>
         )}
         {filteredBuildings.map((building, index) => (
-          <div className="flex-none mx-2 mb-4" key={index}>
+          <div className="flex-none mx-2 md:mb-4" key={index}>
             <BuildingCard building={building} onClick={() => handleBuildingClick(building)} />
           </div>
         ))}
