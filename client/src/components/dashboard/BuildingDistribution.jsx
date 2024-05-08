@@ -27,13 +27,6 @@ const BuildingDistribution = () => {
     if (error) return <div>Error: {error}</div>;
 
     const option = {
-        title: {
-            text: 'Building Distribution',
-            left: 'left',
-            textStyle: {
-                color: '#ffffff'
-            }
-        },
         tooltip: {
             trigger: 'item',
         },
@@ -41,16 +34,13 @@ const BuildingDistribution = () => {
             orient: 'vertical',
             left: 'right',
             textStyle: {
-                color: '#ffffff'
+                fontWeight: 'bold'
             }
         },
         series: [
             {
                 name: 'No. of Building',
                 type: 'pie',
-                label: {
-                    color: '#fff'
-                },
                 center: ['30%', '60%'],
                 data: buildingData,
                 emphasis: {
@@ -59,6 +49,9 @@ const BuildingDistribution = () => {
                         shadowOffsetX: 0,
                         shadowColor: 'rgba(0, 0, 0, 0.5)'
                     }
+                },
+                label: {
+                    fontWeight: 'bold'
                 }
             }
         ]

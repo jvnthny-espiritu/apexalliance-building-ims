@@ -15,8 +15,8 @@ export default function Dashboard() {
               const buildingsResponse = await api.get('/dashboard/total-buildings');
               setTotalBuildings(buildingsResponse.data.Buildings);
 
-              // const roomsResponse = await api.get('/dashboard/total-rooms');
-              // setTotalRooms(roomsResponse.data.Rooms);
+              const roomsResponse = await api.get('/dashboard/total-rooms');
+              setTotalRooms(roomsResponse.data.Rooms);
 
               const assetsResponse = await api.get('/dashboard/total-assets');
               setTotalAssets(assetsResponse.data.totalAssets);
@@ -28,7 +28,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className='mb-24   md:mb-0'>
+    <div className='mb-24 md:mb-0'>
       <div className='flex-grow h-full'> 
         <div className='flex w-auto fixed top-0 z-10'>
           <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen ">
@@ -36,30 +36,40 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      <div className='mt-24 md:mt-24 md:ml-5 flex flex-col md:flex-row'>
-        <div className='flex-col'>
+      <div className='w-auto mt-24 md:mt-24 mx-5 flex flex-col md:flex-row'>
+        <div className='grow flex-col'>
           <div className='flex-col flex-grow'>
-            <div className='flex h-52 text-white justify-evenly w-full md:w-[640px] mb-2'>
-              <div className='flex w-full md:w-1/3 sm:w-1/2 bg-primary rounded-lg items-center justify-center'>
-                <span className="text-sm sm:text-base">Total No of Buildings: {totalBuildings}</span>
+            <div className='flex h-52 gap-2 justify-evenly w-full mb-2'>
+              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
+                <p className='text-5xl'>{totalBuildings || '???'}</p>
+                <p className="text-xs sm:text-base">Total No of Buildings</p>
               </div>
-              <div className='flex w-full md:w-1/3 sm:w-1/2 mx-2 bg-primary rounded-lg items-center justify-center'>
-                <span className="text-sm sm:text-sm">Total No of Rooms: {totalRooms}</span>
+              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
+                <p className='text-5xl'>{totalRooms || '???'}</p>
+                <p className="text-xs sm:text-sm">Total No of Rooms</p>
               </div>
-              <div className='flex w-full md:w-1/3 sm:w-1/2 bg-primary rounded-lg items-center justify-center'>
-                <span className="text-sm sm:text-base">Total No of Assets: {totalAssets}</span>
+              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
+                <p className='text-5xl'>{totalAssets || '???'}</p>
+                <p className="text-xs sm:text-base">Total No of Assets</p>
               </div>
             </div>
           </div>
-          <div className='w-full md:w-[640px] h-96 p-5 bg-primary rounded-lg mb-2'>
+          <div className='shrink w-auto h-auto p-5 mb-2'>
+            <div>
+              <span className='font-bold font-body text-lg'>Buidling Distribution</span>
+            </div>
+            <hr className='border-black' />
             <BuildingDistribution />
           </div>
-          <div className='w-full md:w-[640px] h-96 p-5 bg-primary rounded-lg'>
-            {/* <RoomTypeDistribution /> */}
-            UNAVAILABLE
+          <div className='shrink w-auto h-auto p-5 mb-2'>
+            <div>
+              <span className='font-bold font-body text-lg'>Room Distribution</span>
+            </div>
+            <hr className='border-black' />
+            <RoomTypeDistribution />
           </div>
         </div>
-        <div className="md:ml-5 mt-1 md:mt-0 w-auto sm:w-auto">
+        <div className="relative flex-none right-0 md:ml-5 mt-1 md:mt-0 w-auto sm:w-auto">
           <ActivityLog />
         </div>
       </div>

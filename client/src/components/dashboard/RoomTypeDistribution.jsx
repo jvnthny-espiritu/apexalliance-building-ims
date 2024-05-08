@@ -4,8 +4,6 @@ import api from '../../services/api';
 
 const RoomTypeDistribution = () => {
     const [roomData, setRoomData] = useState({});
-    console.log(roomData);
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -19,26 +17,16 @@ const RoomTypeDistribution = () => {
         fetchData();
     }, []);
 
-    const series = Object.keys(roomData).map(campus => ({
-        name: campus,
-        type: 'bar',
-        stack: 'a',
-        data: [
-            roomData[campus].administrative || 0,
-            roomData[campus].classroom || 0,
-            roomData[campus].laboratory || 0
-        ],
-        barWidth: '20%'
+    const roomTypes = ['Administrative', 'Classroom', 'Laboratory'];
+    const series = roomTypes.map(roomType => ({
+      name: roomType,
+      type: 'bar',
+      stack: 'total',
+      data: Object.keys(roomData).map(campus => roomData[campus][roomType.toLowerCase()] || 0),
+      barWidth: '20%'
     }));
 
     const option = {
-        title: {
-            text: 'Room Type Distribution',
-            left: 'left',
-            textStyle: {
-                color: '#ffffff'
-            }
-        },
         tooltip: {
             trigger: 'item',
             formatter: '<b>{a0}<b/><br />No. of Rooms: {c0}'
@@ -47,7 +35,7 @@ const RoomTypeDistribution = () => {
             orient: 'horizontal',
             left: 'right',
             textStyle: {
-                color: '#ffffff'
+              fontWeight: 'bold'
             }
         },
         xAxis: {
@@ -59,7 +47,7 @@ const RoomTypeDistribution = () => {
                 rotate: -45,
                 textStyle: {
                     fontSize: 10,
-                    color: '#fff'
+                    fontWeight: 'bold'
                 }
             }
         },

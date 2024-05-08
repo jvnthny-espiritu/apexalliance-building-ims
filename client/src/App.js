@@ -8,7 +8,6 @@ import BuildingPage from './pages/BuildingPage';
 import RoomPage from './pages/RoomPage';
 import Sidebar from './components/nav/side';
 import Bottombar from './components/nav/bottom';
-import Topbar from './components/nav/top';
 
 const App = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);

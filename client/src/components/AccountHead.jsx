@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MdAccountCircle } from "react-icons/md";
 import { NavLink } from 'react-router-dom';
 
-export default function Topbar() {
+export default function AccountHead() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
