@@ -1,11 +1,9 @@
 const User = require('../models/user');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 module.exports = {
   getAllUsers: async (req, res) => {
     try {
-      const users = await User.find().populate('campus');
+      const users = await User.find().populate('campus', 'name');
       res.json(users);
     } catch (err) {
       res.status(500).json({ message: err.message });

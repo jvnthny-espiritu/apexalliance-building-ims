@@ -21,7 +21,7 @@ const RoomModal = ({ room, toggleModal }) => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        let apiUrl = `/room/${room._id}/assets`;
+        let apiUrl = `/room/${room._id}/assets?`;
 
         if (selectedType) {
           apiUrl += `&type=${selectedType}`;

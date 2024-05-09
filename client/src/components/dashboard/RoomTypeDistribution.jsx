@@ -13,7 +13,6 @@ const RoomTypeDistribution = () => {
                 console.error('Error fetching room data:', error);
             }
         };
-
         fetchData();
     }, []);
 

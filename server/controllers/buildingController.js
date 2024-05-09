@@ -5,7 +5,15 @@ const logActivity = require('../middleware/logger');
 module.exports = {
   getAllBuildings: async (req, res) => {
     try {
-      const buildings = await Building.find();
+      const { purpose, campus } = req.query;
+      let query = {};
+      if (purpose) {
+        query.purpose = { $in: [purpose] };
+      }
+      if (campus) {
+        query.campus = campus;
+      }
+      const buildings = await Building.find(query).populate('campus', 'name');
       res.json(buildings);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -87,6 +95,15 @@ module.exports = {
     } catch (error) {
       console.error('Error fetching rooms:', error);
       res.status(500).json({ error: 'An error occurred while fetching rooms' });
+    }
+  },
+  totalRoom: async (req, res) => {
+    try {
+      const buildingId = req.params.id;
+      const totalRooms = await Room.countDocuments({ "building": buildingId });
+      res.json({ totalRooms });
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

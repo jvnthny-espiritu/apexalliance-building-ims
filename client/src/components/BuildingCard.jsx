@@ -4,32 +4,21 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 const BuildingCard = ({ building }) => {
-  const { _id, name, campusId, yearOfCompletion, numFloor, purpose } = building;
+  const { _id, name, campus, yearOfCompletion, numFloor, purpose } = building;
   const [totalRooms, setTotalRooms] = useState(0);
-  const [campusName, setCampusName] = useState('');
 
   useEffect(() => {
     const fetchTotalRooms = async () => {
       try {
-        const response = await api.get(`/total-rooms/${_id}`);
+        const response = await api.get(`/building/${_id}/total-rooms`);
         setTotalRooms(response.data.totalRooms);
       } catch (error) {
         console.error('Error fetching total rooms:', error);
       }
     };
 
-    const fetchCampusName = async () => {
-      try {
-        const response = await api.get(`/campus/${campusId}`);
-        setCampusName(response.data.name);
-      } catch (error) {
-        console.error('Error fetching campus name:', error);
-      }
-    };
-
     fetchTotalRooms();
-    fetchCampusName();
-  }, [_id, campusId]);
+  }, [_id]);
 
   const purposeColors = {
     Classroom: 'bg-[#00B178]',
@@ -47,12 +36,12 @@ const BuildingCard = ({ building }) => {
               <MdEdit className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 ml-2" />
             </span>
           </div>
-          <div className='building-details text-white font-body text-sm md:text-base lg:text-[14px] mt-2 gap-2'>
-            <p>Campus: <span className="ml-1">{campusName}</span></p>
-            <p>Year of Completion: <span className="ml-1">{yearOfCompletion}</span></p>
-            <p>No. of Stories: <span className="ml-1 md:ml-10">{numFloor}</span></p>
-            <p>Total No. of Rooms: <span className="ml-1">{totalRooms}</span></p>
-            <p>Purposes:</p>
+          <div className='text-white font-body text-sm md:text-base lg:text-[14px] mt-2 gap-2'>
+            <p className='flex justify-between font-bold'>Campus: <span className='font-normal'>{campus.name}</span></p>
+            <p className='flex justify-between font-bold'>Year of Completion: <span className='font-normal'>{yearOfCompletion}</span></p>
+            <p className='flex justify-between font-bold'>No. of Stories: <span className='font-normal'>{numFloor}</span></p>
+            <p className='flex justify-between font-bold'>Total No. of Rooms: <span className='font-normal'>{totalRooms}</span></p>
+            <p className='flex justify-between font-bold'>Purposes:</p>
             <ul className="ml-1 md:ml-3">
               {purpose && purpose.map((use, index) => (
                 <li key={index} className={`building-use rounded-full mt-1 md:mt-2 text-center shadow-md hover:shadow-lg ${purposeColors[use]}`}>

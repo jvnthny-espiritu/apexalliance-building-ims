@@ -70,16 +70,30 @@ module.exports = {
   },
 
   getAssetByRoom: async (req, res) => {
-    const room = req.params.id;
     try {
-      if (!room) {
-        return res.status(400).json({ error: 'Room ID is required' });
+      const roomId = req.params.id;
+      const { type, condition, date } = req.query;
+      const query = { room: roomId };
+      if (type) {
+        query.type = type;
       }
-        const assets = await Asset.find({ room });
-        res.json(assets);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+      if (condition) {
+        query.condition = condition;
+      }
+      if (date) {
+        const dateObject = new Date(date);
+        const nextDay = new Date(dateObject);
+        nextDay.setDate(dateObject.getDate() + 1);
+        query.createdAt = {
+          $gte: dateObject,
+          $lt: nextDay
+        };
+      }
+      const assets = await Asset.find(query);
+      res.json(assets);
+    } catch (error) {
+      console.error('Error fetching assets:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

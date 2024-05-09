@@ -8,6 +8,7 @@ import BuildingPage from './pages/BuildingPage';
 import RoomPage from './pages/RoomPage';
 import Sidebar from './components/nav/side';
 import Bottombar from './components/nav/bottom';
+import AccountHead from './components/nav/AccountHead';
 
 const App = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -27,7 +28,7 @@ const App = () => {
 
   return (
     <Routes>
-      {isLoggedIn && user && user.role === 'Administrator' && (
+      {/* {isLoggedIn && user && user.role === 'Administrator' && (
         <Route path="/" element={
           <div className="flex h-full w-screen">
             {isMobile ? <Bottombar /> : <Sidebar />}
@@ -36,6 +37,28 @@ const App = () => {
             </div>
           </div>
         }>
+          <Route index element={<Dashboard />} />
+          <Route path="settings/*" element={<Settings />} />
+          <Route path="catalog/building" element={<BuildingPage />} />
+          <Route path="catalog/room/:buildingId" element={<RoomPage />} />
+        </Route>
+      )} */}
+      {isLoggedIn && user && user.role === 'Administrator' && (
+        <Route
+          path="/"
+          element={
+            <div className="flex flex-col h-full w-screen">
+              {isMobile ? <AccountHead /> : null} {/* Render Topbar only in mobile view */}
+              <div className="flex flex-1">
+                {isMobile ? null : <Sidebar />} {/* Render Sidebar only if not in mobile view */}
+                <div className="flex-1">
+                  <Outlet />
+                </div>
+              </div>
+              {isMobile ? <Bottombar /> : null} {/* Render Bottombar only in mobile view */}
+            </div>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="settings/*" element={<Settings />} />
           <Route path="catalog/building" element={<BuildingPage />} />

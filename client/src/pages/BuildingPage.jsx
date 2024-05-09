@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import BuildingCard from '../components/BuildingCard';
 import api from '../services/api';
 
 function BuildingPage() {
+  const { user } = useSelector((state) => state.auth);
   const [buildings, setBuildings] = useState([]);
-  const [selectedCampus, setSelectedCampus] = useState('');
+  const [selectedCampus, setSelectedCampus] = useState(user.campus);
   const [selectedPurpose, setSelectedPurpose] = useState('');
   const [campuses, setCampuses] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,7 +22,7 @@ function BuildingPage() {
         setLoading(true);
         const response = await api.get('/campus');
         const data = response.data;
-        const campusNames = data.map(campus => campus.name);
+        const campusNames = data.map(campus => [campus.name, campus._id]);
         setCampuses(campusNames);
       } catch (error) {
         console.error('Error fetching campuses:', error);
@@ -36,9 +38,12 @@ function BuildingPage() {
     const fetchBuildings = async () => {
       try {
         setLoading(true);
-        let apiUrl = '/building';
+        let apiUrl = '/building?';
         if (selectedPurpose) {
-          apiUrl = `/filtering/buildings?purpose=${selectedPurpose}`;
+          apiUrl += `&purpose=${selectedPurpose}`;
+        }
+        if (selectedCampus) {
+          apiUrl += `&campus=${selectedCampus}`;
         }
         const response = await api.get(apiUrl);
         setBuildings(response.data);
@@ -49,25 +54,9 @@ function BuildingPage() {
         setLoading(false);
       }
     };
-
     fetchBuildings();
-  }, [selectedPurpose]);
+  }, [selectedPurpose, selectedCampus]);
 
-  const filteredBuildings = buildings.filter(building => {
-    if (selectedCampus && selectedPurpose) {
-      return building.campus === selectedCampus && building.purpose.includes(selectedPurpose);
-    } else if (selectedCampus) {
-      return building.campus === selectedCampus;
-    } else if (selectedPurpose) {
-      return building.purpose.includes(selectedPurpose);
-    } else {
-      return true;
-    }
-  }).filter(building =>
-    building.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    building.campus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    building.purpose.join(' ').toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const handleBuildingClick = (building) => {
     navigate(`/rooms/${building.id}`);
@@ -90,7 +79,7 @@ function BuildingPage() {
           </div>
           <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
             <PurposeFilter onChange={setSelectedPurpose} />
-            <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
+            <CampusFilter campuses={campuses} selectedCampus={selectedCampus} onChange={setSelectedCampus} />
           </div>
          </div>
         </h1>
@@ -98,7 +87,7 @@ function BuildingPage() {
         
         <div className="flex fixed items-center space-x-4 right-10 hidden lg:flex">
           <PurposeFilter onChange={setSelectedPurpose} />
-          <CampusFilter campuses={campuses} onChange={setSelectedCampus} />
+          <CampusFilter campuses={campuses} selectedCampus={selectedCampus} onChange={setSelectedCampus} />
           <div className="relative">
             <input
               type="text"
@@ -112,30 +101,31 @@ function BuildingPage() {
         </div>
       </div>
       <div className="flex flex-wrap md:justify-center lg:justify-normal mt-16 mx-8">
-        {filteredBuildings.length === 0 && (
+        {buildings.length === 0 && (
           <p className="text-white">No buildings found.</p>
         )}
-        {filteredBuildings.map((building, index) => (
+        {buildings.map((building, index) => (
           <div className="flex-none mx-2 md:mb-4" key={index}>
             <BuildingCard building={building} onClick={() => handleBuildingClick(building)} />
-          </div>
+          </div>  
         ))}
       </div>
     </div>
   );
 }
 
-function CampusFilter({ campuses, onChange }) {
+function CampusFilter({ campuses, selectedCampus, onChange }) {
   return (
     <div className="flex items-center space-x-2">
       <select
+        value={selectedCampus}
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={(e) => onChange(e.target.value)}
       >
         <option value="">All Campuses</option>
-        {campuses.map((campus, index) => (
-          <option key={index} value={campus}>
-            {campus}
+        {campuses.map(([name, id], index) => (
+          <option key={index} value={id}>
+            {name}
           </option>
         ))}
       </select>

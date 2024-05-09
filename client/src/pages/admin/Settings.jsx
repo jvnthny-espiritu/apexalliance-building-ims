@@ -213,7 +213,7 @@ const ManageUser = () => {
 
   return (
     <div className="my-4 text-white overflow-y-auto relative mr-10">
-      <div className="max-w-screen-lg ml-2">
+      <div className="w-full ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
           Manage who has access to the system
@@ -306,8 +306,8 @@ const Settings = () => {
   
 
   return (
-    <div className="w-screen h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-2xl font-extrabold pt-5 mb-5 px-10 ">
+    <div className="flex-grow-1 h-screen overflow-y-auto flex flex-col">
+      <h2 className="font-body text-2xl font-extrabold py -5 mb-5 px-10 bg-primary xl:bg-white text-white xl:text-primary">
         SETTINGS
       </h2>
       <div className="block sm:hidden">
