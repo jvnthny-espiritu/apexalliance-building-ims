@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { MdAccountCircle } from "react-icons/md";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 export default function AccountHead() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
   const linkClasses = "flex w-full py-5 justify-center items-center py-2 px-4";
   const activeLinkClasses = "transition-colors duration-200";
@@ -21,6 +24,13 @@ export default function AccountHead() {
   const toggleHover = () => {
     setIsHovered(!isHovered);
   };
+
+  const handleLogout = () => {
+		console.log("Logging out...");
+		dispatch({ type: 'LOGOUT' });
+		localStorage.removeItem('token');
+		navigate('/login');	
+	}
 
   return (
     <div className="fixed top-0 right-0 mr-4 mt-4 z-10 text-white">
@@ -58,11 +68,11 @@ export default function AccountHead() {
             </NavLink>
 
             <NavLink
-              to="/settings/manageuser"
+              to="/login"
               className={`${linkClasses} ${activeLinkClasses} ${
                 isHovered ? "hover:bg-gray-30" : ""
               }`}
-              onClick={closeDropdown} 
+              onClick={closeDropdown && handleLogout}
               onMouseEnter={toggleHover} 
               onMouseLeave={toggleHover} 
             >
