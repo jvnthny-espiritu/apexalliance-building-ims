@@ -57,6 +57,9 @@ function BuildingPage() {
     fetchBuildings();
   }, [selectedPurpose, selectedCampus]);
 
+  const filteredBuildings = buildings.filter(building =>
+    building.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleBuildingClick = (building) => {
     navigate(`/rooms/${building.id}`);
@@ -101,10 +104,10 @@ function BuildingPage() {
         </div>
       </div>
       <div className="flex flex-wrap md:justify-center lg:justify-normal mt-16 mx-8">
-        {buildings.length === 0 && (
+        {filteredBuildings.length === 0 && (
           <p className="text-white">No buildings found.</p>
         )}
-        {buildings.map((building, index) => (
+        {filteredBuildings.map((building, index) => (
           <div className="flex-none mx-2 md:mb-4" key={index}>
             <BuildingCard building={building} onClick={() => handleBuildingClick(building)} />
           </div>  
