@@ -21,10 +21,10 @@ module.exports = {
   },
   
   createBuilding: async (req, res) => {
-    const { name, purpose, campus, numOfStory } = req.body;
+    const { name, purpose, numFloor, campus, numOfStory, yearOfCompletion } = req.body;
     
     try {
-      const newBuilding = await Building.create({ name, purpose, campus, numOfStory });
+      const newBuilding = await Building.create({ name, purpose, numFloor, campus, numOfStory, yearOfCompletion });
       logActivity(req.user.id, 'added a new building', newBuilding._id, 'Building');
       res.status(201).json(newBuilding);
     } catch (err) {

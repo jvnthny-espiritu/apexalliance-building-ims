@@ -12,10 +12,10 @@ module.exports = {
   },
 
   createAsset: async (req, res) => {
-    const { roomId, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption } = req.body;
+    const { room, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption } = req.body;
 
     try {
-      const newAsset = await Asset.create({ roomId, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption });
+      const newAsset = await Asset.create({ room, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption });
       logActivity(req.user.id, 'added a new asset', newAsset._id, 'Asset');
       res.status(201).json(newAsset);
     } catch (err) {

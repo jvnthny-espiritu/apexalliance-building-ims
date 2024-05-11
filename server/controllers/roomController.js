@@ -14,10 +14,10 @@ module.exports = {
   },
 
   createRoom: async (req, res) => {
-    const { buildingId, name, floor, type, capacity, status } = req.body;
+    const { building, name, floor, type, capacity, status, dimension } = req.body;
 
     try {
-      const newRoom = await Room.create({ buildingId, name, floor, type, capacity, status });
+      const newRoom = await Room.create({ building, name, floor, type, capacity, status, dimension });
       logActivity(req.user.id, 'added a new room', newRoom._id, 'Room');
       res.status(201).json(newRoom);
     } catch (err) {

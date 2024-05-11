@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from "../../components/modals/AddUserModal";
+import EditUserModal from "../../components/modals/EditUserModal";
 
 const UserAccount = () => {
   const user = {
@@ -152,217 +153,123 @@ const UserAccount = () => {
 const ManageUser = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
-  const [filterRole, setFilterRole] = useState("");
-  const [filterCampus, setFilterCampus] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState('');
+  const [filterCampus, setFilterCampus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [availableCampuses, setAvailableCampuses] = useState([]);
+  const [editingUser, setEditingUser] = useState(null); 
 
   const toggleModal = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen(prev => !prev);
   };
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/user"); // Fetch users from your API endpoint
-        setUsers(response.data); // Set the fetched users to the state
-        const campuses = [
-          ...new Set(response.data.map((user) => user.campus.name)),
-        ];
+        const response = await api.get("/user");
+        setUsers(response.data);
+        const campuses = [...new Set(response.data.map(user => user.campus.name))];
         setAvailableCampuses(campuses);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       }
     };
 
-    fetchUsers(); // Fetch users when the component mounts
+    fetchUsers();
   }, []);
 
   const handleEdit = (userId) => {
-    // Implement the edit functionality here
-    console.log(`Editing user with ID: ${userId}`);
+    const user = users.find(user => user._id === userId);
+    setEditingUser(user);
+    toggleModal();
   };
 
   const deleteUser = async (userId) => {
     try {
-      const response = await api.delete(`/user/${userId}`); // Delete user using your API
+      const response = await api.delete(`/user/${userId}`);
       if (response.ok) {
-        console.log("User deleted successfully");
-        setUsers(users.filter((user) => user._id !== userId));
+        console.log('User deleted successfully');
+        setUsers(users.filter(user => user._id !== userId));
       } else {
-        console.error("Failed to delete user:", response.statusText);
+        console.error('Failed to delete user:', response.statusText);
       }
     } catch (error) {
-      console.error("Error deleting user:", error.message);
+      console.error('Error deleting user:', error.message);
     }
-  };
+  };  
 
-  const filteredUsers = users.filter((user) => {
-    const fullName =
-      `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
+  const filteredUsers = users.filter(user => {
+    const fullName = `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
     const role = user.role.toLowerCase();
     const searchValue = searchTerm.toLowerCase();
     return (
       (filterRole ? user.role === filterRole : true) &&
-      (!filterCampus || (user.campus && user.campus.name === filterCampus)) && // Check if filterCampus is empty or user.campus exists
+      (filterCampus ? user.campus.name === filterCampus : true) &&
       (fullName.includes(searchValue) || role.includes(searchValue))
     );
   });
 
   return (
     <div className="my-4 text-white overflow-y-auto relative mr-10">
-      <div className=" max-w-screen-lg ml-2">
+      <div className="max-w-screen-lg ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
           Manage who has access to the system
         </p>
         <hr className="mb-2" />
-        <div className="">
-          <div className="hidden lg:flex mb-2 items-center justify-end">
-            <div className=" mr-4">
-              <select
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-                className="border border-white text-black text-sm rounded-lg px-2.5 py-1"
-              >
-                <option value="">All Roles</option>
-                <option value="Staff">Staff</option>
-                <option value="Administrator">Administrator</option>
-              </select>
-            </div>
-            <div>
-              <select
-                value={filterCampus}
-                onChange={(e) => setFilterCampus(e.target.value)}
-                className="border border-white text-black text-sm rounded-lg px-2.5 py-1"
-              >
-                <option value="">All Campuses</option>
-                {availableCampuses.map((campus) => (
-                  <option key={campus} value={campus}>
-                    {campus}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center ml-4">
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
-              />
-              <button
-                onClick={toggleModal}
-                className="rounded-full text-white p-2 ml-2 "
-              >
-                <FaCirclePlus />
-              </button>
-              {isOpen && (
-                <AddUserModal isOpen={isOpen} toggleModal={toggleModal} />
-              )}
-            </div>
+        <div className="flex mb-2 items-center justify-end">
+          <div className="mr-4">
+            <select value={filterRole} onChange={e => setFilterRole(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Roles</option>
+              <option value="Staff">Staff</option>
+              <option value="Administrator">Administrator</option>
+            </select>
           </div>
-          <div className="lg:hidden">
-            <div className="flex items-center mb-2 ">
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
-              />
-              <button
-                onClick={toggleModal}
-                className="rounded-full text-white p-2 ml-2 "
-              >
-                <FaCirclePlus />
-              </button>
-              {isOpen && (
-                <AddUserModal isOpen={isOpen} toggleModal={toggleModal} />
-              )}
-            </div>
-            <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-              <select
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-                className="border border-white text-black text-sm rounded-lg px-2.5 py-1"
-              >
-                <option value="">All Roles</option>
-                <option value="Staff">Staff</option>
-                <option value="Administrator">Administrator</option>
-              </select>
-              <select
-                value={filterCampus}
-                onChange={(e) => setFilterCampus(e.target.value)}
-                className="border border-white text-black text-sm rounded-lg px-2.5 py-1"
-              >
-                <option value="">All Campuses</option>
-                {availableCampuses.map((campus) => (
-                  <option key={campus} value={campus}>
-                    {campus}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+            <select value={filterCampus} onChange={e => setFilterCampus(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
+              <option value="">All Campuses</option>
+              {availableCampuses.map(campus => (
+                <option key={campus} value={campus}>{campus}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center ml-4">
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
+            />
+             <button onClick={toggleModal} className="rounded-full text-white p-2 ml-2 ">
+              <FaCirclePlus />
+            </button>
+            {isOpen && <AddUserModal isOpen={isOpen} toggleModal={toggleModal}/>}
           </div>
         </div>
-
-        <div className="overflow-x-auto"></div>
         <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <table className="divide-y divide-gray-200 w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Campus
-                </th>
-                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="hidden sm:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.map((user) => (
                 <tr key={user._id}>
-                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {user.fullName.firstName} {user.fullName.lastName}
-                    <dl className="md:hidden font-normal">
-                      <dt className="sr-only">{user.campus.name}</dt>
-                      <dd className="text-gray-600">{user.role}</dd>
-                      <dt className="sr-only">Email</dt>
-                      <dd className="text-gray-500">{user.email}</dd>
-                    </dl>
-                  </td>
-                  <td className="hidden sm:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {user.campus.name}
-                  </td>
-                  <td className="hidden md:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {user.role}
-                  </td>
-                  <td className="hidden md:table-cell whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-black -900 sm:pl-6">
-                    {user.email}
-                  </td>
-
-                  <td className=" hidden sm:table-cell px-4 py-3 text-gray-500 text-sm">
-                    <button
-                      onClick={() => handleEdit(user._id)}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.fullName.firstName} {user.fullName.lastName}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.campus.name}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.role}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{user.email}</td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">
+                    <button onClick={() => handleEdit(user._id)} className="text-indigo-600 hover:text-indigo-900">
                       Edit
                     </button>
-                    <button
-                      onClick={() => deleteUser(user._id)}
-                      className="ml-2 text-red-600 hover:text-red-900"
-                    >
+                    <button onClick={() => deleteUser(user._id)} className="ml-2 text-red-600 hover:text-red-900">
                       Delete
                     </button>
                   </td>
@@ -371,49 +278,8 @@ const ManageUser = () => {
             </tbody>
           </table>
         </div>
-        {/* Card view up to the 'md:' breakpoint */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:hidden">
-          {filteredUsers.map((user) => (
-            <div
-              key={user._id}
-              className="relative flex items-center space-x-3 rounded-lg bg-white px-6 py-5 shadow ring-1 ring-black ring-opacity-5"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center space-x-3">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {user.fullName.firstName} {user.fullName.lastName}
-                  </p>
-                  {user.campus && (
-                    <span className="inline-block flex-shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                      {user.campus.name}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1 truncate text-sm text-gray-900">
-                  {user.role}
-                </p>
-                <p className="mt-1 truncate text-sm text-gray-700">
-                  {user.email}
-                </p>
-                <div className="mt-1 truncate text-sm text-gray-600">
-                  <button
-                    onClick={() => handleEdit(user._id)}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteUser(user._id)}
-                    className="ml-2 text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
+      {isOpen && <EditUserModal isOpen={isOpen} toggleModal={toggleModal} user={editingUser} />} 
     </div>
   );
 };
