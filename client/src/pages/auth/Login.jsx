@@ -35,7 +35,7 @@ const Login = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-10 lg:p-20"
       style={{ 
         backgroundImage: `url(${image})`, 
         backgroundSize: 'cover', 
@@ -47,14 +47,16 @@ const Login = () => {
       <div className="bg-primary opacity-95 px-20 py-40 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2 }}>
         <div className="max-w-md">
           <div className="flex justify-center mb-6">
-            <Logo className='h-15 w-15 absolute top-0 my-5' />
+            <Logo className='h-12 w-12 sm:h-15 sm:w-15 absolute top-0 my-5 ' />
             <div className="ml-2 flex items-center mt-4">
-              <h2 className="text-2xl font-extrabold text-white">Building inventory</h2>
+              <h2 className="text-center text-lg md:text-xl lg:text-2xl font-extrabold text-white">Building inventory</h2>
             </div>
           </div>
-          <h2 className="text-center text-md font-normal text-white mb-6">Enter your details to sign in <br/> to your account</h2>
+          <h2 className="text-center text-xs md:text-lg lg:text-xl font-normal text-white mb-6">Enter your details to sign in <br/> to your account</h2>
 
-          <form className="space-y-6" onSubmit={handleLogin}>
+
+
+          <form className="space-y-4 sm:space-y-6" onSubmit={handleLogin}>
             <input type="hidden" name="remember" value="true" />
             <div className="rounded-md shadow-sm -space-y-px flex flex-col items-center">
               <div className='mb-4 w-full'>
