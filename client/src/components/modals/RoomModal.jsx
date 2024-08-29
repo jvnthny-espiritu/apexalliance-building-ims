@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { AiOutlineSearch } from 'react-icons/ai';
-import api from '../../services/api.js'
+import { AiOutlineSearch } from "react-icons/ai";
+import api from "../../services/api.js";
 
 const RoomModal = ({ room, toggleModal }) => {
   const [assets, setAssets] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedCondition, setSelectedCondition] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const colors = {
@@ -39,7 +39,7 @@ const RoomModal = ({ room, toggleModal }) => {
         setAssets(response.data);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching assets:', error);
+        console.error("Error fetching assets:", error);
         setIsLoading(false);
       }
     };
@@ -47,7 +47,7 @@ const RoomModal = ({ room, toggleModal }) => {
     fetchAssets();
   }, [room._id, selectedType, selectedCondition, selectedDate]);
 
-  const filteredAssets = assets.filter(asset =>
+  const filteredAssets = assets.filter((asset) =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -63,19 +63,18 @@ const RoomModal = ({ room, toggleModal }) => {
     setSelectedDate(e.target.value);
   };
 
-
-const renderFurnitureRows = (data) => {
-  return data.map((item, index) => (
-    <tr key={index} className="text-center bg-white">
-      <td>{item.name}</td>
-      <td>{item.type}</td>
-      <td>{item.quantity}</td>
-      <td>{item.serialNumber}</td>
-      <td>{item.purchaseDate}</td>
-      <td>{item.condition}</td>
-    </tr>
-  ));
-};
+  const renderFurnitureRows = (data) => {
+    return data.map((item, index) => (
+      <tr key={index} className="text-center bg-white">
+        <td>{item.name}</td>
+        <td>{item.type}</td>
+        <td>{item.quantity}</td>
+        <td>{item.serialNumber}</td>
+        <td>{item.purchaseDate}</td>
+        <td>{item.condition}</td>
+      </tr>
+    ));
+  };
 
   const renderAppliancesRows = (data) => {
     return data.map((item, index) => (
@@ -91,28 +90,33 @@ const renderFurnitureRows = (data) => {
     ));
   };
 
-
-  const furnitureAssets = filteredAssets.filter(asset => asset.type === 'Furniture');
-  const applianceAssets = filteredAssets.filter(asset => asset.type === 'Appliances');
+  const furnitureAssets = filteredAssets.filter(
+    (asset) => asset.type === "Furniture"
+  );
+  const applianceAssets = filteredAssets.filter(
+    (asset) => asset.type === "Appliances"
+  );
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50">
-      <div className="relative bg-primary text-white p-8 rounded-lg max-w-5xl w-full">
-
+      <div className="relative bg-primary text-white p-6 sm:p-8 rounded-lg w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl max-h-[80vh] overflow-y-auto">
         <button
-          className="absolute top-0 right-5 m-2 text-white text-xl cursor-pointer"
+          className="absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-white text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50"
           onClick={toggleModal}
         >
-          x
+          Close
         </button>
-        <h2 className="text-5xl font-bold mb-4">{room.name}</h2>
+
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">{room.name}</h2>
         <div className="mb-4">
-          <p className="mb-2">Dimension: {room.dimension}</p>
+          <p className="mb-2 text-sm sm:text-base">Dimension: {room.dimension}</p>
           <div className="flex flex-wrap">
             <p className="mr-2">Type:</p>
             <p
-              className={`px-3 text-center mb-2 mr-2 rounded-xl ${
-                room.type && colors.hasOwnProperty(room.type.toLowerCase()) ? colors[room.type.toLowerCase()] : ''
+              className={`px-3 py-1 text-center mb-2 mr-2 rounded-xl ${
+                room.type && colors.hasOwnProperty(room.type.toLowerCase())
+                  ? colors[room.type.toLowerCase()]
+                  : ""
               }`}
             >
               {room.type}
@@ -121,8 +125,10 @@ const renderFurnitureRows = (data) => {
           <div className="flex flex-wrap">
             <p className="mr-2">Status:</p>
             <p
-              className={`px-3 text-center mb-2 rounded-xl ${
-                room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ''
+              className={`px-3 py-1 text-center mb-2 rounded-xl ${
+                room.status && colors.hasOwnProperty(room.status.toLowerCase())
+                  ? colors[room.status.toLowerCase()]
+                  : ""
               }`}
             >
               {room.status}
@@ -131,22 +137,21 @@ const renderFurnitureRows = (data) => {
         </div>
 
         <hr className="border-white w-full mt-4 mb-4" />
-        <p className="text- mt-4 text-4xl">Assets</p>
-        <div className="mt-4 overflow-auto">
-
+        <p className="text-2xl sm:text-3xl lg:text-4xl mt-4">Assets</p>
+        <div className="mt-4">
           <div className="relative mb-4">
             <input
               type="text"
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded-md px-10 py-1 pl-10 focus:outline-none focus:border-blue-500 text-black"
+              className="border border-gray-300 rounded-md px-10 py-1 pl-10 focus:outline-none focus:border-blue-500 text-black w-full"
             />
             <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
 
-          <div className="flex justify-between mb-4">
-            <div>
+          <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
+            <div className="flex items-center">
               <span className="text-white mr-2">Type:</span>
               <select
                 value={selectedType}
@@ -158,7 +163,7 @@ const renderFurnitureRows = (data) => {
                 <option value="Appliances">Appliances</option>
               </select>
             </div>
-            <div>
+            <div className="flex items-center">
               <span className="text-white mr-2">Condition:</span>
               <select
                 value={selectedCondition}
@@ -172,7 +177,7 @@ const renderFurnitureRows = (data) => {
                 <option value="Bad">Bad</option>
               </select>
             </div>
-            <div>
+            <div className="flex items-center">
               <span className="text-white mr-2">Date:</span>
               <input
                 type="date"
@@ -189,66 +194,44 @@ const renderFurnitureRows = (data) => {
             <>
               {furnitureAssets.length > 0 && (
                 <>
-                  <p className="text-xl text-white mb-2">Furniture</p>
-                  <table className="text-black w-full">
-                    <tbody>
-                      <tr className="bg-white uppercase bg-opacity-50">
-                        <th scope className="col px-6 py-2 text-white">
-                          Name
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Type
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Quantity
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Serial Number
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Purchased Date
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Condition
-                        </th>
-                      </tr>
-                      {renderFurnitureRows(furnitureAssets)}
-                    </tbody>
-                  </table>
+                  <p className="text-lg sm:text-xl text-white mb-2">Furniture</p>
+                  <div className="overflow-x-auto">
+                    <table className="text-black w-full">
+                      <tbody>
+                        <tr className="bg-white uppercase bg-opacity-50">
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Name</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Type</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Quantity</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Serial Number</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Purchased Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Condition</th>
+                        </tr>
+                        {renderFurnitureRows(furnitureAssets)}
+                      </tbody>
+                    </table>
+                  </div>
                 </>
               )}
 
               {applianceAssets.length > 0 && (
                 <>
-                  <p className="text-xl text-white mt-4 mb-2">Appliances</p>
-                  <table className="text-black w-full">
-                    <tbody>
-                      <tr className="bg-white uppercase bg-opacity-50">
-                        <th scope className="col px-6 py-2 text-white">
-                          Name
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Type
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Quantity
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Serial Number
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Purchased Date
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Condition
-                        </th>
-                        <th scope className="col px-6 py-2 text-white">
-                          Electric Consumption
-                        </th>
-                      </tr>
-                      {renderAppliancesRows(applianceAssets)}
-                    </tbody>
-                  </table>
+                  <p className="text-lg sm:text-xl text-white mt-4 mb-2">Appliances</p>
+                  <div className="overflow-x-auto">
+                    <table className="text-black w-full">
+                      <tbody>
+                        <tr className="bg-white uppercase bg-opacity-50">
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Name</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Type</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Quantity</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Serial Number</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Purchased Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 text-white">Electric Consumption</th>
+                        </tr>
+                        {renderAppliancesRows(applianceAssets)}
+                      </tbody>
+                    </table>
+                  </div>
                 </>
               )}
 
