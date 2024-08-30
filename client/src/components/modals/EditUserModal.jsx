@@ -4,8 +4,8 @@ import api from '../../services/api';
 const EditUserModal = ({ isOpen, toggleModal, user }) => {
   const [formData, setFormData] = useState({
     fullName: {
-      firstName: user ? user.fullName.firstName : null,
-      lastName: user ? user.fullName.lastName : null,
+      firstName: user ? user.fullName.firstName : "",
+      lastName: user ? user.fullName.lastName : "",
     },
     role: user ? user.role : "Staff",
     username: user ? user.username : "",
@@ -45,7 +45,6 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
         },
       }));
     } else {
-  
       setFormData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -53,7 +52,6 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
     }
   };
   
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
@@ -90,13 +88,7 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
 
   return (
     <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
-      <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl">
-        <button
-          className="absolute top-0 right-5 m-2 text-black text-xl cursor-pointer"
-          onClick={handleClose}
-        >
-          x
-        </button>
+      <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh]">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col">
             <h2 className="text-black text-xl font-bold mb-4">
@@ -129,7 +121,7 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black">Role</label>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 flex-wrap">
                     <button
                       className={`px-4 py-2 ${
                         formData.role === "Administrator"

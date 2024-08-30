@@ -150,38 +150,45 @@ const UserAccount = () => {
   );
 };
 
-const ManageUser = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const [users, setUsers] = useState([]);
   const [filterRole, setFilterRole] = useState('');
   const [filterCampus, setFilterCampus] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [availableCampuses, setAvailableCampuses] = useState([]);
-  const [editingUser, setEditingUser] = useState(null); 
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
 
-  const toggleModal = () => {
-    setIsOpen(prev => !prev);
+  const toggleAddUserModalLocal = () => {
+    setIsAddUserOpen(prev => !prev);
+    if (toggleAddUserModal) toggleAddUserModal();
+  };
+
+  const toggleEditUserModalLocal = () => {
+    setIsEditUserOpen(prev => !prev);
+    if (toggleEditUserModal) toggleEditUserModal();
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get("/user");
+      setUsers(response.data);
+      const campuses = [...new Set(response.data.map(user => user.campus.name))];
+      setAvailableCampuses(campuses);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get("/user");
-        setUsers(response.data);
-        const campuses = [...new Set(response.data.map(user => user.campus.name))];
-        setAvailableCampuses(campuses);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
   const handleEdit = (userId) => {
     const user = users.find(user => user._id === userId);
     setEditingUser(user);
-    toggleModal();
+    toggleEditUserModalLocal();
   };
 
   const deleteUser = async (userId) => {
@@ -196,7 +203,7 @@ const ManageUser = () => {
     } catch (error) {
       console.error('Error deleting user:', error.message);
     }
-  };  
+  };
 
   const filteredUsers = users.filter(user => {
     const fullName = `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
@@ -241,10 +248,9 @@ const ManageUser = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
             />
-             <button onClick={toggleModal} className="rounded-full text-white p-2 ml-2 ">
+            <button onClick={toggleAddUserModalLocal} className="rounded-full text-white p-2 ml-2 ">
               <FaCirclePlus />
             </button>
-            {isOpen && <AddUserModal isOpen={isOpen} toggleModal={toggleModal}/>}
           </div>
         </div>
         <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -279,24 +285,28 @@ const ManageUser = () => {
           </table>
         </div>
       </div>
-      {isOpen && <EditUserModal isOpen={isOpen} toggleModal={toggleModal} user={editingUser} />} 
+      {isEditUserOpen && <EditUserModal isOpen={isEditUserOpen} toggleModal={toggleEditUserModalLocal} user={editingUser} />}
+      {isAddUserOpen && <AddUserModal isOpen={isAddUserOpen} toggleModal={toggleAddUserModalLocal} />}
     </div>
   );
 };
 
+
 const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
-  const [open, setOpen] = useState(false);
+  const [openAddUserModal, setOpenAddUserModal] = useState(false);
+  const [openEditUserModal, setOpenEditUserModal] = useState(false);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
 
-  const toggleModal = () => {
-    setOpen((prevOpen) => {
-      console.log("Modal toggle state:", !prevOpen);
-      return !prevOpen;
-    });
+  const toggleAddUserModal = () => {
+    setOpenAddUserModal(prevOpen => !prevOpen);
+  };
+
+  const toggleEditUserModal = () => {
+    setOpenEditUserModal(prevOpen => !prevOpen);
   };
 
   return (
@@ -334,10 +344,13 @@ const Settings = () => {
               </li>
             </ul>
           </nav>
-          <div className="ml-5 flex-grow">
-            {selectedItem === "account" && <UserAccount />}
-            {selectedItem === "manageuser" && (
-              <ManageUser toggleModal={toggleModal} />
+          <div className="flex flex-col flex-1">
+        {selectedItem === "account" && <UserAccount />}
+        {selectedItem === "manageuser" && (
+          <ManageUser
+            toggleAddUserModal={toggleAddUserModal}
+            toggleEditUserModal={toggleEditUserModal}
+          />
             )}
           </div>
         </div>
@@ -373,15 +386,17 @@ const Settings = () => {
               </li>
             </ul>
           </nav>
-          <div className="ml-5 flex-grow">
-            {selectedItem === "account" && <UserAccount />}
-            {selectedItem === "manageuser" && (
-              <ManageUser toggleModal={toggleModal} />
+          <div className="flex flex-col flex-1">
+        {selectedItem === "account" && <UserAccount />}
+        {selectedItem === "manageuser" && (
+          <ManageUser
+            toggleAddUserModal={toggleAddUserModal}
+            toggleEditUserModal={toggleEditUserModal}
+          />
             )}
           </div>
         </div>
       </div>
-      {open && <AddUserModal toggleModal={toggleModal} />}
     </div>
   );
 };

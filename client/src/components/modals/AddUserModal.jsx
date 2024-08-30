@@ -15,7 +15,6 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
   });
 
   const [campuses, setCampuses] = useState([]); 
-
   const modalRef = useRef();
 
   useEffect(() => {
@@ -74,16 +73,10 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
       role: role,
     }));
   };
-  
+
   return (
-    <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10">
-      <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl">
-        <button
-          className="absolute top-0 right-5 m-2 text-black text-xl cursor-pointer"
-          onClick={handleClose}
-        >
-          x
-        </button>
+    <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
+      <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh] rounded-lg">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col">
             <h2 className="text-black text-xl font-bold mb-4">
@@ -116,7 +109,7 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black">Role</label>
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 flex-wrap">
                     <button
                       className={`px-4 py-2 ${
                         formData.role === "Administrator"
@@ -141,38 +134,37 @@ const AddUserModal = ({ isOpen, toggleModal }) => {
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col mb-4">
-              <label className="text-black">Campus</label>
-              <select
-                name="campus"
-                value={formData.campus}
-                onChange={handleChange}
-                className="border-b-2 border-black p-3 outline-none"
-              >
-                <option value="">Select Campus</option>
-                {campuses.length > 0 ? (
-                  campuses.map((campus) => (
-                    <option key={campus._id} value={campus._id}>
-                      {campus.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">Loading Campuses...</option>
-                )}
-
-              </select>
-            </div>
                 <div className="flex flex-col w-full md:w-1/2 md:pl-2">
-                  <label className="text-black">Username</label>
-                  <input
-                    type="text"
-                    name="username"
-                    value={formData.username}
+                  <label className="text-black">Campus</label>
+                  <select
+                    name="campus"
+                    value={formData.campus}
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
-                  />
+                  >
+                    <option value="">Select Campus</option>
+                    {campuses.length > 0 ? (
+                      campuses.map((campus) => (
+                        <option key={campus._id} value={campus._id}>
+                          {campus.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">Loading Campuses...</option>
+                    )}
+                  </select>
                 </div>
               </div>
+            </div>
+            <div className="flex flex-col mb-4">
+              <label className="text-black">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="border-b-2 border-black p-3 outline-none"
+              />
             </div>
             <div className="flex flex-col mb-4">
               <label className="text-black">Email</label>
