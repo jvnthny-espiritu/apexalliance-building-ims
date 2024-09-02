@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
+import { FaEllipsisV } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from "../../components/modals/AddUserModal";
 import EditUserModal from "../../components/modals/EditUserModal";
@@ -152,21 +153,22 @@ const UserAccount = () => {
 
 const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const [users, setUsers] = useState([]);
-  const [filterRole, setFilterRole] = useState('');
-  const [filterCampus, setFilterCampus] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState("");
+  const [filterCampus, setFilterCampus] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [availableCampuses, setAvailableCampuses] = useState([]);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(null); // To control which dropdown is open
 
   const toggleAddUserModalLocal = () => {
-    setIsAddUserOpen(prev => !prev);
+    setIsAddUserOpen((prev) => !prev);
     if (toggleAddUserModal) toggleAddUserModal();
   };
 
   const toggleEditUserModalLocal = () => {
-    setIsEditUserOpen(prev => !prev);
+    setIsEditUserOpen((prev) => !prev);
     if (toggleEditUserModal) toggleEditUserModal();
   };
 
@@ -174,10 +176,12 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
     try {
       const response = await api.get("/user");
       setUsers(response.data);
-      const campuses = [...new Set(response.data.map(user => user.campus.name))];
+      const campuses = [
+        ...new Set(response.data.map((user) => user.campus.name)),
+      ];
       setAvailableCampuses(campuses);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -186,7 +190,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   }, []);
 
   const handleEdit = (userId) => {
-    const user = users.find(user => user._id === userId);
+    const user = users.find((user) => user._id === userId);
     setEditingUser(user);
     toggleEditUserModalLocal();
   };
@@ -195,18 +199,23 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
     try {
       const response = await api.delete(`/user/${userId}`);
       if (response.ok) {
-        console.log('User deleted successfully');
-        setUsers(users.filter(user => user._id !== userId));
+        console.log("User deleted successfully");
+        setUsers(users.filter((user) => user._id !== userId));
       } else {
-        console.error('Failed to delete user:', response.statusText);
+        console.error("Failed to delete user:", response.statusText);
       }
     } catch (error) {
-      console.error('Error deleting user:', error.message);
+      console.error("Error deleting user:", error.message);
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const fullName = `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
+  const toggleDropdown = (userId) => {
+    setDropdownOpen(dropdownOpen === userId ? null : userId);
+  };
+
+  const filteredUsers = users.filter((user) => {
+    const fullName =
+      `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
     const role = user.role.toLowerCase();
     const searchValue = searchTerm.toLowerCase();
     return (
@@ -217,109 +226,220 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   });
 
   return (
-    <div className="my-4 text-white overflow-y-auto relative mr-10">
+    <div className="my-4 text-white relative mr-10 h-full flex-grow overflow-hidden">
       <div className="max-w-screen-lg ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
           Manage who has access to the system
         </p>
         <hr className="mb-2" />
-        <div className="flex mb-2 items-center justify-end">
-          <div className="mr-4">
-            <select value={filterRole} onChange={e => setFilterRole(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
-              <option value="">All Roles</option>
-              <option value="Staff">Staff</option>
-              <option value="Administrator">Administrator</option>
-            </select>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
+          <div className=" md:mt-0 flex items-center space-x-1 md:space-x-4">
+            <div className="mr-0 md:mr-0 flex-shrink-0 w-24">
+              <select
+                value={filterRole}
+                onChange={(e) => setFilterRole(e.target.value)}
+                className="border border-white text-black text-sm rounded-lg px-2.5 py-1 w-full"
+              >
+                <option value="">All Roles</option>
+                <option value="Staff">Staff</option>
+                <option value="Administrator">Administrator</option>
+              </select>
+            </div>
+
+            <div className="mr-0 md:mr-0 flex-shrink-0">
+              <select
+                value={filterCampus}
+                onChange={(e) => setFilterCampus(e.target.value)}
+                className="border border-white text-black text-sm rounded-lg px-2.5 py-1"
+              >
+                <option value="">All Campuses</option>
+                {availableCampuses.map((campus) => (
+                  <option key={campus} value={campus}>
+                    {campus}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div>
-            <select value={filterCampus} onChange={e => setFilterCampus(e.target.value)} className="border border-white text-black text-sm rounded-lg px-2.5 py-1">
-              <option value="">All Campuses</option>
-              {availableCampuses.map(campus => (
-                <option key={campus} value={campus}>{campus}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center ml-4">
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5"
-            />
-            <button onClick={toggleAddUserModalLocal} className="rounded-full text-white p-2 ml-2 ">
+          <div className="flex items-center mt-2 space-x-2 md:space-x-4">
+            <div className="flex-grow max-w-xs md:max-w-md">
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border border-white text-gray-900 text-sm rounded-lg px-2.5 py-1.5 w-full"
+              />
+            </div>
+            <button
+              onClick={toggleAddUserModalLocal}
+              className="rounded-full text-white p-2"
+            >
               <FaCirclePlus />
             </button>
           </div>
         </div>
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-          <table className="divide-y divide-gray-200 w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campus</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        {/* Table for Desktop View */}
+        <table className="hidden md:table min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Campus
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredUsers.map((user) => (
+              <tr key={user._id}>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.fullName.firstName} {user.fullName.lastName}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.campus.name}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.role}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.email}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  <button
+                    onClick={() => handleEdit(user._id)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteUser(user._id)}
+                    className="ml-2 text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user._id}>
-                  <td className="px-4 py-3 text-gray-500 text-sm">{user.fullName.firstName} {user.fullName.lastName}</td>
-                  <td className="px-4 py-3 text-gray-500 text-sm">{user.campus.name}</td>
-                  <td className="px-4 py-3 text-gray-500 text-sm">{user.role}</td>
-                  <td className="px-4 py-3 text-gray-500 text-sm">{user.email}</td>
-                  <td className="px-4 py-3 text-gray-500 text-sm">
-                    <button onClick={() => handleEdit(user._id)} className="text-indigo-600 hover:text-indigo-900">
-                      Edit
-                    </button>
-                    <button onClick={() => deleteUser(user._id)} className="ml-2 text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+        {/* Table for Mobile View */}
+        <div className="overflow-y-auto h-[calc(100vh-320px)]">
+          {" "}
+          <div className="md:hidden space-y-4 items">
+            {filteredUsers.map((user) => (
+              <div
+                key={user._id}
+                className="border rounded-lg p-4 bg-white shadow relative"
+              >
+                {/* Dropdown menu */}
+                <div className="absolute top-4 right-2">
+                  <button
+                    onClick={() => toggleDropdown(user._id)}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <FaEllipsisV />
+                  </button>
+                  {dropdownOpen === user._id && (
+                    <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                      <ul className="py-1">
+                        <li>
+                          <button
+                            onClick={() => handleEdit(user._id)}
+                            className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
+                            Edit
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => deleteUser(user._id)}
+                            className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
+                          >
+                            Delete
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col md:flex-row">
+                  <div className="flex-1">
+                    <h3 className="text-lg text-black font-bold">
+                      {user.fullName.firstName} {user.fullName.lastName}
+                    </h3>
+                    <p className="text-gray-800 text-sm">Role: {user.role}</p>
+                    <p className="text-gray-800 text-sm">Email: {user.email}</p>
+                    <p className="text-gray-800 text-sm">
+                      Campus: {user.campus.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {isAddUserOpen && (
+          <AddUserModal
+            isOpen={isAddUserOpen}
+            toggleModal={toggleAddUserModalLocal}
+          />
+        )}
+        {isEditUserOpen && (
+          <EditUserModal
+            isOpen={isEditUserOpen}
+            toggleModal={toggleEditUserModalLocal}
+            user={editingUser}
+          />
+        )}
       </div>
-      {isEditUserOpen && <EditUserModal isOpen={isEditUserOpen} toggleModal={toggleEditUserModalLocal} user={editingUser} />}
-      {isAddUserOpen && <AddUserModal isOpen={isAddUserOpen} toggleModal={toggleAddUserModalLocal} />}
     </div>
   );
 };
 
-
 const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
-  const [openAddUserModal, setOpenAddUserModal] = useState(false);
-  const [openEditUserModal, setOpenEditUserModal] = useState(false);
+  const [setOpenAddUserModal] = useState(false);
+  const [setOpenEditUserModal] = useState(false);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
 
   const toggleAddUserModal = () => {
-    setOpenAddUserModal(prevOpen => !prevOpen);
+    setOpenAddUserModal((prevOpen) => !prevOpen);
   };
 
   const toggleEditUserModal = () => {
-    setOpenEditUserModal(prevOpen => !prevOpen);
+    setOpenEditUserModal((prevOpen) => !prevOpen);
   };
 
   return (
     <div className="flex-grow-1 h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-2xl font-extrabold py-5 mb-5 px-10 bg-primary xl:bg-white text-white xl:text-primary">
+      <h2 className="font-body text-2xl font-extrabold py-5 mb-5 px-10 bg-primary text-white">
         SETTINGS
       </h2>
-      <div className="block sm:hidden">
-        <div className="w-screen flex flex-col mx-4 mb-10 bg-primary overflow-x-auto">
+
+      {/* Mobile Navigation */}
+      <div className="block md:hidden overflow-x-hidden">
+        <div className="flex flex-col mx-4 mb-10 bg-primary">
           <nav className="border-b border-white">
-            <ul className="pl-5 pr-5 flex text-white font-semibold font-body justify-between space-x-3 ">
+            <ul className="pl-5 pr-5 flex text-white font-semibold justify-between space-x-3">
               <li
-                className={`flex mt-3 ml-2 py-2 pr-4  rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "account"
                     ? "bg-white bg-opacity-5 border-b-2"
                     : ""
@@ -331,7 +451,7 @@ const Settings = () => {
                 </Link>
               </li>
               <li
-                className={`flex mt-3 ml-2 py-2 pr-4  rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5  ${
+                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "manageuser"
                     ? "bg-white bg-opacity-5 border-b-2"
                     : ""
@@ -345,22 +465,24 @@ const Settings = () => {
             </ul>
           </nav>
           <div className="flex flex-col flex-1">
-        {selectedItem === "account" && <UserAccount />}
-        {selectedItem === "manageuser" && (
-          <ManageUser
-            toggleAddUserModal={toggleAddUserModal}
-            toggleEditUserModal={toggleEditUserModal}
-          />
+            {selectedItem === "account" && <UserAccount />}
+            {selectedItem === "manageuser" && (
+              <ManageUser
+                toggleAddUserModal={toggleAddUserModal}
+                toggleEditUserModal={toggleEditUserModal}
+              />
             )}
           </div>
         </div>
       </div>
-      <div className="hidden sm:table-cell">
-        <div className="py-2 flex flex-grow font-body mx-10 mb-10 bg-primary overflow-x-auto">
-          <nav className="px-2  py-3 border-r border-white max-h-full  hidden md:block">
-            <ul className="text-white font-semibold font-body">
+
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex">
+        <div className="flex flex-grow flex-col md:flex-row mx-4 mb-10 bg-primary overflow-hidden">
+          <nav className="flex-shrink-0 md:w-1/6 py-3 px-2 border-r border-white">
+            <ul className="text-white font-semibold">
               <li
-                className={`flex mt-3 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "account"
                     ? "bg-white bg-opacity-5 border-l-4 border-white"
                     : ""
@@ -371,9 +493,8 @@ const Settings = () => {
                   Account
                 </Link>
               </li>
-              <div className="border-l border-white h-full"></div>
               <li
-                className={`flex mt-3 py-2 pl-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "manageuser"
                     ? "bg-white bg-opacity-5 border-l-4 border-white"
                     : ""
@@ -386,13 +507,14 @@ const Settings = () => {
               </li>
             </ul>
           </nav>
-          <div className="flex flex-col flex-1">
-        {selectedItem === "account" && <UserAccount />}
-        {selectedItem === "manageuser" && (
-          <ManageUser
-            toggleAddUserModal={toggleAddUserModal}
-            toggleEditUserModal={toggleEditUserModal}
-          />
+
+          <div className="flex flex-col flex-grow p-5 overflow-x-hidden">
+            {selectedItem === "account" && <UserAccount />}
+            {selectedItem === "manageuser" && (
+              <ManageUser
+                toggleAddUserModal={toggleAddUserModal}
+                toggleEditUserModal={toggleEditUserModal}
+              />
             )}
           </div>
         </div>
