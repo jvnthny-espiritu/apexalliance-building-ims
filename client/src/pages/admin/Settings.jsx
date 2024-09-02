@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
-import { FaCirclePlus} from "react-icons/fa6";
-import {FaEllipsisV } from "react-icons/fa";
+import { FaCirclePlus } from "react-icons/fa6";
+import { FaEllipsisV } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from "../../components/modals/AddUserModal";
 import EditUserModal from "../../components/modals/EditUserModal";
@@ -226,16 +226,14 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   });
 
   return (
-    <div className="my-4 text-white overflow-y-auto relative mr-10 h-full">
+    <div className="my-4 text-white relative mr-10 h-full flex-grow overflow-hidden">
       <div className="max-w-screen-lg ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
           Manage who has access to the system
         </p>
         <hr className="mb-2" />
-        {/* Flex container for filters and search bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
-          {/* Filters */}
           <div className=" md:mt-0 flex items-center space-x-1 md:space-x-4">
             <div className="mr-0 md:mr-0 flex-shrink-0 w-24">
               <select
@@ -264,7 +262,6 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
               </select>
             </div>
           </div>
-          {/* Search bar and Add button */}
           <div className="flex items-center mt-2 space-x-2 md:space-x-4">
             <div className="flex-grow max-w-xs md:max-w-md">
               <input
@@ -283,63 +280,63 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          {/* Table for larger screens */}
-          <table className="hidden md:table min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Campus
-                </th>
-                <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+        {/* Table for Desktop View */}
+        <table className="hidden md:table min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Campus
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredUsers.map((user) => (
+              <tr key={user._id}>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.fullName.firstName} {user.fullName.lastName}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.campus.name}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.role}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  {user.email}
+                </td>
+                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                  <button
+                    onClick={() => handleEdit(user._id)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteUser(user._id)}
+                    className="ml-2 text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user._id}>
-                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                    {user.fullName.firstName} {user.fullName.lastName}
-                  </td>
-                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                    {user.campus.name}
-                  </td>
-                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                    {user.role}
-                  </td>
-                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                    {user.email}
-                  </td>
-                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                    <button
-                      onClick={() => handleEdit(user._id)}
-                      className="text-indigo-600 hover:text-indigo-900"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteUser(user._id)}
-                      className="ml-2 text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Card layout for smaller screens */}
+            ))}
+          </tbody>
+        </table>
+        {/* Table for Mobile View */}
+        <div className="overflow-y-auto h-[calc(100vh-320px)]">
+          {" "}
           <div className="md:hidden space-y-4 items">
             {filteredUsers.map((user) => (
               <div
@@ -394,20 +391,21 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             ))}
           </div>
         </div>
+
+        {isAddUserOpen && (
+          <AddUserModal
+            isOpen={isAddUserOpen}
+            toggleModal={toggleAddUserModalLocal}
+          />
+        )}
+        {isEditUserOpen && (
+          <EditUserModal
+            isOpen={isEditUserOpen}
+            toggleModal={toggleEditUserModalLocal}
+            user={editingUser}
+          />
+        )}
       </div>
-      {isAddUserOpen && (
-        <AddUserModal
-          isOpen={isAddUserOpen}
-          toggleModal={toggleAddUserModalLocal}
-        />
-      )}
-      {isEditUserOpen && (
-        <EditUserModal
-          isOpen={isEditUserOpen}
-          toggleModal={toggleEditUserModalLocal}
-          user={editingUser}
-        />
-      )}
     </div>
   );
 };
