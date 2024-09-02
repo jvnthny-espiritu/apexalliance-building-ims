@@ -104,7 +104,7 @@ const RoomModal = ({ room, toggleModal }) => {
           className="absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-white text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50"
           onClick={toggleModal}
         >
-          Close
+          x
         </button>
 
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">{room.name}</h2>

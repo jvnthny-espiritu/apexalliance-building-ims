@@ -15,7 +15,10 @@ export default function Bottombar() {
                 className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} 
                 end
             >
-                <MdDashboard className="h-6 w-6" />
+                <div className="flex flex-col items-center">
+                    <MdDashboard className="h-6 w-6" />
+                    <h3>Dashboard</h3>
+                </div>
             </NavLink>
             <NavLink 
                 to="/catalog/building" 
@@ -24,7 +27,10 @@ export default function Bottombar() {
                     return isBuildingActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses;
                 }}
             >
-                <MdBook className="h-6 w-6" />
+                <div className="flex flex-col items-center">
+                    <MdBook className="h-6 w-6" />
+                    <h3>Catalog</h3>
+                </div>
             </NavLink>
         </div>
     );
