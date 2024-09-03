@@ -48,7 +48,7 @@ function RoomPage() {
   }));
 
   return (
-    <div className=" overflow-y-auto h-screen w-auto sticky">
+    <div className=" overflow-y-auto h-screen w-auto sticky pb-24">
       <div className="flex sticky top-0 z-10">
         <div className="flex bg-primary justify-between items-center p-5 max-w-screen-auto w-full">
           <h1 className="font-bold text-2xl text-white">Room Catalog</h1>
