@@ -412,8 +412,9 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
 
 const Settings = () => {
   const [selectedItem, setSelectedItem] = useState("account");
-  const [setOpenAddUserModal] = useState(false);
-  const [setOpenEditUserModal] = useState(false);
+  const [openAddUserModal, setOpenAddUserModal] = useState(false);
+  const [openEditUserModal, setOpenEditUserModal] = useState(false);
+
 
   const handleItemClick = (item) => {
     setSelectedItem(item);

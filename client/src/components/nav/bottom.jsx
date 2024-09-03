@@ -5,7 +5,7 @@ import { MdDashboard, MdBook } from 'react-icons/md';
 export default function Bottombar() {
     const location = useLocation();
 
-    const linkClasses = 'flex w-full py-5 justify-center items-center py-2 px-4 hover:bg-white hover:bg-opacity-5';
+    const linkClasses = 'flex w-full py-1 justify-center items-center py-2 px-4 hover:bg-white hover:bg-opacity-5';
     const activeLinkClasses = 'bg-white bg-opacity-10 transition-colors duration-200';
 
     return (
@@ -17,7 +17,7 @@ export default function Bottombar() {
             >
                 <div className="flex flex-col items-center">
                     <MdDashboard className="h-6 w-6" />
-                    <h3>Dashboard</h3>
+                    <p className="text-xs">Dashboard</p>
                 </div>
             </NavLink>
             <NavLink 
@@ -29,7 +29,7 @@ export default function Bottombar() {
             >
                 <div className="flex flex-col items-center">
                     <MdBook className="h-6 w-6" />
-                    <h3>Catalog</h3>
+                    <p className="text-xs">Catalog</p>
                 </div>
             </NavLink>
         </div>
