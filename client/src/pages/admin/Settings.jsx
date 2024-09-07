@@ -26,7 +26,7 @@ const UserAccount = () => {
   };
 
   return (
-    <div className="py-5 -my-1 text-white mr-5">
+    <div className="py-5 -my-1 text-white mx-5 ">
       <div className="ml-2 mr-5">
         <h3 className="font-extrabold text-2xl mb-1">Account</h3>
         <p className="text-sm mb-2 text-gray-500">Account information</p>
@@ -226,7 +226,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   });
 
   return (
-    <div className="my-4 text-white relative mr-10 h-full flex-grow overflow-hidden">
+    <div className="my-4 text-white relative mx-5 md:mx-5  h-full flex-grow overflow-hidden">
       <div className="max-w-screen-lg ml-2">
         <h3 className="font-extrabold text-2xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
@@ -284,7 +284,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
         <table className="hidden md:table min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs  md:text-sm font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
               <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wider">
@@ -435,7 +435,7 @@ const Settings = () => {
       </h2>
 
       {/* Mobile Navigation */}
-      <div className="block md:hidden overflow-x-hidden">
+      <div className="block md:hidden overflow-x-hidden sticky top-0">
         <div className="flex flex-col mx-4 mb-10 bg-primary">
           <nav className="border-b border-white">
             <ul className="pl-5 pr-5 flex text-white font-semibold justify-between space-x-3">
