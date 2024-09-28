@@ -33,7 +33,7 @@ export default function AccountHead() {
 	}
 
   return (
-    <div className="fixed top-0 right-0 mr-4 mt-4 z-10 text-white">
+    <div className="fixed top-0 right-0 mr-4 mt-4 z-10 text-darkGray">
       <div onClick={toggleDropdown}>
         <MdAccountCircle className="h-10 w-10 cursor-pointer" />
       </div>
