@@ -12,7 +12,9 @@ module.exports = {
         transparent: 'transparent',
         current: 'currentColor',
         'white': '#ffffff',
-        'primary': '#041527',
+        'darkGray' : '#808080',
+        'lightGray' : '#F5F5F5',
+        'primary': '#FF0000',
         'room-use': {
           'laboratory': '#8a4cf2',
           'classroom': '#10b981',
