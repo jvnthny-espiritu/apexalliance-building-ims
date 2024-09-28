@@ -14,20 +14,60 @@ module.exports = {
   createUser: async (req, res) => {
     const { fullName, username, email, role, campus, password } = req.body;
     console.log("Received request body:", req.body);
+
     try {
+      const existingEmail = await User.findOne({ email });
       const existingUser = await User.findOne({ username });
-      if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
+      if (existingEmail || existingUser) {
+        return res.status(400).json({ message: "Username or Email already in use" });
       }
-      const newUser = await User.create({ fullName, username, email, role, campus, password });
+
+      const newUser = await User.create({
+        fullName,
+        username,
+        email,
+        role,
+        campus,
+        password
+      });
+
       res.status(201).json(newUser);
     } catch (err) {
       console.error('Error creating user:', err);
       res.status(500).json({ message: "Failed to create user", error: err.message });
     }
   },
-  
-  
+
+  checkUsername: async (req, res) => {
+    const { username } = req.body;
+
+    try {
+      const user = await User.findOne({ username });
+      if (user) {
+        return res.status(200).json({ exists: true });
+      } else {
+        return res.status(200).json({ exists: false });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  },
+
+  checkEmail: async (req, res) => {
+    const { email } = req.body;
+
+    try {
+      const user = await User.findOne({ email });
+      if (user) {
+        return res.status(200).json({ exists: true });
+      } else {
+        return res.status(200).json({ exists: false });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  },
+
   getUserById: async (req, res) => {
     try {
       const user = await User.findById(req.params.id).populate('campus');
@@ -65,8 +105,7 @@ module.exports = {
   
       if (password) {
         console.log('Hashing password...');
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
+        user.password = password;
       }
   
       if (email) {

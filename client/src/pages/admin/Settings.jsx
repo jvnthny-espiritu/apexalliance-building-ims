@@ -160,7 +160,8 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(null); // To control which dropdown is open
+  const [dropdownOpen, setDropdownOpen] = useState(null); 
+  const [successMessage, setSuccessMessage] = useState("");
 
   const toggleAddUserModalLocal = () => {
     setIsAddUserOpen((prev) => !prev);
@@ -185,6 +186,10 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
     }
   };
 
+  const handleUserUpdate = async () => {
+    await fetchUsers(); // Fetch the latest list of users from the server
+  };
+  
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -198,9 +203,14 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const deleteUser = async (userId) => {
     try {
       const response = await api.delete(`/user/${userId}`);
-      if (response.ok) {
-        console.log("User deleted successfully");
+      if (response.status === 200) { 
         setUsers(users.filter((user) => user._id !== userId));
+
+        setSuccessMessage("User deleted successfully!");
+
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
       } else {
         console.error("Failed to delete user:", response.statusText);
       }
@@ -233,6 +243,14 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
           Manage who has access to the system
         </p>
         <hr className="mb-2" />
+        {successMessage && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+            {successMessage}
+            <button onClick={() => setSuccessMessage("")} className="ml-4 text-lg font-bold">
+              &times;
+            </button>
+          </div>
+        )}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
           <div className=" md:mt-0 flex items-center space-x-1 md:space-x-4">
             <div className="mr-0 md:mr-0 flex-shrink-0 w-24">
@@ -396,6 +414,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
           <AddUserModal
             isOpen={isAddUserOpen}
             toggleModal={toggleAddUserModalLocal}
+            onUserAdded={handleUserUpdate}
           />
         )}
         {isEditUserOpen && (
@@ -403,6 +422,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             isOpen={isEditUserOpen}
             toggleModal={toggleEditUserModalLocal}
             user={editingUser}
+            onUserUpdated={handleUserUpdate}
           />
         )}
       </div>

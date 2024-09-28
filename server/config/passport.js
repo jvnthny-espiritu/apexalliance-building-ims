@@ -1,7 +1,7 @@
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
-const User = require('../models/User');
+const User = require('../models/user');
 const secretOrKey = 'apexalliance';
 
 const options = {
@@ -10,6 +10,7 @@ const options = {
 };
 
 passport.use(new JwtStrategy(options, async (jwtPayload, done) => {
+  console.log('JWT Payload:', jwtPayload);
   try {
     const user = await User.findById(jwtPayload.id);
 

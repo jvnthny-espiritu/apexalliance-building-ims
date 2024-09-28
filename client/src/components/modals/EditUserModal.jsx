@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import api from '../../services/api';
 
-const EditUserModal = ({ isOpen, toggleModal, user }) => {
+const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
+  const [validationErrors, setValidationErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [apiError, setApiError] = useState("");
+  
   const [formData, setFormData] = useState({
     fullName: {
       firstName: user ? user.fullName.firstName : "",
@@ -20,16 +24,16 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
 
   useEffect(() => {
     const fetchCampuses = async () => {
-      try {
-        const response = await api.get("/campus");
-        setCampuses(response.data);
-      } catch (error) {
-        console.error("Error fetching campuses:", error);
-      }
+        try {
+            const response = await api.get("/campus");
+            setCampuses(response.data);
+        } catch (error) {
+            setApiError("Failed to fetch campuses. Please try again later.");
+        }
     };
 
     if (isOpen) {
-      fetchCampuses();
+        fetchCampuses();
     }
   }, [isOpen]);
 
@@ -51,29 +55,80 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
       }));
     }
   };
+
+  
+  const validateForm = async () => {
+    const errors = {};
+  
+    if (!formData.fullName.firstName) errors.firstName = "First name is required.";
+    if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
+    if (!formData.username) errors.username = "Username is required.";
+    if (!formData.email) errors.email = "Email is required.";
+    if (!formData.password) errors.password = "Password is required.";
+    if (!formData.confirmPassword) errors.confirmPassword = "Confirm password is required.";
+    if (!formData.campus) errors.campus = "Campus is required.";
+  
+    if (formData.password && formData.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+  
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+  
+    if (formData.username && formData.username !== user.username) {
+      try {
+        const usernameCheckResponse = await api.post("/user/check-username", { username: formData.username });
+        if (usernameCheckResponse.data.exists) {
+          errors.username = "Username is already in use.";
+        }
+      } catch (error) {
+        console.error("Error checking username uniqueness:", error);
+      }
+    }
+
+    if (formData.email && formData.email !== user.email) {
+      try {
+        const emailCheckResponse = await api.post("/user/check-email", { email: formData.email });
+        if (emailCheckResponse.data.exists) {
+          errors.email = "Email is already in use.";
+        }
+      } catch (error) {
+        console.error("Error checking email uniqueness:", error);
+      }
+    }
+  
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0; 
+  };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const isValid = await validateForm();
+    if (!isValid) return;
     if (formData.password !== formData.confirmPassword) {
-      setPasswordError("Passwords do not match");
-      return;
+        setPasswordError("Passwords do not match");
+        return;
     }
 
     try {
-      if (user) {
-        const response = await api.put(`/user/${user._id}`, formData);
-        console.log("User updated:", response.data);
-      } else {
-        const response = await api.post("/user", formData);
-        console.log("User created:", response.data);
-      }
-      handleClose();
+        if (user) {
+            const response = await api.put(`/user/${user._id}`, formData);
+            setSuccessMessage("Updated user successfully!");
+            if (onUserUpdated) {
+                onUserUpdated();
+            }
+            setTimeout(() => {
+                handleClose();
+            }, 3000);
+        }
     } catch (error) {
-      console.error("Error updating/creating user:", error);
+        setApiError("Failed to update user. Please try again later.");
     }
   };
 
   const handleClose = () => {
+    setSuccessMessage(""); 
     if (typeof toggleModal === "function") {
       toggleModal();
     }
@@ -87,6 +142,28 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
   };
 
   return (
+    <>
+      {successMessage && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+          {successMessage}
+          <button
+            onClick={() => setSuccessMessage("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+      {apiError && (
+            <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+                {apiError}
+                <button
+                    onClick={() => setApiError("")}
+                    className="ml-4 text-lg font-bold">
+                    &times;
+                </button>
+            </div>
+      )}
     <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
       <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh]">
         <form onSubmit={handleSubmit}>
@@ -106,6 +183,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
+                   {validationErrors.firstName && (
+                    <span className="text-red-500 text-sm">{validationErrors.firstName}</span>
+                  )}
                 </div>
                 <div className="flex flex-col w-full md:w-1/2 md:pl-2">
                   <label className="text-black">Last Name</label>
@@ -116,6 +196,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
+                  {validationErrors.lastName && (
+                    <span className="text-red-500 text-sm">{validationErrors.lastName}</span>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
@@ -165,6 +248,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                       <option value="">Loading Campuses...</option>
                     )}
                   </select>
+                  {validationErrors.campus && (
+                    <span className="text-red-500 text-sm">{validationErrors.campus}</span>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col mb-4">
@@ -176,6 +262,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                   onChange={handleChange}
                   className="border-b-2 border-black p-3 outline-none"
                 />
+                {validationErrors.username && (
+                <span className="text-red-500 text-sm">{validationErrors.username}</span>
+              )}
               </div>
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
@@ -187,6 +276,10 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
+                  <p>• Must be 8 characters long.</p>
+                  {validationErrors.password && (
+                    <span className="text-red-500 text-sm">{validationErrors.password}</span>
+              )}
                 </div>
                 <div className="flex flex-col w-full md:w-1/2 md:pl-2">
                   <label className="text-black">Confirm Password</label>
@@ -198,6 +291,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   {passwordError && <p className="text-red-500">{passwordError}</p>}
+                  {validationErrors.confirmPassword && (
+                  <span className="text-red-500 text-sm">{validationErrors.confirmPassword}</span>
+                )}
                 </div>
               </div>
               <div className="flex flex-col mb-4">
@@ -209,6 +305,9 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
                   onChange={handleChange}
                   className="border-b-2 border-black p-3 outline-none"
                 />
+                 {validationErrors.email && (
+                <span className="text-red-500 text-sm">{validationErrors.email}</span>
+              )}
               </div>
             </div>
             <div className="flex justify-end">
@@ -230,6 +329,7 @@ const EditUserModal = ({ isOpen, toggleModal, user }) => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
