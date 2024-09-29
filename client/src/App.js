@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Dashboard from "./pages/admin/Dashboard";
 import Settings from "./pages/admin/Settings";
@@ -14,6 +14,7 @@ import TopBar from "./components/nav/top";
 const App = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,41 +27,26 @@ const App = () => {
     };
   }, []);
 
+  // Check if the current path is the login page
+  const isLoginPage = location.pathname === "/login";
+
   return (
     <div className="flex flex-col h-full w-screen">
-      <TopBar /> {/* Top navigation visible on all pages */}
+      {!isLoginPage && <TopBar />} {/* Only show TopBar if not on the login page */}
       <Routes>
-        {/* {isLoggedIn && user && user.role === 'Administrator' && (
-        <Route path="/" element={
-          <div className="flex h-full w-screen">
-            {isMobile ? <Bottombar /> : <Sidebar />}
-            <div className="flex-1">
-              <Outlet />
-            </div>
-          </div>
-        }>
-          <Route index element={<Dashboard />} />
-          <Route path="settings/*" element={<Settings />} />
-          <Route path="catalog/building" element={<BuildingPage />} />
-          <Route path="catalog/room/:buildingId" element={<RoomPage />} />
-        </Route>
-      )} */}
         {isLoggedIn && user && user.role === "Administrator" && (
           <Route
             path="/"
             element={
               <div className="flex flex-col h-full w-screen">
-                {isMobile ? <AccountHead /> : null}{" "}
-                {/* Render Topbar only in mobile view */}
+                {isMobile ? <AccountHead /> : null}
                 <div className="flex flex-1">
-                  {isMobile ? null : <Sidebar />}{" "}
-                  {/* Render Sidebar only if not in mobile view */}
+                  {isMobile ? null : <Sidebar />}
                   <div className="flex-1">
                     <Outlet />
                   </div>
                 </div>
-                {isMobile ? <Bottombar /> : null}{" "}
-                {/* Render Bottombar only in mobile view */}
+                {isMobile ? <Bottombar /> : null}
               </div>
             }
           >

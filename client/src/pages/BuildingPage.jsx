@@ -66,10 +66,10 @@ function BuildingPage() {
   };
 
   return (
-    <div className=" overflow-y-auto h-screen w-auto sticky pb-20">
-      <div className="flex sticky top-0 z-10 md:mb-20">
-        <div className="flex bg-primary justify-between items-center p-5 max-w-screen-auto w-full">
-          <h1 className="font-bold text-2xl text-white">Building Catalog</h1>
+    <div className="h-screen w-auto pb-20 mt-16">
+      <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
+        <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
+          <h1 className="font-bold text-md text-white">Building Catalog</h1>
           <div className="hidden md:flex items-center space-x-4 ">
             <PurposeFilter onChange={setSelectedPurpose} />
             <CampusFilter
@@ -89,7 +89,6 @@ function BuildingPage() {
           </div>
         </div>
       </div>
-
       <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
         <div className="flex space-x-4 mb-4 sticky top-0">
           <div className="relative ">
@@ -112,8 +111,7 @@ function BuildingPage() {
           />
         </div>
       </div>
-
-      <div className="flex flex-wrap md:justify-center lg:justify-normal  mx-8">
+      <div className="flex flex-wrap md:justify-center lg:justify-normal mx-8 md:mt-24">
         {filteredBuildings.length === 0 && (
           <p className="text-white">No buildings found.</p>
         )}
