@@ -64,16 +64,16 @@ const BuildingCard = ({ building, onDelete }) => {
               <span onClick={toggleDropdown} className="relative cursor-pointer">
                 <BsThreeDotsVertical className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 ml-2" />
                 {dropdownVisible && (
-                  <ul className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                  <ul className="absolute right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                     <li 
                       onClick={handleEdit} 
-                      className="px-4 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                      className=" font-light text-base px-2 py-2 hover:bg-blue-500 hover:text-white  cursor-pointer"
                     >
                       Edit
                     </li>
                     <li 
                       onClick={handleDelete} 
-                      className="px-4 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
+                      className=" font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
                     >
                       Delete
                     </li>
