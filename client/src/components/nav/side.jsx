@@ -13,14 +13,14 @@ export default function Sidebar() {
 		navigate('/login');	
 		
 	}
-	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'
+	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-darkGray hover:bg-opacity-20 hover:text-gray'
 	const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-100 text-white'
 
 	return (
-		<div className={`h-screen sticky top-5 transition-width ease-in-out duration-100 font-bold`}>
-			<nav className='h-full flex flex-col justify-between px-1.5 bg-white text-gray pt-20 w-64'>
-				<div>
-					<ul className='mt-5 justify-center'>
+		<div className={`h-screen sticky top-0 transition-width ease-in-out duration-100 font-bold`}>
+			<nav className='h-full flex flex-col justify-between bg-white text-gray px-4 pt-20 w-60'>
+				<div className='mt-5'>
+					<ul className='justify-center'>
 						<li>
 							<NavLink to='/' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Dashboard'>
 								<MdDashboard className='h-6 w-6 mx-4' />
@@ -43,7 +43,7 @@ export default function Sidebar() {
 				</div>
 				<div>
 					<hr />
-					<ul className='mb-4'>
+					<ul className='mb-5'>
 						<li>
 							<NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
 								<MdSettings className='h-6 w-6 mx-4' />
@@ -51,10 +51,12 @@ export default function Sidebar() {
 							</NavLink>
 						</li>
 						<li>
+						<ul className='sticky'>
 							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
 								<MdExitToApp className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Logout</span>
 							</button>
+							</ul>
 						</li>
 					</ul>
 				</div>
