@@ -11,11 +11,11 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
   const getTypeClass = (type) => {
     switch (type) {
       case 'Classroom':
-        return 'bg-[#00B178]';
+        return 'bg-room-use-classroom';
       case 'Laboratory':
-        return 'bg-[#712EE1]';
+        return 'bg--room-use-laboratory';
       case 'Administrative':
-        return 'bg-[#F02556]';
+        return 'bg--room-use-administrative';
       default:
         return '';
     }
@@ -24,9 +24,9 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
   const getStatusClass = (status) => {
     switch (status) {
       case 'Available':
-        return 'bg-[#005FE9]';
+        return 'bg-room-use-available';
       case 'Not Available':
-        return 'bg-[#F02556]';
+        return 'bg-room-use-notavailable';
       default:
         return '';
     }
@@ -42,7 +42,7 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
   return (
     <>
       <div
-        className="p-3 text-white shadow-md m-2 rounded-lg cursor-pointer bg-[#04172D]"
+        className="p-3 text-darkGray shadow-md m-2 rounded-lg cursor-pointer bg-white border border-darkGray"
         style={{
           width: '300px',
           height: 'fit-content',
@@ -50,14 +50,14 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
         onClick={toggleModal}
       >
         <div className="flex flex-col justify-start items-start font-body">
-          <h3 className="text-xl font-extrabold">{room.name}</h3>
+          <h3 className="text-xl text-black font-extrabold">{room.name}</h3>
           <div className="flex justify-between w-full">
             <p className="mb-2">Dimension:</p>
             <p className="mb-2">{room.dimension}</p>
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Type:</p>
-            <p className={`px-3 text-center mb-2 rounded-xl ${getTypeClass(room.type)}`}>
+            <p className={`px-3 text-center text-white mb-2 rounded-xl ${getTypeClass(room.type)}`}>
               {room.type}
             </p>
           </div>
@@ -67,7 +67,7 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Status:</p>
-            <div className={`px-3 text-center mb-2 rounded-xl ${getStatusClass(room.status)}`}>
+            <div className={`px-3 text-center text-white mb-2 rounded-xl ${getStatusClass(room.status)}`}>
               {room.status}
             </div>
           </div>

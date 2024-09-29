@@ -21,9 +21,9 @@ const BuildingCard = ({ building }) => {
   }, [_id]);
 
   const purposeColors = {
-    Classroom: 'bg-[#00B178]',
-    Laboratory: 'bg-[#712EE1]',
-    Administrative: 'bg-[#F02556]'
+    Classroom: 'bg-room-use-classroom',
+    Laboratory: 'bg-room-use-laboratory',
+    Administrative: 'bg-room-use-administrative'
   };
 
   return (
