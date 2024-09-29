@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { MdDashboard, MdBook, MdSettings, MdMenu, MdExitToApp } from 'react-icons/md';
-import { ReactComponent as Logo } from '../../assets/img/logo.svg';
+import { MdDashboard, MdBook, MdSettings, MdExitToApp, MdInfo } from 'react-icons/md';
 export default function Sidebar() {
-	const [expanded, setExpanded] = useState(true);
-	const [disableToggle, setDisableToggle] = useState(false);
+	const [expanded] = useState(true);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleLogout = () => {
@@ -33,6 +31,12 @@ export default function Sidebar() {
 							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
 								<MdBook className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Catalog</span>
+							</NavLink>
+						</li>
+						<li>
+							<NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
+								<MdInfo className='h-6 w-6 mx-4' />
+								<span className={`${expanded ? "" : "sr-only"}`}>Reports</span>
 							</NavLink>
 						</li>
 					</ul>
