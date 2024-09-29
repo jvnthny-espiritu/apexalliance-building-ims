@@ -15,6 +15,8 @@ module.exports = {
         'darkGray' : '#808080',
         'lightGray' : '#F5F5F5',
         'primary': '#FF0000',
+        'primary-light': '#ff2222',
+        'primary-dark': '#ff6666',
         'room-use': {
           'laboratory': '#8a4cf2',
           'classroom': '#10b981',
