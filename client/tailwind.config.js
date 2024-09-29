@@ -14,13 +14,13 @@ module.exports = {
         'white': '#ffffff',
         'darkGray' : '#808080',
         'lightGray' : '#F5F5F5',
-        'primary': '#FF0000',
+        'primary': '#FF0000', // Renamed primary color
         'primary-light': '#ff2222',
         'primary-dark': '#ff6666',
         'room-use': {
-          'laboratory': '#8a4cf2',
-          'classroom': '#10b981',
-          'administrative': '#ec4899',
+          'laboratory': '#0000FF',
+          'classroom': '#008000',
+          'administrative': '#FF0000',
           'available': '#3b82f6',
           'notavailable': '#ef4444',
         },

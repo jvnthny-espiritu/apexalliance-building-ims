@@ -3,14 +3,11 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { MdDashboard, MdBook, MdSettings, MdMenu, MdExitToApp } from 'react-icons/md';
 import { ReactComponent as Logo } from '../../assets/img/logo.svg';
-
-
 export default function Sidebar() {
 	const [expanded, setExpanded] = useState(true);
 	const [disableToggle, setDisableToggle] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
 	useEffect(() => {
 			const handleResize = () => {
 					if (window.innerWidth <= 1250) {
@@ -21,27 +18,23 @@ export default function Sidebar() {
 							setDisableToggle(false);
 					}
 			};
-
 			window.addEventListener('resize', handleResize);
-
 			return () => {
 					window.removeEventListener('resize', handleResize);
 			};
 	}, []);
-
 	const handleLogout = () => {
 		console.log("Logging out...");
 		dispatch({ type: 'LOGOUT' });
 		localStorage.removeItem('token');
 		navigate('/login');	
 	}
-
 	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'
-	const activeLinkClasses = 'border-l-4 bg-white bg-opacity-10 transition-colors duration-200'
-  
+	const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-200 text-white'
+
 	return (
 		<div className={`h-screen sticky top-0 transition-width ease-in-out duration-300 ${expanded ? 'w-1/5' : 'w-auto' }`}>
-			<nav className='h-full flex flex-col justify-between px-5 bg-primary text-white'>
+			<nav className='h-full flex flex-col justify-between px-5 bg-white text-gray'>
 				<div>
 					<div className='w-full p-4 pb-5 inline-flex justify-between items-center'>
 						<div className={`inline-flex items-center`}>

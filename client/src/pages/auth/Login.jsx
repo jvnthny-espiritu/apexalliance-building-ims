@@ -48,7 +48,7 @@ const Login = () => {
       }}
     >
       <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-sm z-[1]" />
-      <div className="bg-white opacity-85 px-20 py-44 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2, minHeight: '505px' }}>
+      <div className="bg-white opacity-85 px-20 py-44 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2, minHeight: '480px' }}>
         <div className="max-w-md">
           <div className="flex justify-center">
             <img src={logo} className="h-12 w-12 sm:h-15 sm:w-15 absolute top-0 my-5" />

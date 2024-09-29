@@ -276,7 +276,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
-                  <p>• Must be 8 characters long.</p>
+                  <p className="text-sm">• Must be at least 8 characters long.</p>
                   {validationErrors.password && (
                     <span className="text-red-500 text-sm">{validationErrors.password}</span>
               )}
