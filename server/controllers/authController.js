@@ -17,7 +17,7 @@ module.exports = {
             if (!auth) {
                 return res.status(401).json({ success: false, message: 'Invalid username or password' });
             }
-            const token = jwt.sign({ user: user._id, role: user.role, campus: user.campus._id}, 'apexalliance', { expiresIn: '1h' });
+            const token = jwt.sign({ user: user._id, firstName: user.fullName.firstName, lastName: user.fullName.lastName, role: user.role, campus: user.campus._id}, 'apexalliance', { expiresIn: '1h' });
             res.cookie("token", token, { httpOnly: true });
             return res.status(200).json({ success: true, message: "User logged in successfully", token });
         } catch (error) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { jwtDecode } from 'jwt-decode';
 import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -8,57 +9,156 @@ import AddUserModal from "../../components/modals/AddUserModal";
 import EditUserModal from "../../components/modals/EditUserModal";
 
 const UserAccount = () => {
-  const user = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
+  const [user, setUser] = useState({
+    id: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const resetForm = () => {
+    setUser({
+      ...user, 
+      password: "",
+      confirmPassword: "",
+    });
+    setSuccessMessage("");  
+    setApiError("");        
   };
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+      fetchUserData(decoded.user);
+    } else {
+      console.error("Token not found in localStorage");
+    }
+  }, []);
+
+  const fetchUserData = async (userId) => {
+    if (!userId) {
+      console.error("User ID is undefined");
+      return;
+    }
+    try {
+      const response = await api.get(`/user/${userId}`);
+      setUser({
+        ...user,
+        id: response.data._id,
+        firstName: response.data.fullName.firstName,
+        lastName: response.data.fullName.lastName,
+        email: response.data.email,
+      });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [apiError, setApiError] = useState("");
+
+    const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    if (user.password && user.password !== user.confirmPassword) {
+      setApiError("Passwords do not match!");
+      return;
+    }
+    if (user.password && user.password.length < 8) {
+      setApiError("New password must be at least 8 characters long.");
+      return;
+    }
+  
+    try {
+      const response = await api.put(`/user/${user.id}`, {
+        email: user.email,
+        password: user.password,
+        fullName: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      });
+
+      if (response.data.success) {
+        setSuccessMessage('Profile updated successfully!');
+        setApiError(""); 
+      } else {
+        setApiError('Failed to update profile.');
+        setSuccessMessage(""); 
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      setApiError('An error occurred while updating the profile.');
+      setSuccessMessage(""); 
+    }
   };
+
+  useEffect(() => {
+    if (apiError) {
+      const timer = setTimeout(() => {
+        setApiError(""); 
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [apiError]);
 
   return (
-    <div className="py-5 -my-1 text-white mx-5 ">
+    <div className="py-5 -my-1 text-white mx-5">
       <div className="ml-2 mr-5">
         <h3 className="font-extrabold text-2xl mb-1">Account</h3>
         <p className="text-sm mb-2 text-gray-500">Account information</p>
         <hr className="mb-2 w-full mr-5" />
+
+         {successMessage && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+            {successMessage}
+            <button
+              onClick={() => setSuccessMessage("")}
+              className="ml-4 text-lg font-bold"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+        {apiError && (
+          <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+            {apiError}
+            <button
+              onClick={() => setApiError("")}
+              className="ml-4 text-lg font-bold"
+            >
+              &times;
+            </button>
+          </div>
+        )}
+
         <div className="max-w-md">
-          <form>
+          <form onSubmit={handleUpdate}>
             <div className="grid gap-6 mb-7 md:grid-cols-2">
               <div>
-                <label
-                  htmlFor="first_name"
-                  className="block text-lg  font-bold text-white"
-                >
+                <label htmlFor="first_name" className="block text-lg font-bold text-white">
                   First Name
                 </label>
-                <div
-                  id="first_name"
-                  className="text-white text-md rounded-lg block w-full p-2.5"
-                >
+                <div id="first_name" className="text-white text-md rounded-lg block w-full p-2.5">
                   {user.firstName}
                 </div>
               </div>
               <div>
-                <label
-                  htmlFor="last_name"
-                  className=" text-lg font-bold text-white"
-                >
+                <label htmlFor="last_name" className="block text-lg font-bold text-white">
                   Last Name
                 </label>
-                <div
-                  id="last_name"
-                  className=" text-white text-md rounded-lg block w-full p-2.5 "
-                >
+                <div id="last_name" className="text-white text-md rounded-lg block w-full p-2.5">
                   {user.lastName}
                 </div>
               </div>
@@ -69,30 +169,26 @@ const UserAccount = () => {
                 <input
                   type="email"
                   id="email"
+                  value={user.email}
+                  onChange={(e) => setUser({ ...user, email: e.target.value })}
                   className="mt-2 bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-primary dark:white dark:text-white dark:focus:white dark:focus:border-white"
-                  placeholder="email address"
                   required
                 />
               </div>
             </div>
-          </form>
-          <div className="max-w-screen-lg mx-auto"></div>
-          <form>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <div>
-                <label
-                  htmlFor="new_password"
-                  className="block mb-2 text-lg font-bold text-white"
-                >
+                <label htmlFor="new_password" className="block mb-2 text-lg font-bold text-white">
                   New Password
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="new_password"
+                    value={user.password}
+                    onChange={(e) => setUser({ ...user, password: e.target.value })}
                     className="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
-                    placeholder="new password"
-                    required
+                    placeholder="New password"
                   />
                   <button
                     type="button"
@@ -101,22 +197,22 @@ const UserAccount = () => {
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
+                  <p className="text-sm">• Must be at least 8 characters long.</p>
                 </div>
               </div>
+
               <div>
-                <label
-                  htmlFor="confirm_password"
-                  className="block mb-2 text-lg font-bold text-white"
-                >
+                <label htmlFor="confirm_password" className="block mb-2 text-lg font-bold text-white">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     id="confirm_password"
+                    value={user.confirmPassword}
+                    onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
                     className="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:white dark:text-white dark:focus:white dark:focus:border-white"
-                    placeholder="confirm password"
-                    required
+                    placeholder="Confirm password"
                   />
                   <button
                     type="button"
@@ -128,23 +224,25 @@ const UserAccount = () => {
                 </div>
               </div>
             </div>
+
+            <div className="p-2 flex justify-end mr-10">
+              <div className="flex">
+                <button
+                  type="button"
+                  className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 mr-4 dark:bg-black-pearl-950 dark:white dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
+                  onClick={resetForm}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 dark:bg-black-pearl-950 dark:white  dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
           </form>
-        </div>
-      </div>
-      <div className="p-2 flex justify-end mr-10">
-        <div className="flex">
-          <button
-            type="submit"
-            className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 mr-4 dark:bg-black-pearl-950 dark:white dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="bg-transparent border border-white text-white text-sm rounded-lg p-2.5 dark:bg-black-pearl-950 dark:white  dark:focus:white dark:focus:border-white hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-white dark:hover:border-white"
-          >
-            Save
-          </button>
         </div>
       </div>
     </div>
