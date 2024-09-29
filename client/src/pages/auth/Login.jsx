@@ -47,10 +47,10 @@ const Login = () => {
         position: 'relative',
       }}
     >
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-md z-[1]" />
-      <div className="bg-white opacity-95 px-20 py-40 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2 }}>
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-sm z-[1]" />
+      <div className="bg-white opacity-85 px-20 py-44 pt-16 pb-20 rounded-lg shadow-lg relative" style={{ zIndex: 2, minHeight: '505px' }}>
         <div className="max-w-md">
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center">
             <img src={logo} className="h-12 w-12 sm:h-15 sm:w-15 absolute top-0 my-5" />
             <div className="ml-2 flex items-center mt-4">
               <h2 className="text-center text-lg md:text-xl lg:text-2xl font-extrabold text-primary">
@@ -75,7 +75,7 @@ const Login = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-primary-dark placeholder-gray-500 text-black focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm w-full"
+                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-black placeholder-gray-500 text-black focus:outline-none focus:ring-primary focus:border-primary focus:border-4 focus:z-10 sm:text-sm w-full"
                   placeholder="Username"
                 />
               </div>
@@ -89,7 +89,7 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-primary-dark placeholder-gray-500 text-black focus:outline-none focus:ring-indigo-500 focus:border-primary focus:z-10 sm:text-sm w-full"
+                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-black placeholder-gray-500 text-black focus:outline-none focus:ring-indigo-500 focus:border-primary focus:border-4 focus:z-10 sm:text-sm w-full"
                   placeholder="Password"
                 />
               </div>
