@@ -27,12 +27,12 @@ const App = () => {
     };
   }, []);
 
-  // Check if the current path is the login page
+
   const isLoginPage = location.pathname === "/login";
 
   return (
-    <div className="flex flex-col h-full w-screen">
-      {!isLoginPage && <TopBar />} {/* Only show TopBar if not on the login page */}
+    <div className="flex flex-col h-full w-screen bg-lightGray">
+      {!isLoginPage && <TopBar />} 
       <Routes>
         {isLoggedIn && user && user.role === "Administrator" && (
           <Route
