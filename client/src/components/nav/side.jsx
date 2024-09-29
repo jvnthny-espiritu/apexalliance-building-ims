@@ -8,46 +8,20 @@ export default function Sidebar() {
 	const [disableToggle, setDisableToggle] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	useEffect(() => {
-			const handleResize = () => {
-					if (window.innerWidth <= 1250) {
-							setExpanded(false);
-							setDisableToggle(true);
-					} else {
-							setExpanded(true);
-							setDisableToggle(false);
-					}
-			};
-			window.addEventListener('resize', handleResize);
-			return () => {
-					window.removeEventListener('resize', handleResize);
-			};
-	}, []);
 	const handleLogout = () => {
 		console.log("Logging out...");
 		dispatch({ type: 'LOGOUT' });
 		localStorage.removeItem('token');
 		navigate('/login');	
+		
 	}
 	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-white hover:bg-opacity-5'
-	const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-200 text-white'
+	const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-100 text-white'
 
 	return (
-		<div className={`h-screen sticky top-0 transition-width ease-in-out duration-300 ${expanded ? 'w-1/5' : 'w-auto' }`}>
-			<nav className='h-full flex flex-col justify-between px-5 bg-white text-gray'>
+		<div className={`h-screen sticky top-5 transition-width ease-in-out duration-100 font-bold`}>
+			<nav className='h-full flex flex-col justify-between px-1.5 bg-white text-gray pt-20 w-64'>
 				<div>
-					<div className='w-full p-4 pb-5 inline-flex justify-between items-center'>
-						<div className={`inline-flex items-center`}>
-							<Logo className={`transition-all ease-in-out ${expanded ? 'h-10 w-10' : 'h-0 w-0' }`} />
-							<span className={`transition-all ease-in-out ${expanded ? "px-5 font-mono font-semibold" : "sr-only"}`}>Building Inventory</span>
-						</div>
-						{(!disableToggle && (
-							<button onClick={() => setExpanded((curr) => !curr)} className='p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
-								<MdMenu className='h-7 w-7'/>
-							</button>
-						)) || <Logo className='h-7 w-full' />}
-					</div>
-					<hr />
 					<ul className='mt-5 justify-center'>
 						<li>
 							<NavLink to='/' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Dashboard'>
