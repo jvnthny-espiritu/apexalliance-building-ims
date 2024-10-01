@@ -1,9 +1,6 @@
 const express = require('express');
 const router = require('express').Router();
 const userController = require('../controllers/userController');
-const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
-
-router.use(authenticateJWT, authorizeRoles(['admin']));
 
 // Routes for users
 router.get('/', userController.getAllUsers);
