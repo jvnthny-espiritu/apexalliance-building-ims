@@ -4,7 +4,7 @@ const logActivity = require('../middleware/logger');
 module.exports = {
   getAllAssets: async (req, res) => {
     try {
-      const assets = await Asset.find();
+      const assets = await Asset.find().populate('location');
       res.json(assets);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -12,10 +12,10 @@ module.exports = {
   },
 
   createAsset: async (req, res) => {
-    const { room, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption } = req.body;
+    const { name, category, condition, status, location, purchaseDate, value, numberOfUnits, electricDetails, nonElectricDetails } = req.body;
 
     try {
-      const newAsset = await Asset.create({ room, name, type, quantity, serialNumber, purchaseDate, condition, electricConsumption });
+      const newAsset = await Asset.create({ name, category, condition, status, location, purchaseDate, value, numberOfUnits, electricDetails, nonElectricDetails });
       logActivity(req.user.id, 'added a new asset', newAsset._id, 'Asset');
       res.status(201).json(newAsset);
     } catch (err) {
@@ -27,7 +27,7 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      const asset = await Asset.findById(id);
+      const asset = await Asset.findById(id).populate('location');
       if (!asset) {
         return res.status(404).json({ error: 'Asset not found' });
       }
@@ -41,7 +41,7 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      const updatedAsset = await Asset.findByIdAndUpdate(id, req.body, { new: true });
+      const updatedAsset = await Asset.findByIdAndUpdate(id, req.body, { new: true }).populate('location');
       if (!updatedAsset) {
         return res.status(404).json({ error: 'Asset not found' });
       }

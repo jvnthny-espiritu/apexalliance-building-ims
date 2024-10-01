@@ -9,6 +9,7 @@ const assetsRoutes = require('./routes/assets');
 const dashboardRoutes = require('./routes/dashboard');
 const filteringRoutes = require('./routes/filtering');
 const totalRoomsRoutes = require('./routes/totalRoom'); 
+const reportRoutes = require('./routes/reports');
 
 router.use('/', authRoutes);
 router.use('/user', usersRoutes);
@@ -19,5 +20,6 @@ router.use('/asset', assetsRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/filtering', filteringRoutes);
 router.use('/total-rooms', totalRoomsRoutes); 
+router.use('/report', reportRoutes); 
 
 module.exports = router;

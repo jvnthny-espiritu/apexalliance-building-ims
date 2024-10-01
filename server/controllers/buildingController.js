@@ -1,5 +1,6 @@
 const Building = require('../models/building');
 const Room = require('../models/room');
+const Asset = require('../models/asset');
 const logActivity = require('../middleware/logger');
 
 module.exports = {
@@ -21,16 +22,16 @@ module.exports = {
   },
   
   createBuilding: async (req, res) => {
-    const { name, purpose, numFloor, campus, numOfStory, yearOfCompletion } = req.body;
-    
+    const { name, campus, numberOfFloors, yearBuilt, purpose } = req.body;
     try {
-      const newBuilding = await Building.create({ name, purpose, numFloor, campus, numOfStory, yearOfCompletion });
+      const newBuilding = await Building.create({ name, campus, numberOfFloors, yearBuilt, purpose });
       logActivity(req.user.id, 'added a new building', newBuilding._id, 'Building');
       res.status(201).json(newBuilding);
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
   },
+  
   
   getBuildingById: async (req, res) => {
     const { id } = req.params;
@@ -63,16 +64,38 @@ module.exports = {
   
   deleteBuilding: async (req, res) => {
     const { id } = req.params;
-    
+
     try {
-      const deletedBuilding = await Building.findByIdAndDelete(id);
-      if (!deletedBuilding) {
-        return res.status(404).json({ error: 'Building not found' });
-      }
-      logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
-      res.json({ message: 'Building deleted' });
+        const deletedBuilding = await Building.findByIdAndDelete(id);
+        if (!deletedBuilding) {
+            return res.status(404).json({ error: 'Building not found' });
+        }
+
+        const rooms = await Room.find({ building: id });
+
+        let deletedAssetsCount = 0;
+        if (rooms.length > 0) {
+            const roomIds = rooms.map(room => room._id);
+            await Room.deleteMany({ building: id });
+
+            const deletedAssets = await Asset.deleteMany({ location: { $in: roomIds } });
+            deletedAssetsCount = deletedAssets.deletedCount;
+        }
+
+        if (req.user && req.user.id) {
+            logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
+        } else {
+            console.warn('User not found or user ID is missing for activity logging.');
+        }
+
+        res.json({
+            message: 'Building, related rooms, and assets deleted successfully',
+            deletedRoomsCount: rooms.length,
+            deletedAssetsCount: deletedAssetsCount
+        });
     } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error deleting building, rooms, or assets:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
   },
 
@@ -97,6 +120,7 @@ module.exports = {
       res.status(500).json({ error: 'An error occurred while fetching rooms' });
     }
   },
+  
   totalRoom: async (req, res) => {
     try {
       const buildingId = req.params.id;
