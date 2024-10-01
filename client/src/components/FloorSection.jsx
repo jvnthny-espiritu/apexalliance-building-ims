@@ -27,7 +27,7 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
   });
 
   return (
-    <div className="mt-8">
+    <div >
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{getOrdinalIndicator(floorName)} Floor</h2>
         <button onClick={toggleCollapse}>

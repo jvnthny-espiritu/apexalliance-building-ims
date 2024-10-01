@@ -3,9 +3,11 @@ import { useParams, useLocation } from "react-router-dom";
 import FloorSection from "../components/FloorSection";
 import { AiOutlineSearch } from "react-icons/ai";
 import api from "../services/api";
+import BuildingInfo from "../components/BuildingInfo";
 
 function RoomPage() {
   const { buildingId } = useParams();
+  const [building, setBuilding] = useState(null);
   const [floors, setFloors] = useState([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -13,6 +15,15 @@ function RoomPage() {
   const location = useLocation();
 
   useEffect(() => {
+    const fetchBuildingDetails = async () => {
+      try {
+        const response = await api.get(`/building/${buildingId}`);
+        setBuilding(response.data);
+      } catch (error) {
+        console.error("Error fetching building details:", error);
+      }
+    };
+
     const fetchFloors = async () => {
       try {
         const queryParams = new URLSearchParams(location.search);
@@ -37,6 +48,7 @@ function RoomPage() {
       }
     };
 
+    fetchBuildingDetails();
     fetchFloors();
   }, [buildingId, selectedType, selectedStatus, location.search]);
 
@@ -48,61 +60,69 @@ function RoomPage() {
   }));
 
   return (
-    <div className="h-screen w-auto pb-20">
-      <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-        <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
-          <h1 className="font-bold text-md text-white">Room Catalog</h1>
-          <div className="hidden md:flex items-center space-x-4 ">
-            <TypeFilter onChange={setSelectedType} />
-            <StatusFilter onChange={setSelectedStatus} />
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search rooms..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-              />
-            </div>
-          </div>
-        </div>
+    <div>
+      <div className="flex-none mx-5 hidden md:block md:my-36 md:mx-10 md:mb-4 ">
+        {building && <BuildingInfo building={building} />}
       </div>
-
-      <div className="pt-24"> 
-        {/*MOBILE RESPONSIVENESS*/}
-        <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
-          <div className="flex space-x-4 mb-4">
-            <div className="relative">
-              <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
-              <input
-                type="text"
-                placeholder="Search rooms..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg"
-              />
+      <div className="h-screen w-auto pb-20">
+        <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
+          <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
+            <h1 className="font-bold text-md text-white">Room Catalog</h1>
+            <div className="hidden  md:flex items-center space-x-4 ">
+              <TypeFilter onChange={setSelectedType} />
+              <StatusFilter onChange={setSelectedStatus} />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search rooms..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-            <TypeFilter onChange={setSelectedType} />
-            <StatusFilter onChange={setSelectedStatus} />
           </div>
         </div>
 
-        <div className="mx-3">
-          {filteredFloors.length > 0 ? (
-            filteredFloors.map((floor, index) => (
-              <FloorSection
-                key={index}
-                floorName={floor.buildingFloor}
-                rooms={floor.rooms}
-                selectedType={selectedType}
-                selectedStatus={selectedStatus}
-              />
-            ))
-          ) : (
-            <p>No rooms found for this building.</p>
-          )}
+        <div className="mt-28">
+          {/*MOBILE RESPONSIVENESS*/}
+          <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
+            <div className="flex space-x-4 mb-4">
+              <div className="relative">
+                <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
+                <input
+                  type="text"
+                  placeholder="Search rooms..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg"
+                />
+              </div>
+            </div>
+            <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
+              <TypeFilter onChange={setSelectedType} />
+              <StatusFilter onChange={setSelectedStatus} />
+            </div>
+            <div className="flex-none mx-5 md:my-36 md:mx-10 md:mb-4 ">
+              {building && <BuildingInfo building={building} />}
+            </div>
+          </div>
+
+          <div className="mx-3">
+            {filteredFloors.length > 0 ? (
+              filteredFloors.map((floor, index) => (
+                <FloorSection
+                  key={index}
+                  floorName={floor.buildingFloor}
+                  rooms={floor.rooms}
+                  selectedType={selectedType}
+                  selectedStatus={selectedStatus}
+                />
+              ))
+            ) : (
+              <p>No rooms found for this building.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

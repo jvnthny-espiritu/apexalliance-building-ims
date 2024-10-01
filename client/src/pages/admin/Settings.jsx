@@ -171,8 +171,7 @@ const UserAccount = () => {
                   id="email"
                   value={user.email}
                   onChange={(e) => setUser({ ...user, email: e.target.value })}
-                  className="mt-2 bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 dark:bg-primary dark:black dark:text-black dark:focus:black dark:focus:border-black"
-                  required
+                  className="mt-2 bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
                 />
               </div>
             </div>
@@ -187,7 +186,7 @@ const UserAccount = () => {
                     id="new_password"
                     value={user.password}
                     onChange={(e) => setUser({ ...user, password: e.target.value })}
-                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:black dark:text-black dark:focus:black dark:focus:border-black"
+                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
                     placeholder="New password"
                   />
                   <button
@@ -211,7 +210,7 @@ const UserAccount = () => {
                     id="confirm_password"
                     value={user.confirmPassword}
                     onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
-                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 dark:bg-black-pearl-950 dark:black dark:text-black dark:focus:black dark:focus:border-black"
+                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
                     placeholder="Confirm password"
                   />
                   <button
@@ -229,14 +228,14 @@ const UserAccount = () => {
               <div className="flex">
                 <button
                   type="button"
-                  className="bg-transparent border border-black text-black text-sm rounded-lg p-2.5 mr-4 dark:bg-black-pearl-950 dark:black dark:focus:black dark:focus:border-black hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-black dark:hover:border-black"
+                  className="bg-transparent border border-black text-black text-sm rounded-lg p-2.5 mr-4 "
                   onClick={resetForm}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-transparent border border-black text-black text-sm rounded-lg p-2.5 dark:bg-black-pearl-950 dark:black  dark:focus:black dark:focus:border-black hover:bg-gray-200 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-black dark:hover:border-black"
+                  className="bg-transparent border border-black text-black text-sm rounded-lg p-2.5"
                 >
                   Save
                 </button>
@@ -457,7 +456,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             {filteredUsers.map((user) => (
               <div
                 key={user._id}
-                className="border rounded-lg p-4 bg-black shadow relative"
+                className="border rounded-lg p-4 bg-white shadow relative"
               >
                 {/* Dropdown menu */}
                 <div className="absolute top-4 right-2">
@@ -468,7 +467,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                     <FaEllipsisV />
                   </button>
                   {dropdownOpen === user._id && (
-                    <div className="absolute right-0 mt-2 w-28 bg-black border border-gray-300 rounded-lg shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                       <ul className="py-1">
                         <li>
                           <button
@@ -554,13 +553,13 @@ const Settings = () => {
 
       {/* Mobile Navigation */}
       <div className="block md:hidden overflow-x-hidden sticky top-0">
-        <div className="flex flex-col mx-4 mb-10 bg-primary">
+        <div className="flex flex-col mx-4 mb-10 bg-white">
           <nav className="border-b border-black">
             <ul className="pl-5 pr-5 flex text-black font-semibold justify-between space-x-3">
               <li
-                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-black hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
                   selectedItem === "account"
-                    ? "bg-black bg-opacity-5 border-b-2"
+                    ? "bg-white bg-opacity-5 border-b-2"
                     : ""
                 }`}
                 onClick={() => handleItemClick("account")}
@@ -570,9 +569,9 @@ const Settings = () => {
                 </Link>
               </li>
               <li
-                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-black hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-primary hover:bg-opacity-5 ${
                   selectedItem === "manageuser"
-                    ? "bg-black bg-opacity-5 border-b-2"
+                    ? "bg-white bg-opacity-5 border-b-2"
                     : ""
                 }`}
                 onClick={() => handleItemClick("manageuser")}
@@ -601,9 +600,9 @@ const Settings = () => {
           <nav className="flex-shrink-0 md:w-1/6 py-3 px-2 border-r border-black">
             <ul className="text-black font-semibold">
               <li
-                className={`flex mt-3 py-2 pl-2 hover:bg-primary hover:bg-opacity-10 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-10 ${
                   selectedItem === "account"
-                    ? "bg-primary bg-opacity-75 border-l-4 border-primary text-white"
+                    ? "bg-white bg-opacity-75 border-l-4 border-primary text-white"
                     : ""
                 }`}
                 onClick={() => handleItemClick("account")}
@@ -613,9 +612,9 @@ const Settings = () => {
                 </Link>
               </li>
               <li
-                className={`flex mt-3 py-2 pl-2 hover:bg-primary hover:bg-opacity-10 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-10 ${
                   selectedItem === "manageuser"
-                    ? "bg-primary bg-opacity-75 border-l-4 border-primary text-white"
+                    ? "bg-white bg-opacity-75 border-l-4 border-primary text-white"
                     : ""
                 }`}
                 onClick={() => handleItemClick("manageuser")}
