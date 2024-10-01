@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch } from "react-icons/ai"; 
 import BuildingCard from "../components/BuildingCard";
+import AddButton from "../components/AddButton";
 import api from "../services/api";
 
 function BuildingPage() {
@@ -65,12 +66,16 @@ function BuildingPage() {
     navigate(`/rooms/${building.id}`);
   };
 
+  const handleAddBuilding = () => {
+    navigate("/add-building"); 
+  };
+
   return (
     <div className="h-screen w-auto pb-20 mt-16">
       <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
         <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
           <h1 className="font-bold text-md text-white">Building Catalog</h1>
-          <div className="hidden md:flex items-center space-x-4 ">
+          <div className="hidden md:flex items-center space-x-4">
             <PurposeFilter onChange={setSelectedPurpose} />
             <CampusFilter
               campuses={campuses}
@@ -91,7 +96,7 @@ function BuildingPage() {
       </div>
       <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
         <div className="flex space-x-4 mb-4 sticky top-0">
-          <div className="relative ">
+          <div className="relative">
             <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
@@ -111,18 +116,23 @@ function BuildingPage() {
           />
         </div>
       </div>
-      <div className="flex flex-wrap md:justify-center lg:justify-normal mx-8 md:mt-24">
-        {filteredBuildings.length === 0 && (
-          <p className="text-white">No buildings found.</p>
-        )}
-        {filteredBuildings.map((building, index) => (
-          <div className="flex-none mx-2 md:mb-4" key={index}>
-            <BuildingCard
-              building={building}
-              onClick={() => handleBuildingClick(building)}
-            />
-          </div>
-        ))}
+      <div className="relative mx-8 md:mt-24">
+        <div className="absolute top-0 right-0 mt-4 mr-4">
+          <AddButton onClick={handleAddBuilding} />
+        </div>
+        <div className="flex flex-wrap">
+          {filteredBuildings.length === 0 && (
+            <p className="text-white">No buildings found.</p>
+          )}
+          {filteredBuildings.map((building, index) => (
+            <div className="flex-none mx-2 md:mb-4" key={index}>
+              <BuildingCard
+                building={building}
+                onClick={() => handleBuildingClick(building)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
