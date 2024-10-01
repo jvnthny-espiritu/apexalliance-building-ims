@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import FloorSection from "../components/FloorSection";
 import { AiOutlineSearch } from "react-icons/ai";
+import { FaArrowLeft } from "react-icons/fa"; // Back icon from react-icons
 import api from "../services/api";
-import BuildingInfo from "../components/BuildingInfo";
+import AddButton from "../components/AddButton";
 
 function RoomPage() {
   const { buildingId } = useParams();
@@ -13,6 +14,7 @@ function RoomPage() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate(); // To handle navigation
 
   useEffect(() => {
     const fetchBuildingDetails = async () => {
@@ -59,71 +61,65 @@ function RoomPage() {
     ),
   }));
 
+  const handleAddRoom = () => {
+    console.log("Add Room button clicked");
+    // Logic for adding a room
+  };
+
+  const handleBack = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
+
   return (
-    <div>
-      <div className="flex-none mx-5 hidden md:block md:my-36 md:mx-10 md:mb-4 ">
-        {building && <BuildingInfo building={building} />}
+    <div className="h-screen w-auto pb-20">
+      <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
+        <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
+        <div className="flex items-center space-x-6">
+  {/* Back Button */}
+  <button 
+    onClick={handleBack} 
+    className="mx-10 bg-red-600 text-white font-bold text-xl hover:bg-white hover:border hover:border-gray-300 hover:text-red-600 px-4 py-0 rounded-full transition-all duration-300 flex items-center"
+  >
+    <FaArrowLeft className="mr-2" /> Back
+  </button>
+</div>
+
+          <div className="hidden md:flex items-center space-x-4">
+            <TypeFilter onChange={setSelectedType} />
+            <StatusFilter onChange={setSelectedStatus} />
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search rooms..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="h-screen w-auto pb-20">
-        <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-          <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
-            <h1 className="font-bold text-md text-white">Room Catalog</h1>
-            <div className="hidden  md:flex items-center space-x-4 ">
-              <TypeFilter onChange={setSelectedType} />
-              <StatusFilter onChange={setSelectedStatus} />
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search rooms..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-                />
-              </div>
-            </div>
-          </div>
+
+      <div className="pt-24 mx-6">
+        {/* Add Room button positioned before the floor section */}
+        <div className="flex justify-end mt-8 mb-4">
+          <AddButton onClick={handleAddRoom} />
         </div>
 
-        <div className="mt-28">
-          {/*MOBILE RESPONSIVENESS*/}
-          <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
-            <div className="flex space-x-4 mb-4">
-              <div className="relative">
-                <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
-                <input
-                  type="text"
-                  placeholder="Search rooms..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg"
-                />
-              </div>
-            </div>
-            <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-              <TypeFilter onChange={setSelectedType} />
-              <StatusFilter onChange={setSelectedStatus} />
-            </div>
-            <div className="flex-none mx-5 md:my-36 md:mx-10 md:mb-4 ">
-              {building && <BuildingInfo building={building} />}
-            </div>
-          </div>
-
-          <div className="mx-3">
-            {filteredFloors.length > 0 ? (
-              filteredFloors.map((floor, index) => (
-                <FloorSection
-                  key={index}
-                  floorName={floor.buildingFloor}
-                  rooms={floor.rooms}
-                  selectedType={selectedType}
-                  selectedStatus={selectedStatus}
-                />
-              ))
-            ) : (
-              <p>No rooms found for this building.</p>
-            )}
-          </div>
-        </div>
+        {/* Floor sections */}
+        {filteredFloors.length > 0 ? (
+          filteredFloors.map((floor, index) => (
+            <FloorSection
+              key={index}
+              floorName={floor.buildingFloor}
+              rooms={floor.rooms}
+              selectedType={selectedType}
+              selectedStatus={selectedStatus}
+            />
+          ))
+        ) : (
+          <p>No rooms found for this building.</p>
+        )}
       </div>
     </div>
   );
