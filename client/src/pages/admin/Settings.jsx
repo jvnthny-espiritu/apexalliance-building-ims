@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -20,12 +20,12 @@ const UserAccount = () => {
 
   const resetForm = () => {
     setUser({
-      ...user, 
+      ...user,
       password: "",
       confirmPassword: "",
     });
-    setSuccessMessage("");  
-    setApiError("");        
+    setSuccessMessage("");
+    setApiError("");
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -63,11 +63,12 @@ const UserAccount = () => {
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
   const [successMessage, setSuccessMessage] = useState("");
   const [apiError, setApiError] = useState("");
 
-    const handleUpdate = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
 
     if (user.password && user.password !== user.confirmPassword) {
@@ -78,7 +79,7 @@ const UserAccount = () => {
       setApiError("New password must be at least 8 characters long.");
       return;
     }
-  
+
     try {
       const response = await api.put(`/user/${user.id}`, {
         email: user.email,
@@ -90,23 +91,23 @@ const UserAccount = () => {
       });
 
       if (response.data.success) {
-        setSuccessMessage('Profile updated successfully!');
-        setApiError(""); 
+        setSuccessMessage("Profile updated successfully!");
+        setApiError("");
       } else {
-        setApiError('Failed to update profile.');
-        setSuccessMessage(""); 
+        setApiError("Failed to update profile.");
+        setSuccessMessage("");
       }
     } catch (error) {
-      console.error('Error updating user:', error);
-      setApiError('An error occurred while updating the profile.');
-      setSuccessMessage(""); 
+      console.error("Error updating user:", error);
+      setApiError("An error occurred while updating the profile.");
+      setSuccessMessage("");
     }
   };
 
   useEffect(() => {
     if (apiError) {
       const timer = setTimeout(() => {
-        setApiError(""); 
+        setApiError("");
       }, 3000);
 
       return () => clearTimeout(timer);
@@ -120,7 +121,7 @@ const UserAccount = () => {
         <p className="text-sm mb-2 text-gray-500">Account information</p>
         <hr className="mb-2 w-full mr-5" />
 
-         {successMessage && (
+        {successMessage && (
           <div className="fixed top-4 right-4 bg-green-500 text-black p-4 rounded shadow-md z-20">
             {successMessage}
             <button
@@ -147,18 +148,30 @@ const UserAccount = () => {
           <form onSubmit={handleUpdate}>
             <div className="grid gap-6 mb-7 md:grid-cols-2">
               <div>
-                <label htmlFor="first_name" className="block text-lg font-bold text-black">
+                <label
+                  htmlFor="first_name"
+                  className="block text-lg font-bold text-black"
+                >
                   First Name
                 </label>
-                <div id="first_name" className="text-black text-md rounded-lg block w-full p-2.5">
+                <div
+                  id="first_name"
+                  className="text-black text-md rounded-lg block w-full p-2.5"
+                >
                   {user.firstName}
                 </div>
               </div>
               <div>
-                <label htmlFor="last_name" className="block text-lg font-bold text-black">
+                <label
+                  htmlFor="last_name"
+                  className="block text-lg font-bold text-black"
+                >
                   Last Name
                 </label>
-                <div id="last_name" className="text-black text-md rounded-lg block w-full p-2.5">
+                <div
+                  id="last_name"
+                  className="text-black text-md rounded-lg block w-full p-2.5"
+                >
                   {user.lastName}
                 </div>
               </div>
@@ -177,7 +190,10 @@ const UserAccount = () => {
             </div>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
               <div>
-                <label htmlFor="new_password" className="block mb-2 text-lg font-bold text-black">
+                <label
+                  htmlFor="new_password"
+                  className="block mb-2 text-lg font-bold text-black"
+                >
                   New Password
                 </label>
                 <div className="relative">
@@ -185,23 +201,31 @@ const UserAccount = () => {
                     type={showPassword ? "text" : "password"}
                     id="new_password"
                     value={user.password}
-                    onChange={(e) => setUser({ ...user, password: e.target.value })}
-                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
+                    onChange={(e) =>
+                      setUser({ ...user, password: e.target.value })
+                    }
+                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 pr-10" // Adjusted padding-right to make space for the icon
                     placeholder="New password"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-gray-500 focus:outline-none"
                     onClick={togglePasswordVisibility}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
-                  <p className="text-sm">• Must be at least 8 characters long.</p>
                 </div>
+                <p className="text-sm mt-1">
+                  • Must be at least 8 characters long.
+                </p>{" "}
+                {/* Added margin-top to separate the text */}
               </div>
 
               <div>
-                <label htmlFor="confirm_password" className="block mb-2 text-lg font-bold text-black">
+                <label
+                  htmlFor="confirm_password"
+                  className="block mb-2 text-lg font-bold text-black"
+                >
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -209,13 +233,15 @@ const UserAccount = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     id="confirm_password"
                     value={user.confirmPassword}
-                    onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
-                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
+                    onChange={(e) =>
+                      setUser({ ...user, confirmPassword: e.target.value })
+                    }
+                    className="bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 pr-10" // Adjusted padding-right to make space for the icon
                     placeholder="Confirm password"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 focus:outline-none"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-gray-500 focus:outline-none"
                     onClick={toggleConfirmPasswordVisibility}
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -257,7 +283,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(null); 
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
   const toggleAddUserModalLocal = () => {
@@ -286,7 +312,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const handleUserUpdate = async () => {
     await fetchUsers(); // Fetch the latest list of users from the server
   };
-  
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -300,7 +326,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const deleteUser = async (userId) => {
     try {
       const response = await api.delete(`/user/${userId}`);
-      if (response.status === 200) { 
+      if (response.status === 200) {
         setUsers(users.filter((user) => user._id !== userId));
 
         setSuccessMessage("User deleted successfully!");
@@ -343,7 +369,10 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
         {successMessage && (
           <div className="fixed top-4 right-4 bg-green-500 text-black p-4 rounded shadow-md z-20">
             {successMessage}
-            <button onClick={() => setSuccessMessage("")} className="ml-4 text-lg font-bold">
+            <button
+              onClick={() => setSuccessMessage("")}
+              className="ml-4 text-lg font-bold"
+            >
               &times;
             </button>
           </div>
@@ -532,7 +561,6 @@ const Settings = () => {
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
   const [openEditUserModal, setOpenEditUserModal] = useState(false);
 
-
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
@@ -557,9 +585,9 @@ const Settings = () => {
           <nav className="border-b border-black">
             <ul className="pl-5 pr-5 flex text-black font-semibold justify-between space-x-3">
               <li
-                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-white hover:bg-opacity-5 ${
+                className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-primary hover:bg-opacity-5 ${
                   selectedItem === "account"
-                    ? "bg-white bg-opacity-5 border-b-2"
+                    ? "bg-primary bg-opacity-5 border-b-2"
                     : ""
                 }`}
                 onClick={() => handleItemClick("account")}
@@ -571,7 +599,7 @@ const Settings = () => {
               <li
                 className={`flex mt-3 py-2 pr-4 rounded-lg rounded-b-none hover:bg-primary hover:bg-opacity-5 ${
                   selectedItem === "manageuser"
-                    ? "bg-white bg-opacity-5 border-b-2"
+                    ? "bg-primary bg-opacity-5 border-b-2"
                     : ""
                 }`}
                 onClick={() => handleItemClick("manageuser")}
@@ -600,9 +628,9 @@ const Settings = () => {
           <nav className="flex-shrink-0 md:w-1/6 py-3 px-2 border-r border-black">
             <ul className="text-black font-semibold">
               <li
-                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-10 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-primary hover:bg-opacity-10 hover:text-black ${
                   selectedItem === "account"
-                    ? "bg-white bg-opacity-75 border-l-4 border-primary text-white"
+                    ? "bg-primary bg-opacity-75 border-l-4 border-primary text-white"
                     : ""
                 }`}
                 onClick={() => handleItemClick("account")}
@@ -612,9 +640,9 @@ const Settings = () => {
                 </Link>
               </li>
               <li
-                className={`flex mt-3 py-2 pl-2 hover:bg-white hover:bg-opacity-10 ${
+                className={`flex mt-3 py-2 pl-2 hover:bg-primary hover:bg-opacity-10 hover:text-black ${
                   selectedItem === "manageuser"
-                    ? "bg-white bg-opacity-75 border-l-4 border-primary text-white"
+                    ? "bg-primary bg-opacity-75 border-l-4 border-primary text-white"
                     : ""
                 }`}
                 onClick={() => handleItemClick("manageuser")}
