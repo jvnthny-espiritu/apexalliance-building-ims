@@ -13,12 +13,12 @@ export default function Sidebar() {
 		navigate('/login');	
 		
 	}
-	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-darkGray hover:bg-opacity-20 hover:text-gray'
+	const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-primary hover:bg-opacity-50 hover:text-black'
 	const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-100 text-white'
 
 	return (
 		<div className={`h-screen sticky top-0 transition-width ease-in-out duration-100 font-bold`}>
-			<nav className='h-full flex flex-col justify-between bg-white text-gray px-4 pt-20 w-60'>
+			<nav className='h-full flex flex-col justify-between bg-white text-darkGray px-4 pt-20 w-60'>
 				<div className='mt-5'>
 					<ul className='justify-center'>
 						<li>
@@ -52,7 +52,7 @@ export default function Sidebar() {
 						</li>
 						<li>
 						<ul className='sticky'>
-							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-white hover:bg-opacity-5'>
+							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-5'>
 								<MdExitToApp className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Logout</span>
 							</button>
