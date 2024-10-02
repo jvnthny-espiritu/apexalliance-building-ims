@@ -7,6 +7,7 @@ import { FaEllipsisV } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import AddUserModal from "../../components/modals/AddUserModal";
 import EditUserModal from "../../components/modals/EditUserModal";
+import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";
 
 const UserAccount = () => {
   const [user, setUser] = useState({
@@ -285,6 +286,8 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   const [editingUser, setEditingUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [deleteUserId, setDeleteUserId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const toggleAddUserModalLocal = () => {
     setIsAddUserOpen((prev) => !prev);
@@ -340,6 +343,35 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
     } catch (error) {
       console.error("Error deleting user:", error.message);
     }
+  };
+
+  const handleDeleteClick = (userId) => {
+    setDeleteUserId(userId);
+    setIsDeleteModalOpen(true); // Open the confirmation modal
+  };
+
+  const confirmDeleteUser = async () => {
+    try {
+      const response = await api.delete(`/user/${deleteUserId}`);
+      if (response.status === 200) {
+        setUsers(users.filter((user) => user._id !== deleteUserId));
+        setSuccessMessage("User deleted successfully!");
+
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      } else {
+        console.error("Failed to delete user:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error.message);
+    }
+    setIsDeleteModalOpen(false); // Close the confirmation modal
+  };
+
+  const cancelDelete = () => {
+    setDeleteUserId(null);
+    setIsDeleteModalOpen(false); // Close the confirmation modal
   };
 
   const toggleDropdown = (userId) => {
@@ -468,7 +500,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                     Edit
                   </button>
                   <button
-                    onClick={() => deleteUser(user._id)}
+                     onClick={() => handleDeleteClick(user._id)}
                     className="ml-2 text-red-600 hover:text-red-900"
                   >
                     Delete
@@ -508,7 +540,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                         </li>
                         <li>
                           <button
-                            onClick={() => deleteUser(user._id)}
+                             onClick={() => handleDeleteClick(user._id)}
                             className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
                           >
                             Delete
@@ -535,6 +567,14 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             ))}
           </div>
         </div>
+
+         {/* Delete Confirmation Modal */}
+          <DeleteConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onConfirm={confirmDeleteUser}
+            onCancel={cancelDelete}
+          />
+
 
         {isAddUserOpen && (
           <AddUserModal

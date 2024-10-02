@@ -17,6 +17,8 @@ function BuildingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [apiError, setApiError] = useState("");
   const [isAddBuildingOpen, setIsAddBuildingOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -80,6 +82,33 @@ function BuildingPage() {
   };
 
   return (
+    <div>
+      {/* Alert for success */}
+      {successMessage && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+          {successMessage}
+          <button
+            onClick={() => setSuccessMessage("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
+      {/* Alert for errors */}
+      {apiError && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+          {apiError}
+          <button
+            onClick={() => setApiError("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
     <div className="h-screen w-auto pb-20 mt-16">
       <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
         <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
@@ -138,6 +167,9 @@ function BuildingPage() {
               <BuildingCard
                 building={building}
                 onClick={() => handleBuildingClick(building)}
+                onDelete={(deletedId) => setBuildings(buildings.filter(b => b._id !== deletedId))}
+                setSuccessMessage={setSuccessMessage} 
+                setApiError={setApiError}
               />
             </div>
           ))}
@@ -150,6 +182,7 @@ function BuildingPage() {
           />
         )}
       </div>
+    </div>
     </div>
   );
 }
