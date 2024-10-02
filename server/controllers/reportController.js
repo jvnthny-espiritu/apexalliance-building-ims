@@ -1,8 +1,20 @@
-const { parse } = require('json2csv'); 
-const Room = require('../models/room'); 
-const Building = require('../models/building'); 
-const Campus = require('../models/campus'); 
-const Asset = require('../models/asset'); 
+const { parse } = require('json2csv');
+const Room = require('../models/room');
+const Building = require('../models/building');
+const Campus = require('../models/campus');
+const Asset = require('../models/asset');
+
+async function getCampusId(campusName) {
+    const campusData = await Campus.findOne({
+        name: new RegExp('^' + campusName.trim() + '$', 'i')
+    });
+    
+    if (campusData) {
+        return campusData._id;
+    } else {
+        return null;
+    }
+}
 
 exports.exportReport = async (req, res) => {
     try {
@@ -17,20 +29,23 @@ exports.exportReport = async (req, res) => {
             assetStatus
         } = req.query;
 
-        async function getCampusId(campusName) {
-            const campusData = await Campus.findOne({ name: campusName });
-            return campusData ? campusData._id : null;
-        }
-
         if (type === 'building') {
             let query = {};
+
             if (campusFilter) {
                 const campusId = await getCampusId(campusFilter);
                 if (campusId) {
-                    query.campus = campusId; 
+                    query.campus = campusId;
+                } else {
+                    return res.status(404).json({ message: 'Campus not found' });
                 }
             }
+
             const buildings = await Building.find(query).populate('campus', 'name');
+            if (!buildings.length) {
+                return res.status(404).json({ message: 'No buildings found for the specified campus' });
+            }
+
             const fields = ['Building Name', 'Number of Floors', 'Year Built', 'Campus'];
             const data = buildings.map(building => ({
                 'Building Name': building.name,
@@ -47,103 +62,125 @@ exports.exportReport = async (req, res) => {
 
         if (type === 'building_with_rooms') {
             let buildingQuery = {};
+
             if (campusFilter) {
                 const campusId = await getCampusId(campusFilter);
                 if (campusId) {
-                    buildingQuery.campus = campusId; 
+                    buildingQuery.campus = campusId;
+                } else {
+                    return res.status(404).json({ message: 'Campus not found' });
                 }
             }
+
+            if (buildingFilter) {
+                buildingQuery.name = buildingFilter;
+            }
+        
             const buildings = await Building.find(buildingQuery);
+            if (!buildings.length) {
+                return res.status(404).json({ message: 'No buildings found' });
+            }
+        
             const fields = ['Building Name', 'Room Name', 'Purpose', 'Room Status'];
             const data = [];
-
+        
             for (const building of buildings) {
-                const rooms = await Room.find({ building: building._id }); 
+                let roomQuery = { building: building._id };
+        
+                if (roomPurpose) roomQuery.purpose = roomPurpose.trim();
+                if (roomStatus) roomQuery.status = roomStatus.trim(); 
+        
+                const rooms = await Room.find(roomQuery);
                 rooms.forEach(room => {
                     data.push({
                         'Building Name': building.name,
                         'Room Name': room.name,
                         'Purpose': room.purpose,
-                        'Room Status': room.status,
+                        'Room Status': room.status
                     });
                 });
             }
-
-            const csv = parse(data, { fields });
-            res.header('Content-Type', 'text/csv');
-            res.attachment('buildings_with_rooms_report.csv');
-            return res.send(csv);
-        }
-
-        if (type === 'room') {
-            let roomQuery = {};
-            if (roomPurpose) roomQuery.purpose = roomPurpose;
-            if (roomStatus) roomQuery.status = roomStatus;
-
-            const rooms = await Room.find(roomQuery).populate('building');
-            const fields = ['Building Name', 'Room Name', 'Purpose', 'Room Status'];
-            const data = rooms.map(room => ({
-                'Building Name': room.building ? room.building.name : 'N/A',
-                'Room Name': room.name,
-                'Purpose': room.purpose,
-                'Room Status': room.status,
-            }));
-
+        
+            if (data.length === 0) {
+                console.log("No rooms found for the specified filters");
+                return res.status(404).json({ message: 'No rooms found for the specified filters' });
+            }
+        
             const csv = parse(data, { fields });
             res.header('Content-Type', 'text/csv');
             res.attachment('rooms_report.csv');
             return res.send(csv);
-        }
+        }                
 
         if (type === 'room_with_assets') {
-            let roomQuery = {};
-            if (roomPurpose) roomQuery.purpose = roomPurpose;
-            if (roomStatus) roomQuery.status = roomStatus;
+            let buildingQuery = {};
 
-            const rooms = await Room.find(roomQuery);
-            const fields = ['Room Name', 'Asset Name', 'Category', 'Condition', 'Status'];
-            const data = [];
-
-            for (const room of rooms) {
-                const assets = await Asset.find({ location: room._id }); 
-                assets.forEach(asset => {
-                    data.push({
-                        'Room Name': room.name,
-                        'Asset Name': asset.name,
-                        'Category': asset.category,
-                        'Condition': asset.condition,
-                        'Status': asset.status,
-                    });
-                });
+            if (campusFilter) {
+                const campusId = await getCampusId(campusFilter);
+                if (campusId) {
+                    buildingQuery.campus = campusId;
+                } else {
+                    console.log(`Campus "${campusFilter}" not found`);
+                    return res.status(404).json({ message: 'Campus not found' });
+                }
+            }
+        
+            if (buildingFilter) {
+                buildingQuery.name = buildingFilter;
             }
 
-            const csv = parse(data, { fields });
-            res.header('Content-Type', 'text/csv');
-            res.attachment('rooms_with_assets_report.csv');
-            return res.send(csv);
-        }
+        
+            const building = await Building.findOne(buildingQuery);
+            if (!building) {
+                return res.status(404).json({ message: 'Building not found' });
+            }
+        
+            let roomQuery = { building: building._id };
 
-        if (type === 'asset') {
-            let assetQuery = {};
-            if (assetCategory) assetQuery.category = assetCategory;
-            if (assetCondition) assetQuery.condition = assetCondition;
-            if (assetStatus) assetQuery.status = assetStatus;
-
-            const assets = await Asset.find(assetQuery).populate('location'); 
+            if (req.query.room) {
+                roomQuery.name = req.query.room.trim(); 
+            }
+        
+            const rooms = await Room.find(roomQuery);
+            if (!rooms.length) {
+                console.log("Room not found for query:", roomQuery);
+                return res.status(404).json({ message: 'Room not found' });
+            }
+        
+            let data = [];
+            for (const room of rooms) {
+                let assetQuery = { location: room._id };
+        
+                if (assetCategory) assetQuery.category = assetCategory.trim();
+                if (assetCondition) assetQuery.condition = assetCondition.trim();
+                if (assetStatus) assetQuery.status = assetStatus.trim(); 
+        
+                const assets = await Asset.find(assetQuery);
+        
+                if (assets.length > 0) {
+                    assets.forEach(asset => {
+                        data.push({
+                            'Room Name': room.name,
+                            'Asset Name': asset.name,
+                            'Category': asset.category,
+                            'Condition': asset.condition,
+                            'Status': asset.status
+                        });
+                    });
+                }
+            }
+        
+            if (data.length === 0) {
+                console.log("No assets found for the specified filters");
+                return res.status(404).json({ message: 'No assets found for the specified filters' });
+            }
+        
             const fields = ['Room Name', 'Asset Name', 'Category', 'Condition', 'Status'];
-            const data = assets.map(asset => ({
-                'Room Name': asset.location ? asset.location.name : 'N/A',
-                'Asset Name': asset.name,
-                'Category': asset.category,
-                'Condition': asset.condition,
-                'Status': asset.status,
-            }));
-
             const csv = parse(data, { fields });
             res.header('Content-Type', 'text/csv');
             res.attachment('assets_report.csv');
             return res.send(csv);
-        }
+        }                                        
 
         return res.status(400).json({ message: 'Invalid report type specified.' });
 
