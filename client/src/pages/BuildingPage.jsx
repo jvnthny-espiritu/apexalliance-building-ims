@@ -5,6 +5,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
+import AddBuildingModal from "../components/modals/AddBuildingModal";
+
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
@@ -15,7 +17,12 @@ function BuildingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isAddBuildingOpen, setIsAddBuildingOpen] = useState(false);
   const navigate = useNavigate();
+
+  const toggleAddBuildingModalLocal = () => {
+    setIsAddBuildingOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     const fetchCampuses = async () => {
@@ -36,28 +43,29 @@ function BuildingPage() {
   }, []);
 
   useEffect(() => {
-    const fetchBuildings = async () => {
-      try {
-        setLoading(true);
-        let apiUrl = "/building?";
-        if (selectedPurpose) {
-          apiUrl += `&purpose=${selectedPurpose}`;
-        }
-        if (selectedCampus) {
-          apiUrl += `&campus=${selectedCampus}`;
-        }
-        const response = await api.get(apiUrl);
-        setBuildings(response.data);
-      } catch (error) {
-        console.error("Error fetching buildings:", error);
-        setError("Error fetching buildings");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBuildings();
   }, [selectedPurpose, selectedCampus]);
 
+  const fetchBuildings = async () => {
+    try {
+      setLoading(true);
+      let apiUrl = "/building?";
+      if (selectedPurpose) {
+        apiUrl += `&purpose=${selectedPurpose}`;
+      }
+      if (selectedCampus) {
+        apiUrl += `&campus=${selectedCampus}`;
+      }
+      const response = await api.get(apiUrl);
+      setBuildings(response.data);
+    } catch (error) {
+      console.error("Error fetching buildings:", error);
+      setError("Error fetching buildings");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const filteredBuildings = buildings.filter((building) =>
     building.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -67,7 +75,8 @@ function BuildingPage() {
   };
 
   const handleAddBuilding = () => {
-    navigate("/add-building"); 
+    fetchBuildings(); 
+    toggleAddBuildingModalLocal(); 
   };
 
   return (
@@ -118,7 +127,7 @@ function BuildingPage() {
       </div>
       <div className="relative mx-8 md:mt-24">
         <div className="absolute top-0 right-0 mt-4 mr-4">
-          <AddButton onClick={handleAddBuilding} />
+           <AddButton onClick={toggleAddBuildingModalLocal} />
         </div>
         <div className="flex flex-wrap">
           {filteredBuildings.length === 0 && (
@@ -133,6 +142,13 @@ function BuildingPage() {
             </div>
           ))}
         </div>
+        {isAddBuildingOpen && (
+          <AddBuildingModal
+            isOpen={isAddBuildingOpen}
+            toggleModal={toggleAddBuildingModalLocal}
+            onBuildingAdded={handleAddBuilding}
+          />
+        )}
       </div>
     </div>
   );

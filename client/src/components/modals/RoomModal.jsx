@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import api from "../../services/api.js";
+import AddButton from "../AddButton"; 
+import AddAssetModal from '../modals/AddAssetModal'; 
 
-const RoomModal = ({ room, toggleModal }) => {
+const RoomModal = ({ room, toggleModal, onAddAsset }) => { 
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
 
   const colors = {
     laboratory: "bg-room-use-laboratory",
@@ -97,47 +100,48 @@ const RoomModal = ({ room, toggleModal }) => {
     (asset) => asset.type === "Appliances"
   );
 
+  const toggleAssetModal = () => {
+    setAssetModalOpen((prev) => !prev);
+  };
+
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50">
       <div className="relative bg-white text-darkGray p-6 sm:p-8 rounded-lg w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl max-h-[80vh] overflow-y-auto">
-        <button
-          className="absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-darkGray text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50"
-          onClick={toggleModal}
-        >
-          x
+      <button
+      className={`absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-darkGray text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50 ${isAssetModalOpen ? 'hidden' : ''}`}
+      onClick={toggleModal}>
+        x
         </button>
 
+
         <h2 className="text-3xl text-black sm:text-4xl lg:text-5xl font-bold mb-4">{room.name}</h2>
-        <div className="mb-4">
-          <p className="mb-2 text-sm sm:text-base">Dimension: {room.dimension}</p>
-          <div className="flex flex-wrap">
-            <p className="mr-2">Type:</p>
-            <p
-              className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${
-                room.type && colors.hasOwnProperty(room.type.toLowerCase())
-                  ? colors[room.type.toLowerCase()]
-                  : ""
-              }`}
-            >
-              {room.type}
-            </p>
+        <div className="mb-4 flex justify-between items-center">
+          <div>
+            <p className="mb-2 text-sm sm:text-base">Dimension: {room.dimension}</p>
+            <div className="flex flex-wrap">
+              <p className="mr-2">Type:</p>
+              <p
+                className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${room.type && colors.hasOwnProperty(room.type.toLowerCase()) ? colors[room.type.toLowerCase()] : ""}`}
+              >
+                {room.type}
+              </p>
+            </div>
+            <div className="flex flex-wrap">
+              <p className="mr-2">Status:</p>
+              <p
+                className={`px-3 py-1 text-white text-center mb-2 rounded-xl ${room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ""}`}
+              >
+                {room.status}
+              </p>
+            </div>
           </div>
-          <div className="flex flex-wrap">
-            <p className="mr-2">Status:</p>
-            <p
-              className={`px-3 py-1 text-white text-center mb-2 rounded-xl ${
-                room.status && colors.hasOwnProperty(room.status.toLowerCase())
-                  ? colors[room.status.toLowerCase()]
-                  : ""
-              }`}
-            >
-              {room.status}
-            </p>
-          </div>
+
+        
+          <AddButton onClick={toggleAssetModal} />
         </div>
 
         <hr className="border-darkGray w-full mt-4 mb-4" />
-        <p className=" text-black text-2xl sm:text-3xl lg:text-4xl mt-4">Assets</p>
+        <p className="text-black text-2xl sm:text-3xl lg:text-4xl mt-4">Assets</p>
         <div className="mt-4">
           <div className="relative mb-4">
             <input
@@ -145,7 +149,7 @@ const RoomModal = ({ room, toggleModal }) => {
               placeholder="Search assets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-darkGray text-black rounded-md px-10 py-1 pl-10 focus:outline-none focus:border-blue-500  w-full"
+              className="border border-darkGray text-black rounded-md px-10 py-1 pl-10 focus:outline-none focus:border-blue-500 w-full"
             />
             <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
@@ -199,12 +203,12 @@ const RoomModal = ({ room, toggleModal }) => {
                     <table className="text-black w-full">
                       <tbody>
                         <tr className="bg-primary text-white uppercase">
-                          <th scope className="col px-3 sm:px-6 py-2 ">Name</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Type</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Quantity</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Serial Number</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Purchased Date</th>
-                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th className="col px-3 sm:px-6 py-2">Name</th>
+                          <th className="col px-3 sm:px-6 py-2">Type</th>
+                          <th className="col px-3 sm:px-6 py-2">Quantity</th>
+                          <th className="col px-3 sm:px-6 py-2">Serial Number</th>
+                          <th className="col px-3 sm:px-6 py-2">Purchased Date</th>
+                          <th className="col px-3 sm:px-6 py-2">Condition</th>
                         </tr>
                         {renderFurnitureRows(furnitureAssets)}
                       </tbody>
@@ -219,14 +223,14 @@ const RoomModal = ({ room, toggleModal }) => {
                   <div className="overflow-x-auto">
                     <table className="text-black w-full">
                       <tbody>
-                        <tr className="bg-primary text-white uppercase ">
-                          <th scope className="col px-3 sm:px-6 py-2 ">Name</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Type</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Quantity</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Serial Number</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Purchased Date</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Condition</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Electric Consumption</th>
+                        <tr className="bg-primary text-white uppercase">
+                          <th className="col px-3 sm:px-6 py-2">Name</th>
+                          <th className="col px-3 sm:px-6 py-2">Type</th>
+                          <th className="col px-3 sm:px-6 py-2">Quantity</th>
+                          <th className="col px-3 sm:px-6 py-2">Serial Number</th>
+                          <th className="col px-3 sm:px-6 py-2">Purchased Date</th>
+                          <th className="col px-3 sm:px-6 py-2">Condition</th>
+                          <th className="col px-3 sm:px-6 py-2">Electric Consumption</th>
                         </tr>
                         {renderAppliancesRows(applianceAssets)}
                       </tbody>
@@ -241,6 +245,17 @@ const RoomModal = ({ room, toggleModal }) => {
             </>
           )}
         </div>
+
+        <AddAssetModal 
+        isOpen={isAssetModalOpen} 
+        toggleModal={toggleAssetModal} 
+        onAssetAdded={() => {
+          setSelectedType(''); 
+          setSelectedCondition(''); 
+          setSelectedDate(''); 
+          toggleModal();
+  }} 
+/>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaArrowLeft } from "react-icons/fa";
 import api from "../services/api";
 import AddButton from "../components/AddButton";
+import AddRoomModal from "../components/modals/AddRoomModal";
 
 function RoomPage() {
   const { buildingId } = useParams();
@@ -13,38 +14,43 @@ function RoomPage() {
   const [selectedType, setSelectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  const toggleAddRoomModalLocal = () => {
+    setIsAddRoomOpen((prev) => !prev);
+  };
+
+  const fetchBuildingDetails = async () => {
+    try {
+      const response = await api.get(`/building/${buildingId}`);
+      setBuilding(response.data);
+    } catch (error) {
+      console.error("Error fetching building details:", error);
+    }
+  };
+
+  const fetchFloors = async () => {
+    try {
+      const queryParams = new URLSearchParams(location.search);
+      let apiUrl = `/building/${buildingId}/rooms`;
+
+      if (selectedType) apiUrl += `?type=${selectedType}`;
+      if (selectedStatus) apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
+
+      const response = await api.get(apiUrl);
+      const floorsArray = Object.keys(response.data).map((floorNumber) => ({
+        buildingFloor: parseInt(floorNumber),
+        rooms: response.data[floorNumber],
+      }));
+      setFloors(floorsArray);
+    } catch (error) {
+      console.error("Error fetching floors:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchBuildingDetails = async () => {
-      try {
-        const response = await api.get(`/building/${buildingId}`);
-        setBuilding(response.data);
-      } catch (error) {
-        console.error("Error fetching building details:", error);
-      }
-    };
-
-    const fetchFloors = async () => {
-      try {
-        const queryParams = new URLSearchParams(location.search);
-        let apiUrl = `/building/${buildingId}/rooms`;
-
-        if (selectedType) apiUrl += `?type=${selectedType}`;
-        if (selectedStatus) apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
-
-        const response = await api.get(apiUrl);
-        const floorsArray = Object.keys(response.data).map((floorNumber) => ({
-          buildingFloor: parseInt(floorNumber),
-          rooms: response.data[floorNumber],
-        }));
-        setFloors(floorsArray);
-      } catch (error) {
-        console.error("Error fetching floors:", error);
-      }
-    };
-
     fetchBuildingDetails();
     fetchFloors();
   }, [buildingId, selectedType, selectedStatus, location.search]);
@@ -57,8 +63,8 @@ function RoomPage() {
   }));
 
   const handleAddRoom = () => {
-    console.log("Add Room button clicked");
-    // Logic for adding a room
+    toggleAddRoomModalLocal();
+    fetchFloors(); 
   };
 
   const handleBack = () => {
@@ -76,8 +82,15 @@ function RoomPage() {
       />
       <div className="pt-24 mx-6">
         <div className="hidden md:flex justify-end mt-8 mb-4">
-          <AddButton onClick={handleAddRoom} />
+          <AddButton onClick={toggleAddRoomModalLocal} />
         </div>
+        {isAddRoomOpen && (
+          <AddRoomModal
+            isOpen={isAddRoomOpen}
+            toggleModal={toggleAddRoomModalLocal}
+            onRoomAdded={handleAddRoom}
+          />
+        )}
         <MobileFilters
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
