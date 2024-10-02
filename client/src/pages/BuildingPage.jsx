@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineSearch } from "react-icons/ai"; 
+import { AiOutlineSearch } from "react-icons/ai";
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
@@ -38,23 +38,28 @@ function BuildingPage() {
   useEffect(() => {
     const fetchBuildings = async () => {
       try {
-        setLoading(true);
-        let apiUrl = "/building?";
-        if (selectedPurpose) {
-          apiUrl += `&purpose=${selectedPurpose}`;
-        }
-        if (selectedCampus) {
-          apiUrl += `&campus=${selectedCampus}`;
-        }
-        const response = await api.get(apiUrl);
-        setBuildings(response.data);
+          setLoading(true);
+          let apiUrl = "/building?";
+          if (selectedPurpose) {
+              apiUrl += `purpose=${selectedPurpose}`; // Ensure this line is correct
+          }
+          if (selectedCampus) {
+              apiUrl += `&campus=${selectedCampus}`; // Ensure this line is correct
+          }
+          
+          console.log("Fetching buildings from:", apiUrl); // Debug URL
+          const response = await api.get(apiUrl);
+          
+          console.log("Buildings fetched:", response.data); // Log the fetched buildings
+          setBuildings(response.data);
       } catch (error) {
-        console.error("Error fetching buildings:", error);
-        setError("Error fetching buildings");
+          console.error("Error fetching buildings:", error);
+          setError("Error fetching buildings");
       } finally {
-        setLoading(false);
+          setLoading(false);
       }
-    };
+  };
+  
     fetchBuildings();
   }, [selectedPurpose, selectedCampus]);
 
@@ -121,19 +126,20 @@ function BuildingPage() {
           <AddButton onClick={handleAddBuilding} />
         </div>
         <div className="flex flex-wrap">
-          {filteredBuildings.length === 0 && (
-            <p className="text-white">No buildings found.</p>
-          )}
-          {filteredBuildings.map((building, index) => (
-            <div className="flex-none mx-2 md:mb-4" key={index}>
-              <BuildingCard
-                building={building}
-                onClick={() => handleBuildingClick(building)}
-              />
+                {filteredBuildings.length === 0 ? (
+                    <p className="text-white">No buildings found for the selected filters.</p>
+                ) : (
+                    filteredBuildings.map((building, index) => (
+                        <div className="flex-none mx-2 md:mb-4" key={index}>
+                            <BuildingCard
+                                building={building}
+                                onClick={() => handleBuildingClick(building)}
+                            />
+                        </div>
+                    ))
+                )}
             </div>
-          ))}
         </div>
-      </div>
     </div>
   );
 }
@@ -159,8 +165,9 @@ function CampusFilter({ campuses, selectedCampus, onChange }) {
 
 function PurposeFilter({ onChange }) {
   const handlePurposeChange = (e) => {
+    console.log("Selected Purpose:", e.target.value); 
     onChange(e.target.value);
-  };
+};
 
   return (
     <div className="flex items-center space-x-2">
@@ -172,6 +179,8 @@ function PurposeFilter({ onChange }) {
         <option value="Classroom">Classroom</option>
         <option value="Laboratory">Laboratory</option>
         <option value="Administrative">Administrative</option>
+        <option value="Library">Library</option>
+        <option value="Auditorium">Auditorium</option>
       </select>
     </div>
   );

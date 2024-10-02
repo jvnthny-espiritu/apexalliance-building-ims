@@ -1,23 +1,15 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const validator = require('validator');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  fullName:  {
-    firstName: {
-      type: String,
-      required: [true, "Your first name is required"],
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
     },
-    lastName: {
-      type: String,
-      required: [true, "Your last name is required"],
-    }
-  },
-  username: {
-    type: String,
-    required: [true, "Your username is required"],
-  },
-  email: {
+    email: {
     type: String,
     required: [true, "Your email is required."],
     unique: true,
@@ -25,34 +17,47 @@ const userSchema = new mongoose.Schema({
     validate: (value) => {
       return validator.isEmail(value);
     }
-  },
-  campus: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Campus"
-  },
-  role: {
-    type: String,
-    enum: ['Administrator', 'Staff'],
-    default: 'Staff'
-  },
-  password: {
-    type: String,
-    required: true
-  }
+    },
+    fullName: {
+        firstName: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        lastName: {
+            type: String,
+            required: true,
+            trim: true
+        }
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        enum: ['Administrator', 'Staff'],
+        default: 'Staff'
+    },
+    campus: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Campus',
+        required: true
+    }
 }, { timestamps: true });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    return next();
-  }
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+// Pre-save hook to hash password
+userSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        this.password = await bcrypt.hash(this.password, 10);
+    }
     next();
-  } catch (error) {
-    return next(error);
-  }
 });
+
+// Method to compare password
+userSchema.methods.comparePassword = function (password) {
+    return bcrypt.compare(password, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 

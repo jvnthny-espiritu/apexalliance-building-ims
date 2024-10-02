@@ -5,7 +5,7 @@ import api from "../../services/api.js";
 const RoomModal = ({ room, toggleModal }) => {
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -14,8 +14,11 @@ const RoomModal = ({ room, toggleModal }) => {
     laboratory: "bg-room-use-laboratory",
     classroom: "bg-room-use-classroom",
     administrative: "bg-room-use-administrative",
+    library: 'bg-room-use-library',
+    auditorium: 'bg-room-use-auditorium',
+    lecture_hall: 'bg-room-use-lecture_hall',
     available: "bg-room-use-available",
-    notavailable: "bg-room-use-notavailable",
+    not_available: "bg-room-use-not_available",
   };
 
   useEffect(() => {
@@ -23,8 +26,8 @@ const RoomModal = ({ room, toggleModal }) => {
       try {
         let apiUrl = `/room/${room._id}/assets?`;
 
-        if (selectedType) {
-          apiUrl += `&type=${selectedType}`;
+        if (selectedCategory) {
+          apiUrl += `&category=${selectedCategory}`;
         }
 
         if (selectedCondition) {
@@ -45,14 +48,14 @@ const RoomModal = ({ room, toggleModal }) => {
     };
 
     fetchAssets();
-  }, [room._id, selectedType, selectedCondition, selectedDate]);
+  }, [room._id, selectedCategory, selectedCondition, selectedDate]);
 
   const filteredAssets = assets.filter((asset) =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleTypeChange = (e) => {
-    setSelectedType(e.target.value);
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
   };
 
   const handleConditionChange = (e) => {
@@ -62,40 +65,67 @@ const RoomModal = ({ room, toggleModal }) => {
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
-
-  const renderFurnitureRows = (data) => {
-    return data.map((item, index) => (
-      <tr key={index} className="text-center text-black bg-white">
-        <td>{item.name}</td>
-        <td>{item.type}</td>
-        <td>{item.quantity}</td>
-        <td>{item.serialNumber}</td>
-        <td>{item.purchaseDate}</td>
-        <td>{item.condition}</td>
-      </tr>
-    ));
-  };
-
-  const renderAppliancesRows = (data) => {
+  
+  const renderElectricRows = (data) => {
     return data.map((item, index) => (
       <tr key={index} className="text-center bg-white">
         <td>{item.name}</td>
-        <td>{item.type}</td>
-        <td>{item.quantity}</td>
-        <td>{item.serialNumber}</td>
-        <td>{item.purchaseDate}</td>
+        <td>{item.category}</td>
         <td>{item.condition}</td>
-        <td>{item.electricConsumption}</td>
+        <td>{item.status}</td>
+        <td>{item.location ? item.location.name : 'N/A'}</td> 
+        <td>{item.purchaseDate}</td>
+        <td>{item.value}</td>
+        <td>{item.numberOfUnits}</td>
+        <td>
+          {item.electricDetails ? (
+            <div>
+              <p>Voltage: {item.electricDetails.voltage}</p>
+              <p>Power: {item.electricDetails.power}</p>
+              <p>Manufacturer: {item.electricDetails.manufacturer}</p>
+              <p>Warranty: {item.electricDetails.warranty}</p>
+            </div>
+          ) : (
+            'N/A'
+          )}
+        </td>
       </tr>
     ));
   };
+  
+  const renderNonElectricRows = (data) => {
+    return data.map((item, index) => (
+      <tr key={index} className="text-center text-black bg-white">
+        <td>{item.name}</td>
+        <td>{item.category}</td>
+        <td>{item.condition}</td>
+        <td>{item.status}</td>
+        <td>{item.location ? item.location.name : 'N/A'}</td> 
+        <td>{item.purchaseDate}</td>
+        <td>{item.value}</td>
+        <td>{item.numberOfUnits}</td>
+        <td>
+          {item.nonElectricDetails ? (
+            <div>
+              <p>Material: {item.nonElectricDetails.material}</p>
+              <p>Dimensions: {item.nonElectricDetails.dimensions}</p>
+              <p>Weight: {item.nonElectricDetails.weight}</p>
+            </div>
+          ) : (
+            'N/A'
+          )}
+        </td>
+      </tr>
+    ));
+  };  
 
-  const furnitureAssets = filteredAssets.filter(
-    (asset) => asset.type === "Furniture"
-  );
-  const applianceAssets = filteredAssets.filter(
-    (asset) => asset.type === "Appliances"
-  );
+  const nonelectricAssets = (selectedCategory === "Non-electric" || selectedCategory === "")
+    ? filteredAssets.filter((asset) => asset.category === "Non-electric")
+    : [];
+
+  const electricAssets = (selectedCategory === "Electric" || selectedCategory === "")
+    ? filteredAssets.filter((asset) => asset.category === "Electric")
+    : [];
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50">
@@ -109,17 +139,16 @@ const RoomModal = ({ room, toggleModal }) => {
 
         <h2 className="text-3xl text-black sm:text-4xl lg:text-5xl font-bold mb-4">{room.name}</h2>
         <div className="mb-4">
-          <p className="mb-2 text-sm sm:text-base">Dimension: {room.dimension}</p>
           <div className="flex flex-wrap">
-            <p className="mr-2">Type:</p>
+            <p className="mr-2">Purpose:</p>
             <p
               className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${
-                room.type && colors.hasOwnProperty(room.type.toLowerCase())
-                  ? colors[room.type.toLowerCase()]
+                room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase())
+                  ? colors[room.purpose.toLowerCase()]
                   : ""
               }`}
             >
-              {room.type}
+              {room.purpose}
             </p>
           </div>
           <div className="flex flex-wrap">
@@ -152,15 +181,15 @@ const RoomModal = ({ room, toggleModal }) => {
 
           <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
             <div className="flex items-center">
-              <span className="text-white mr-2">Type:</span>
+              <span className="text-white mr-2">Category:</span>
               <select
-                value={selectedType}
-                onChange={handleTypeChange}
+                value={selectedCategory}
+                onChange={handleCategoryChange}
                 className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
               >
-                <option value="">All Types</option>
-                <option value="Furniture">Furniture</option>
-                <option value="Appliances">Appliances</option>
+                <option value="">All Category</option>
+                <option value="Non-electric">Non-Electric</option>
+                <option value="Electric">Electric</option>
               </select>
             </div>
             <div className="flex items-center">
@@ -171,10 +200,10 @@ const RoomModal = ({ room, toggleModal }) => {
                 className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
               >
                 <option value="">All Conditions</option>
-                <option value="Working">Working</option>
-                <option value="Not Working">Not Working</option>
+                <option value="New">New</option>
                 <option value="Good">Good</option>
-                <option value="Bad">Bad</option>
+                <option value="Fair">Fair</option>
+                <option value="Poor">Poor</option>
               </select>
             </div>
             <div className="flex items-center">
@@ -192,51 +221,56 @@ const RoomModal = ({ room, toggleModal }) => {
             <p className="text-black">Loading...</p>
           ) : (
             <>
-              {furnitureAssets.length > 0 && (
+              {nonelectricAssets.length > 0 && (
                 <>
-                  <p className="text-lg font-semibold sm:text-xl text-black mb-2">Furniture</p>
+                  <p className="text-lg font-semibold sm:text-xl text-black mb-2">Non-electric</p>
                   <div className="overflow-x-auto">
                     <table className="text-black w-full">
                       <tbody>
                         <tr className="bg-primary text-white uppercase">
                           <th scope className="col px-3 sm:px-6 py-2 ">Name</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Type</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Quantity</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Serial Number</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Purchased Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
                           <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Non-Electric Details</th>
                         </tr>
-                        {renderFurnitureRows(furnitureAssets)}
+                        {renderNonElectricRows(nonelectricAssets)}
                       </tbody>
                     </table>
                   </div>
                 </>
               )}
 
-              {applianceAssets.length > 0 && (
+              {electricAssets.length > 0 && (
                 <>
-                  <p className="text-lg font-semibold sm:text-xl text-black mt-4 mb-2">Appliances</p>
+                  <p className="text-lg font-semibold sm:text-xl text-black mt-4 mb-2">Electric</p>
                   <div className="overflow-x-auto">
                     <table className="text-black w-full">
                       <tbody>
                         <tr className="bg-primary text-white uppercase ">
-                          <th scope className="col px-3 sm:px-6 py-2 ">Name</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Type</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Quantity</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Serial Number</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Purchased Date</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Condition</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Electric Consumption</th>
+                        <th scope className="col px-3 sm:px-6 py-2 ">Name</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
+                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Electric Details</th>
                         </tr>
-                        {renderAppliancesRows(applianceAssets)}
+                        {renderElectricRows(electricAssets)}
                       </tbody>
                     </table>
                   </div>
                 </>
               )}
 
-              {filteredAssets.length === 0 && (
-                <p className="text-white">No assets found.</p>
+              {nonelectricAssets.length === 0 && electricAssets.length === 0 && (
+                <p className="text-gray">No assets found.</p>
               )}
             </>
           )}

@@ -52,7 +52,7 @@ export default function Sidebar() {
 						</li>
 						<li>
 						<ul className='sticky'>
-							<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-5'>
+						<button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-5'>
 								<MdExitToApp className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Logout</span>
 							</button>

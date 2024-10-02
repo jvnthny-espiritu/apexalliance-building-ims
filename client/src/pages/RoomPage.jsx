@@ -10,7 +10,7 @@ function RoomPage() {
   const { buildingId } = useParams();
   const [building, setBuilding] = useState(null);
   const [floors, setFloors] = useState([]);
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedPurpose, setSelectedPurpose] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
@@ -31,8 +31,8 @@ function RoomPage() {
         const queryParams = new URLSearchParams(location.search);
         let apiUrl = `/building/${buildingId}/rooms`;
 
-        if (selectedType) apiUrl += `?type=${selectedType}`;
-        if (selectedStatus) apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
+        if (selectedPurpose) apiUrl += `?purpose=${selectedPurpose}`;
+        if (selectedStatus) apiUrl += `${selectedPurpose ? "&" : "?"}status=${selectedStatus}`;
 
         const response = await api.get(apiUrl);
         const floorsArray = Object.keys(response.data).map((floorNumber) => ({
@@ -47,7 +47,7 @@ function RoomPage() {
 
     fetchBuildingDetails();
     fetchFloors();
-  }, [buildingId, selectedType, selectedStatus, location.search]);
+  }, [buildingId, selectedPurpose, selectedStatus, location.search]);
 
   const filteredFloors = floors.map((floor) => ({
     ...floor,
@@ -71,7 +71,7 @@ function RoomPage() {
         handleBack={handleBack}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        setSelectedType={setSelectedType}
+        setSelectedPurpose={setSelectedPurpose}
         setSelectedStatus={setSelectedStatus}
       />
       <div className="pt-24 mx-6">
@@ -81,7 +81,7 @@ function RoomPage() {
         <MobileFilters
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          setSelectedType={setSelectedType}
+          setSelectedPurpose={setSelectedPurpose}
           setSelectedStatus={setSelectedStatus}
           handleAddRoom={handleAddRoom}
         />
@@ -92,7 +92,7 @@ function RoomPage() {
                 key={index}
                 floorName={floor.buildingFloor}
                 rooms={floor.rooms}
-                selectedType={selectedType}
+                selectedPurpose={selectedPurpose}
                 selectedStatus={selectedStatus}
               />
             ))
@@ -105,7 +105,7 @@ function RoomPage() {
   );
 }
 
-function Header({ handleBack, searchQuery, setSearchQuery, setSelectedType, setSelectedStatus }) {
+function Header({ handleBack, searchQuery, setSearchQuery, setSelectedPurpose, setSelectedStatus }) {
   return (
     <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
       <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
@@ -116,7 +116,7 @@ function Header({ handleBack, searchQuery, setSearchQuery, setSelectedType, setS
           <FaArrowLeft className="mr-2" /> Back
         </button>
         <div className="hidden md:flex items-center space-x-4">
-          <TypeFilter onChange={setSelectedType} />
+          <PurposeFilter onChange={setSelectedPurpose} />
           <StatusFilter onChange={setSelectedStatus} />
           <div className="relative">
             <input
@@ -133,7 +133,7 @@ function Header({ handleBack, searchQuery, setSearchQuery, setSelectedType, setS
   );
 }
 
-function MobileFilters({ searchQuery, setSearchQuery, setSelectedType, setSelectedStatus, handleAddRoom }) {
+function MobileFilters({ searchQuery, setSearchQuery, setSelectedPurpose, setSelectedStatus, handleAddRoom }) {
   return (
     <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
       <div className="w-full mb-4 mt-5">
@@ -149,7 +149,7 @@ function MobileFilters({ searchQuery, setSearchQuery, setSelectedType, setSelect
         </div>
       </div>
       <div className="flex items-center space-x-4 w-full mb-4">
-        <TypeFilter onChange={setSelectedType} />
+        <PurposeFilter onChange={setSelectedPurpose} />
         <StatusFilter onChange={setSelectedStatus} />
         <AddButton onClick={handleAddRoom} />
       </div>
@@ -157,16 +157,18 @@ function MobileFilters({ searchQuery, setSearchQuery, setSelectedType, setSelect
   );
 }
 
-function TypeFilter({ onChange }) {
+function PurposeFilter({ onChange }) {
   return (
     <select
       className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
       onChange={(e) => onChange(e.target.value)}
     >
-      <option value="">All Types</option>
-      <option value="Classroom">Classroom</option>
-      <option value="Laboratory">Laboratory</option>
-      <option value="Administrative">Administrative</option>
+      <option value="">All Purpose</option>
+        <option value="Classroom">Classroom</option>
+        <option value="Laboratory">Laboratory</option>
+        <option value="Administrative">Administrative</option>
+        <option value="Library">Library</option>
+        <option value="Auditorium">Auditorium</option>
     </select>
   );
 }

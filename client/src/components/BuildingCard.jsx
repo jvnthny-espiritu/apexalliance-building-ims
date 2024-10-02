@@ -5,27 +5,16 @@ import api from '../services/api';
 
 const BuildingCard = ({ building, onDelete }) => {
   const { _id, name, purpose } = building;
-  const [totalRooms, setTotalRooms] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate(); // Use this for navigation (e.g., for editing)
 
-  useEffect(() => {
-    const fetchTotalRooms = async () => {
-      try {
-        const response = await api.get(`/building/${_id}/total-rooms`);
-        setTotalRooms(response.data.totalRooms);
-      } catch (error) {
-        console.error('Error fetching total rooms:', error);
-      }
-    };
-
-    fetchTotalRooms();
-  }, [_id]);
 
   const purposeColors = {
     Classroom: 'bg-room-use-classroom',
     Laboratory: 'bg-room-use-laboratory',
-    Administrative: 'bg-room-use-administrative'
+    Administrative: 'bg-room-use-administrative',
+    Library: 'bg-room-use-library',
+    Auditorium: 'bg-room-use-auditorium',
   };
 
   // Toggle dropdown
@@ -55,7 +44,7 @@ const BuildingCard = ({ building, onDelete }) => {
   };
 
   return (
-    <div className="w-[300px] h-[150px] md:h-[200px] my-8 md:my-15 flex flex-col relative">
+    <div className="w-[300px] h-[150px] md:h-[250px] my-8 md:my-15 flex flex-col relative">
       <div className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray">
         <Link to={`/catalog/room/${_id}`} className="p-3 md:p-5 flex flex-col flex-grow">
           <div className='building-name text-black text-[24px] md:text-2xl lg:text-[24px] font-black font-body mt-3'>
@@ -83,7 +72,7 @@ const BuildingCard = ({ building, onDelete }) => {
             </span>
           </div>
           <div className='text-darkGray font-body text-sm md:text-base lg:text-[14px] mt-2 gap-2 flex-grow'>
-            <p className='flex justify-between font-bold'>Facilities:</p>
+            <p className='flex justify-between font-bold'>Purposes:</p>
             <ul className="ml-1 md:ml-3">
               {purpose && purpose.map((use, index) => (
                 <li key={index} className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${purposeColors[use]}`}>

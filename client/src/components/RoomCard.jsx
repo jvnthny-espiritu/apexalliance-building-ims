@@ -1,43 +1,44 @@
 import React, { useState } from 'react';
 import RoomModal from '../components/modals/RoomModal';
 
-const RoomCard = ({ room, selectedType, selectedStatus }) => {
+const RoomCard = ({ room, selectedPurpose, selectedStatus }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const getTypeClass = (type) => {
-    switch (type) {
-      case 'Classroom':
-        return 'bg-room-use-classroom';
-      case 'Laboratory':
-        return 'bg--room-use-laboratory';
-      case 'Administrative':
-        return 'bg--room-use-administrative';
-      default:
-        return '';
-    }
+  const colors = {
+    laboratory: "bg-room-use-laboratory",
+    classroom: "bg-room-use-classroom",
+    administrative: "bg-room-use-administrative",
+    library: 'bg-room-use-library',
+    auditorium: 'bg-room-use-auditorium',
+    lecture_hall: 'bg-room-use-lecture_hall',
+    available: "bg-room-use-available",
+    not_available: "bg-room-use-not_available",
+    under_renovation: "bg-room-use-under_renovation",
+  };
+
+  const getPurposeClass = (purpose) => {
+    return purpose && colors.hasOwnProperty(purpose.toLowerCase())
+      ? colors[purpose.toLowerCase()]
+      : '';
   };
 
   const getStatusClass = (status) => {
-    switch (status) {
-      case 'Available':
-        return 'bg-room-use-available';
-      case 'Not Available':
-        return 'bg-room-use-notavailable';
-      default:
-        return '';
-    }
+    return status && colors.hasOwnProperty(status.toLowerCase())
+      ? colors[status.toLowerCase()]
+      : '';
   };
 
-  const isMatchingType = selectedType ? room.type === selectedType : true;
-  const isMatchingStatus = selectedStatus ? room.status === selectedStatus : true;
+  const isMatchingPurpose = !selectedPurpose || room.purpose.toLowerCase() === selectedPurpose.toLowerCase();
+  const isMatchingStatus = !selectedStatus || room.status.toLowerCase() === selectedStatus.toLowerCase();
 
-  if (!isMatchingType || !isMatchingStatus) {
-    return null;
+  if (!isMatchingPurpose || !isMatchingStatus) {
+    return null; 
   }
+
 
   return (
     <>
@@ -52,18 +53,14 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
         <div className="flex flex-col justify-start items-start font-body">
           <h3 className="text-xl text-black font-extrabold">{room.name}</h3>
           <div className="flex justify-between w-full">
-            <p className="mb-2">Dimension:</p>
-            <p className="mb-2">{room.dimension}</p>
+            <p className="mb-2">Floor:</p>
+            <p className="mb-2">{room.floor}</p>
           </div>
           <div className="flex justify-between w-full">
-            <p className="mb-2">Type:</p>
-            <p className={`px-3 text-center text-white mb-2 rounded-xl ${getTypeClass(room.type)}`}>
-              {room.type}
+            <p className="mb-2">Purpose:</p>
+            <p className={`px-3 text-center text-white mb-2 rounded-xl ${getPurposeClass(room.purpose)}`}>
+              {room.purpose}
             </p>
-          </div>
-          <div className="flex justify-between w-full">
-            <p className="mb-2">Capacity:</p>
-            <p className="mb-2">{room.capacity}</p>
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Status:</p>

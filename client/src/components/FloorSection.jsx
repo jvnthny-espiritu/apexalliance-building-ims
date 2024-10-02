@@ -7,7 +7,7 @@ const getOrdinalIndicator = (number) => {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
-const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
+const FloorSection = ({  floorName, rooms, selectedPurpose, selectedStatus }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleCollapse = () => {
@@ -15,10 +15,10 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
   };
 
   const filteredRooms = rooms.filter(room => {
-    if (selectedType && selectedStatus) {
-      return room.type === selectedType && room.status === selectedStatus;
-    } else if (selectedType) {
-      return room.type === selectedType;
+    if (selectedPurpose && selectedStatus) {
+      return room.purpose === selectedPurpose && room.status === selectedStatus;
+    } else if (selectedPurpose) {
+      return room.purpose === selectedPurpose;
     } else if (selectedStatus) {
       return room.status === selectedStatus;
     } else {
@@ -27,7 +27,7 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
   });
 
   return (
-    <div >
+    <div>
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{getOrdinalIndicator(floorName)} Floor</h2>
         <button onClick={toggleCollapse}>
@@ -42,7 +42,7 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {filteredRooms.map((room, index) => (
-                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} />
+                <RoomCard key={index} room={room} selectedPurpose={selectedPurpose} selectedStatus={selectedStatus} />
               ))}
             </div>
           )}
