@@ -56,7 +56,6 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     }
   };
 
-  
   const validateForm = async () => {
     const errors = {};
   
@@ -64,68 +63,43 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
     if (!formData.email) errors.email = "Email is required.";
-    if (!formData.password) errors.password = "Password is required.";
-    if (!formData.confirmPassword) errors.confirmPassword = "Confirm password is required.";
-    if (!formData.campus) errors.campus = "Campus is required.";
-  
     if (formData.password && formData.password.length < 8) {
       errors.password = "Password must be at least 8 characters long.";
     }
-  
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match.";
     }
-  
-    if (formData.username && formData.username !== user.username) {
-      try {
-        const usernameCheckResponse = await api.post("/user/check-username", { username: formData.username });
-        if (usernameCheckResponse.data.exists) {
-          errors.username = "Username is already in use.";
-        }
-      } catch (error) {
-        console.error("Error checking username uniqueness:", error);
-      }
-    }
-
-    if (formData.email && formData.email !== user.email) {
-      try {
-        const emailCheckResponse = await api.post("/user/check-email", { email: formData.email });
-        if (emailCheckResponse.data.exists) {
-          errors.email = "Email is already in use.";
-        }
-      } catch (error) {
-        console.error("Error checking email uniqueness:", error);
-      }
-    }
+    if (!formData.campus) errors.campus = "Campus is required.";
   
     setValidationErrors(errors);
     return Object.keys(errors).length === 0; 
-  };
+  };  
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const isValid = await validateForm();
     if (!isValid) return;
-    if (formData.password !== formData.confirmPassword) {
-        setPasswordError("Passwords do not match");
-        return;
-    }
-
+  
     try {
-        if (user) {
-            const response = await api.put(`/user/${user._id}`, formData);
-            setSuccessMessage("Updated user successfully!");
-            if (onUserUpdated) {
-                onUserUpdated();
-            }
-            setTimeout(() => {
-                handleClose();
-            }, 3000);
-        }
+      const response = await api.put(`/user/${user._id}`, formData);
+  
+      setSuccessMessage("User updated successfully!");
+      if (onUserUpdated) {
+        onUserUpdated();
+      }
+      setTimeout(() => {
+        handleClose();
+      }, 3000);
     } catch (error) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const { errors } = error.response.data;
+        setValidationErrors(errors);
+      } else {
         setApiError("Failed to update user. Please try again later.");
+      }
     }
-  };
+  };  
 
   const handleClose = () => {
     setSuccessMessage(""); 

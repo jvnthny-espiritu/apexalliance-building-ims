@@ -59,9 +59,9 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     }));
   };
 
-  const validateForm = async () => {
+  const validateForm = () => {
     const errors = {};
-
+  
     if (!formData.fullName.firstName) errors.firstName = "First name is required.";
     if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
@@ -69,44 +69,24 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     if (!formData.password) errors.password = "Password is required.";
     if (!formData.confirmPassword) errors.confirmPassword = "Confirm password is required.";
     if (!formData.campus) errors.campus = "Campus is required.";
-
+  
     if (formData.password && formData.password.length < 8) {
       errors.password = "Password must be at least 8 characters long.";
     }
-
+  
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = "Passwords do not match.";
     }
-
-    if (formData.username) {
-      try {
-        const usernameCheckResponse = await api.post("/user/check-username", { username: formData.username });
-        if (usernameCheckResponse.data.exists) {
-          errors.username = "Username is already in use.";
-        }
-      } catch (error) {
-        console.error("Error checking username uniqueness:", error);
-      }
-    }
-
-    if (formData.email) {
-      try {
-        const emailCheckResponse = await api.post("/user/check-email", { email: formData.email });
-        if (emailCheckResponse.data.exists) {
-          errors.email = "Email is already in use.";
-        }
-      } catch (error) {
-        console.error("Error checking email uniqueness:", error);
-      }
-    }
-
+  
     setValidationErrors(errors);
-    return Object.keys(errors).length === 0; 
+    return Object.keys(errors).length === 0;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isValid = await validateForm();
+
+    const isValid = validateForm();
     if (!isValid) return;
 
     try {
@@ -118,10 +98,15 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
         setTimeout(() => {
             handleClose();
         }, 3000);
-    } catch (error) {
-        setApiError("Failed to add user. Please try again later.");
-    }
-  };  
+      } catch (error) {
+          if (error.response && error.response.data.errors) {
+              const { errors } = error.response.data;
+              setValidationErrors(errors);  
+          } else {
+              setApiError("Failed to add user. Please try again later.");
+          }
+      }
+  };
 
   const handleClose = () => {
     setFormData({
