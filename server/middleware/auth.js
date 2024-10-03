@@ -1,10 +1,28 @@
-const passport = require('../config/passport');
+const jwt = require('jsonwebtoken');
 
-exports.authenticateJWT = passport.authenticate('jwt', { session: false });
-
-exports.authorizeRoles = (roles) => (req, res, next) => {
-  if (!roles.includes(req.user.role)) {
-    return res.status(403).json({ message: 'Unauthorized' });
-  }
-  next();
+const authenticateJWT = (req, res, next) => {
+	const authHeader = req.header('Authorization');
+	if (authHeader && authHeader.startsWith('Bearer ')) {
+		const token = authHeader.split(' ')[1];
+		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+			if (err) {
+				return res.sendStatus(403);
+			}
+			req.user = user;
+			next();
+		});
+	} else {
+		res.sendStatus(401);
+	}
 };
+
+const authorizeRoles = (...roles) => {
+	return (req, res, next) => {
+		if (!req.user || !roles.includes(req.user.role)) {
+			return res.sendStatus(403);
+		}
+		next();
+	};
+};
+
+module.exports = { authenticateJWT, authorizeRoles };

@@ -10,6 +10,5 @@ router.get('/:id', buildingController.getBuildingById);
 router.put('/:id', buildingController.updateBuilding);
 router.delete('/:id', buildingController.deleteBuilding);
 router.get('/:id/rooms', buildingController.getRoomByFloor);
-router.get('/:id/total-rooms', buildingController.totalRoom);
 
 module.exports = router;

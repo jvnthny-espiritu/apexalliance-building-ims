@@ -1,15 +1,15 @@
-const Building = require('../models/building');
-const Room = require('../models/room');
-const Asset = require('../models/asset');
+const Building = require('../models/Building');
+const Room = require('../models/Room');
+const Asset = require('../models/Asset');
 const logActivity = require('../middleware/logger');
 
 module.exports = {
   getAllBuildings: async (req, res) => {
     try {
-      const { purpose, campus } = req.query;
+      const { faciliites, campus } = req.query;
       let query = {};
-      if (purpose) {
-        query.purpose = { $in: [purpose] };
+      if (faciliites) {
+        query.faciliites = { $in: [faciliites] };
       }
       if (campus) {
         query.campus = campus;
@@ -22,11 +22,10 @@ module.exports = {
   },
   
   createBuilding: async (req, res) => {
-    const { name, campus, numberOfFloors, yearBuilt, purpose } = req.body;
+    const { name, campus, numberOfFloors, yearBuilt, faciliites } = req.body;
     try {
-      const newBuilding = await Building.create({ name, campus, numberOfFloors, yearBuilt, purpose });
-      logActivity(req.user.id, 'added a new building', newBuilding._id, 'Building');
-      res.status(201).json(newBuilding);
+      const building = await Building.create({ name, campus, numberOfFloors, yearBuilt, faciliites });
+      res.status(201).json(building);
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
@@ -34,10 +33,8 @@ module.exports = {
   
   
   getBuildingById: async (req, res) => {
-    const { id } = req.params;
-    
     try {
-      const building = await Building.findById(id);
+      const building = await Building.findById(req.params.id);
       if (!building) {
         return res.status(404).json({ error: 'Building not found' });
       }
@@ -48,14 +45,11 @@ module.exports = {
   },
   
   updateBuilding: async (req, res) => {
-    const { id } = req.params;
-    
     try {
-      const updatedBuilding = await Building.findByIdAndUpdate(id, req.body, { new: true });
+      const updatedBuilding = await Building.findByIdAndUpdate(req.params.id, req.body, { new: true });
       if (!updatedBuilding) {
         return res.status(404).json({ error: 'Building not found' });
       }
-      logActivity(req.user.id, 'updated a building', updatedBuilding._id, 'Building');
       res.json(updatedBuilding);
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -63,10 +57,8 @@ module.exports = {
   },
   
   deleteBuilding: async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const deletedBuilding = await Building.findByIdAndDelete(id);
+        const deletedBuilding = await Building.findByIdAndDelete(req.params.id);
         if (!deletedBuilding) {
             return res.status(404).json({ error: 'Building not found' });
         }
@@ -82,11 +74,11 @@ module.exports = {
             deletedAssetsCount = deletedAssets.deletedCount;
         }
 
-        if (req.user && req.user.id) {
-            logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
-        } else {
-            console.warn('User not found or user ID is missing for activity logging.');
-        }
+        // if (req.user && req.user.id) {
+        //     logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
+        // } else {
+        //     console.warn('User not found or user ID is missing for activity logging.');
+        // }
 
         res.json({
             message: 'Building, related rooms, and assets deleted successfully',
@@ -118,16 +110,6 @@ module.exports = {
     } catch (error) {
       console.error('Error fetching rooms:', error);
       res.status(500).json({ error: 'An error occurred while fetching rooms' });
-    }
-  },
-  
-  totalRoom: async (req, res) => {
-    try {
-      const buildingId = req.params.id;
-      const totalRooms = await Room.countDocuments({ "building": buildingId });
-      res.json({ totalRooms });
-    } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 };

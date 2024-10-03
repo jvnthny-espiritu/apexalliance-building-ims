@@ -1,7 +1,26 @@
-const User = require('../models/user');
-const bcrypt = require('bcrypt');
+const passport = require('../config/passport-config');
+const User = require('../models/User');
 
 module.exports = {
+  login: (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err) return next(err);
+      if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+      req.login(user, { session: false }, (err) => {
+        if (err) return next(err);
+
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        return res.status(200).json({ message: 'Logged in successfully', token });
+      });
+    })(req, res, next);
+  },
+
+  logout: (req, res) => {
+    req.logout();
+    res.json({ message: 'Logged out' });
+  },
+
   getAllUsers: async (req, res) => {
     try {
       const users = await User.find().populate('campus', 'name');
@@ -12,7 +31,7 @@ module.exports = {
   },
 
   createUser: async (req, res) => {
-    const { fullName, username, email, role, campus, password } = req.body;
+    const { username, fullName, role, campus, password } = req.body;
     console.log("Received request body:", req.body);
 
     try {
@@ -38,7 +57,6 @@ module.exports = {
       const newUser = await User.create({
         fullName,
         username,
-        email,
         role,
         campus,
         password
@@ -66,7 +84,7 @@ module.exports = {
   updateUser: async (req, res) => {
     try {
       const { id } = req.params;
-      const { username, password, email, campus, fullName, role } = req.body; 
+      const { username, password, campus, fullName, role } = req.body; 
   
       console.log('Received request to update user with ID:', id);
   
