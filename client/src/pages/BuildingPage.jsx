@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineSearch } from "react-icons/ai"; 
+import { AiOutlineSearch } from "react-icons/ai";
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
 import AddBuildingModal from "../components/modals/AddBuildingModal";
-
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
@@ -67,7 +66,7 @@ function BuildingPage() {
       setLoading(false);
     }
   };
-  
+
   const filteredBuildings = buildings.filter((building) =>
     building.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -77,8 +76,8 @@ function BuildingPage() {
   };
 
   const handleAddBuilding = () => {
-    fetchBuildings(); 
-    toggleAddBuildingModalLocal(); 
+    fetchBuildings();
+    toggleAddBuildingModalLocal();
   };
 
   return (
@@ -109,18 +108,32 @@ function BuildingPage() {
         </div>
       )}
 
-    <div className="h-screen w-auto pb-20 mt-16">
-      <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-        <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
-          <h1 className="font-bold text-md text-white">Building Catalog</h1>
-          <div className="hidden md:flex items-center space-x-4">
-            <PurposeFilter onChange={setSelectedPurpose} />
-            <CampusFilter
-              campuses={campuses}
-              selectedCampus={selectedCampus}
-              onChange={setSelectedCampus}
-            />
+      <div className="h-screen w-auto pb-20 mt-16">
+        <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
+          <div className="flex bg-primary justify-end items-center p-1 max-w-screen-auto w-full">
+            <div className="hidden md:flex items-center space-x-4">
+              <PurposeFilter onChange={setSelectedPurpose} />
+              <CampusFilter
+                campuses={campuses}
+                selectedCampus={selectedCampus}
+                onChange={setSelectedCampus}
+              />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search buildings..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
+          <div className="flex space-x-4 mb-4 sticky top-0">
             <div className="relative">
+              <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search buildings..."
@@ -130,59 +143,49 @@ function BuildingPage() {
               />
             </div>
           </div>
-        </div>
-      </div>
-      <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
-        <div className="flex space-x-4 mb-4 sticky top-0">
-          <div className="relative">
-            <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search buildings..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
+            <PurposeFilter onChange={setSelectedPurpose} />
+            <CampusFilter
+              campuses={campuses}
+              selectedCampus={selectedCampus}
+              onChange={setSelectedCampus}
             />
           </div>
         </div>
-        <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-          <PurposeFilter onChange={setSelectedPurpose} />
-          <CampusFilter
-            campuses={campuses}
-            selectedCampus={selectedCampus}
-            onChange={setSelectedCampus}
-          />
-        </div>
-      </div>
-      <div className="relative mx-8 md:mt-24">
-        <div className="absolute top-0 right-0 mt-4 mr-4">
-           <AddButton onClick={toggleAddBuildingModalLocal} />
-        </div>
-        <div className="flex flex-wrap">
-          {filteredBuildings.length === 0 && (
-            <p className="text-white">No buildings found.</p>
+        <div className="relative mx-8 md:mt-24">
+          <div className="absolute top-0 right-0 py-8 mr-4">
+            <AddButton onClick={toggleAddBuildingModalLocal} />
+          </div>
+          <h1 className="font-bold text-3xl text-black mt-18 py-8">
+            Building Catalog
+          </h1>
+          <div className="flex flex-wrap">
+            {filteredBuildings.length === 0 && (
+              <p className="text-white">No buildings found.</p>
+            )}
+            {filteredBuildings.map((building, index) => (
+              <div className="flex-none mx-2 md:mb-4" key={index}>
+                <BuildingCard
+                  building={building}
+                  onClick={() => handleBuildingClick(building)}
+                  onDelete={(deletedId) =>
+                    setBuildings(buildings.filter((b) => b._id !== deletedId))
+                  }
+                  setSuccessMessage={setSuccessMessage}
+                  setApiError={setApiError}
+                />
+              </div>
+            ))}
+          </div>
+          {isAddBuildingOpen && (
+            <AddBuildingModal
+              isOpen={isAddBuildingOpen}
+              toggleModal={toggleAddBuildingModalLocal}
+              onBuildingAdded={handleAddBuilding}
+            />
           )}
-          {filteredBuildings.map((building, index) => (
-            <div className="flex-none mx-2 md:mb-4" key={index}>
-              <BuildingCard
-                building={building}
-                onClick={() => handleBuildingClick(building)}
-                onDelete={(deletedId) => setBuildings(buildings.filter(b => b._id !== deletedId))}
-                setSuccessMessage={setSuccessMessage} 
-                setApiError={setApiError}
-              />
-            </div>
-          ))}
         </div>
-        {isAddBuildingOpen && (
-          <AddBuildingModal
-            isOpen={isAddBuildingOpen}
-            toggleModal={toggleAddBuildingModalLocal}
-            onBuildingAdded={handleAddBuilding}
-          />
-        )}
       </div>
-    </div>
     </div>
   );
 }

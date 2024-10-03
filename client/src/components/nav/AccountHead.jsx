@@ -33,40 +33,28 @@ export default function AccountHead() {
 	}
 
   return (
-    <div className="fixed top-0 right-0 mr-4 mt-4 z-10 text-darkGray">
+    <div className="fixed top-0 right-0 mr-4 mt-4 z-10 text-darkGray ">
       <div onClick={toggleDropdown}>
         <MdAccountCircle className="h-10 w-10 cursor-pointer" />
       </div>
 
       {isDropdownOpen && (
         <div
-          className="absolute right-0 mt-2 w-40 bg-white rounded-lg ring-1 ring-black ring-opacity-10 focus:outline-none"
+          className="absolute right-0 mt-2 w-40 z-10 bg-white rounded-lg ring-1 ring-black ring-opacity-10 focus:outline-none"
           onMouseLeave={closeDropdown}
         >
-          <div className="py-1 text-black">
+          <div className="py-1 text-black hover:bg-primary ">
             <NavLink
               to="/settings/account"
               className={`${linkClasses} ${activeLinkClasses} ${
-                isHovered ? "hover:bg-gray-30" : ""
+                isHovered ? "hover:bg-primary hover:bg-opacity-50" : ""
               }`}
               onClick={closeDropdown} 
               onMouseEnter={toggleHover} 
               onMouseLeave={toggleHover} 
             >
-              Account
+              Setting
             </NavLink>
-            <NavLink
-              to="/settings/manageuser"
-              className={`${linkClasses} ${activeLinkClasses} ${
-                isHovered ? "hover:bg-gray-30" : ""
-              }`}
-              onClick={closeDropdown} 
-              onMouseEnter={toggleHover} 
-              onMouseLeave={toggleHover} 
-            >
-              Manage User
-            </NavLink>
-
             <NavLink
               to="/login"
               className={`${linkClasses} ${activeLinkClasses} ${
