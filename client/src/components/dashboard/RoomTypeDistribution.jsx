@@ -7,8 +7,8 @@ const RoomTypeDistribution = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get('/dashboard/room-distribution');
-                setRoomData(response.data);
+                const response = await api.get('/dashboard/metrics/rooms');
+                setRoomData(response.data.roomPurposeDistribution);
             } catch (error) {
                 console.error('Error fetching room data:', error);
             }

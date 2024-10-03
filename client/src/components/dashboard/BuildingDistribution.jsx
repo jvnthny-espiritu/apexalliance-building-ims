@@ -10,8 +10,8 @@ const BuildingDistribution = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get('/dashboard/building-distribution');
-                setBuildingData(response.data);
+                const response = await api.get('/dashboard/metrics/buildings');
+                setBuildingData(response.data.buildingDistribution);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching building data:', error);

@@ -49,6 +49,13 @@ exports.getBuildingMetrics = async (req, res) => {
         const buildingDistribution = await Building.aggregate([
             { $group: { _id: '$campus', count: { $sum: 1 } } }
         ]);
+        const building_data = await Promise.all(buildingDistribution.map(async item => {
+            const campus = await Campus.findById(item._id);
+            return {
+                name: campus ? campus.name : 'Unknown Campus',
+                value: item.count
+            };
+        }));
 
         const facilitiesDistribution = await Building.aggregate([
             { $group: { _id: '$purpose', count: { $sum: 1 } } }
@@ -56,10 +63,7 @@ exports.getBuildingMetrics = async (req, res) => {
 
         res.json({
             totalBuildings,
-            buildingDistribution: buildingDistribution.map(item => ({
-                campus: item._id,
-                count: item.count
-            })),
+            buildingDistribution: building_data,
             facilitiesDistribution: facilitiesDistribution.map(item => ({
                 facility: item._id,
                 count: item.count
@@ -91,24 +95,7 @@ exports.getRoomMetrics = async (req, res) => {
     }
 };
 
-exports.getBuildingDistribution = async (req, res) => {
-    try {
-        const buildingDistribution = await Building.aggregate([
-            { $group: { _id: "$campus", count: { $sum: 1 } } }
-        ]);
-
-        const data = await Promise.all(buildingDistribution.map(async item => {
-            const campus = await Campus.findById(item._id);
-            return { name: campus.name, value: item.count };
-        }));
-
-        res.json(data);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-exports.getRoomDistribution = async (req, res) => {
+/*exports.getRoomDistribution = async (req, res) => {
   try {
     const roomDistribution = await Room.aggregate([
       {
@@ -173,34 +160,7 @@ exports.getRoomDistribution = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
-
-exports.getTotalAssets = async (req, res) => {
-    try {
-        const totalAssets = await Asset.countDocuments();
-        res.json({ totalAssets });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-exports.getTotalBuildings = async (req, res) => {
-    try {
-        const totalBuildings = await Building.countDocuments();
-        res.json({ Buildings: totalBuildings });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
-
-exports.getTotalRooms = async (req, res) => {
-    try {
-        const totalRooms = await Room.countDocuments();
-        res.json({ Rooms: totalRooms });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
+};*/
 
 exports.getActivityLog = async (req, res) => {
     try {

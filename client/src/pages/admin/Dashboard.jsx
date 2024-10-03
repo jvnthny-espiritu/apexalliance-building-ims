@@ -56,7 +56,7 @@ export default function Dashboard() {
           </div>
           <div className='shrink w-auto h-auto p-5 mb-2'>
             <div>
-              <span className='font-bold font-body text-lg'>Buidling Distribution</span>
+              <span className='font-bold font-body text-lg'>Building Distribution</span>
             </div>
             <hr className='border-black' />
             <BuildingDistribution />
