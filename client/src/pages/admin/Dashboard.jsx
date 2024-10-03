@@ -12,14 +12,14 @@ export default function Dashboard() {
     useEffect(() => {
       const fetchData = async () => {
           try {
-              const buildingsResponse = await api.get('/dashboard/total-buildings');
-              setTotalBuildings(buildingsResponse.data.Buildings);
+              const buildingsMetrics = await api.get('/dashboard/metrics/buildings');
+              setTotalBuildings(buildingsMetrics.data.totalBuildings);
 
-              const roomsResponse = await api.get('/dashboard/total-rooms');
-              setTotalRooms(roomsResponse.data.Rooms);
+              const roomsMetrics = await api.get('/dashboard/metrics/rooms');
+              setTotalRooms(roomsMetrics.data.totalRooms);
 
-              const assetsResponse = await api.get('/dashboard/total-assets');
-              setTotalAssets(assetsResponse.data.totalAssets);
+              const assetsMetrics = await api.get('/dashboard/metrics/assets');
+              setTotalAssets(assetsMetrics.data.totalAssets);
           } catch (error) {
               console.error('Error fetching data:', error);
           }
