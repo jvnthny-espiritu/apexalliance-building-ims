@@ -16,10 +16,23 @@ module.exports = {
     console.log("Received request body:", req.body);
 
     try {
-      const existingEmail = await User.findOne({ email });
-      const existingUser = await User.findOne({ username });
-      if (existingEmail || existingUser) {
-        return res.status(400).json({ message: "Username or Email already in use" });
+      const [existingEmail, existingUser] = await Promise.all([
+        User.findOne({ email }),
+        User.findOne({ username })
+      ]);
+
+      const errors = {};
+
+      if (existingEmail) {
+        errors.email = "Email already in use";
+      }
+
+      if (existingUser) {
+          errors.username = "Username already in use";
+      }
+
+      if (Object.keys(errors).length > 0) {
+        return res.status(400).json({ errors });
       }
 
       const newUser = await User.create({
@@ -35,36 +48,6 @@ module.exports = {
     } catch (err) {
       console.error('Error creating user:', err);
       res.status(500).json({ message: "Failed to create user", error: err.message });
-    }
-  },
-
-  checkUsername: async (req, res) => {
-    const { username } = req.body;
-
-    try {
-      const user = await User.findOne({ username });
-      if (user) {
-        return res.status(200).json({ exists: true });
-      } else {
-        return res.status(200).json({ exists: false });
-      }
-    } catch (error) {
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  },
-
-  checkEmail: async (req, res) => {
-    const { email } = req.body;
-
-    try {
-      const user = await User.findOne({ email });
-      if (user) {
-        return res.status(200).json({ exists: true });
-      } else {
-        return res.status(200).json({ exists: false });
-      }
-    } catch (error) {
-      return res.status(500).json({ message: 'Internal server error' });
     }
   },
 
@@ -84,7 +67,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const { username, password, email, campus, fullName, role } = req.body; 
-    
+  
       console.log('Received request to update user with ID:', id);
   
       const user = await User.findById(id);
@@ -93,45 +76,41 @@ module.exports = {
         return res.status(404).json({ success: false, message: 'User not found' });
       }
   
-      if (username) {
+      const errors = {};
+  
+      if (username && username !== user.username) {
         console.log('Checking if username is available:', username);
         const existingUser = await User.findOne({ username });
         if (existingUser && existingUser._id.toString() !== id) {
           console.error('Username already exists:', username);
-          return res.status(400).json({ success: false, message: 'Username already exists' });
-        }
-        user.username = username;
-      }
-  
-      if (password) {
-        console.log('Hashing password...');
-        user.password = password;
-      }
-  
-      if (email) {
-        console.log('Updating email...');
-        user.email = email;
-      }
-  
-      if (campus) {
-        console.log('Updating campus...');
-        user.campus = campus;
-      }
-  
-      if (fullName) {
-        console.log('Updating full name...');
-        if (fullName.firstName) {
-          user.fullName.firstName = fullName.firstName;
-        }
-        if (fullName.lastName) {
-          user.fullName.lastName = fullName.lastName;
+          errors.username = 'Username already exists';
         }
       }
+  
+      if (email && email !== user.email) {
+        console.log('Checking if email is available:', email);
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail && existingEmail._id.toString() !== id) {
+          console.error('Email already exists:', email);
+          errors.email = 'Email already exists';
+        }
+      }
+
+      if (Object.keys(errors).length > 0) {
+        return res.status(400).json({ success: false, errors });
+      }
+  
+      if (username) user.username = username;
+      if (password) user.password = password; 
+      if (email) user.email = email;
+      if (campus) user.campus = campus;
       
-      if (role) {
-        console.log('Updating role...');
-        user.role = role;
+      if (fullName) {
+        if (fullName.firstName) user.fullName.firstName = fullName.firstName;
+        if (fullName.lastName) user.fullName.lastName = fullName.lastName;
       }
+  
+      if (role) user.role = role;
   
       console.log('Saving updated user to the database...');
       const updatedUser = await user.save();
@@ -143,6 +122,7 @@ module.exports = {
       return res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
     }
   },
+  
   
   deleteUser: async (req, res) => {
     try {
