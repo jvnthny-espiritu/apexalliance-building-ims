@@ -11,6 +11,7 @@ const filteringRoutes = require('./routes/filtering');
 const totalRoomsRoutes = require('./routes/totalRoom'); 
 const reportRoutes = require('./routes/reports');
 
+
 router.use('/', authRoutes);
 router.use('/user', usersRoutes);
 router.use('/campus', campusRoutes);
