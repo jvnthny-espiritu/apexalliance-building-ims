@@ -2,22 +2,24 @@ const mongoose = require('mongoose');
 
 const roomSchema = new mongoose.Schema({
   building: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Building',
-    required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Building',
+      required: true
   },
   name: {
-    type: String,
-    required: true
+      type: String,
+      required: true
   },
   floor: {
-    type: Number,
-    required: true
+      type: Number,
+      required: true
   },
-  type: String,
-  capacity: Number,
-  status: String,
-  dimension: String,
+  purpose: {
+      type: String, // e.g., "Library", "Laboratory", "Lecture Hall"
+      required: true
+  },
+  status: String, 
+
 }, { timestamps: true });
 
 const Room = mongoose.model('Room', roomSchema);

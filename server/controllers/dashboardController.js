@@ -58,16 +58,20 @@ exports.getBuildingMetrics = async (req, res) => {
         }));
 
         const facilitiesDistribution = await Building.aggregate([
-            { $group: { _id: '$purpose', count: { $sum: 1 } } }
+            { $group: { _id: '$facilities', count: { $sum: 1 } } }
         ]);
+        const facilities_data = await Promise.all(facilitiesDistribution.map(async item => {
+          const facilities = await Campus.findById(item._id);
+          return {
+              name: facilities ? facilities.name : 'Unknown Facility',
+              value: item.count
+          };
+        }));
 
         res.json({
             totalBuildings,
             buildingDistribution: building_data,
-            facilitiesDistribution: facilitiesDistribution.map(item => ({
-                facility: item._id,
-                count: item.count
-            })),
+            facilitiesDistribution: facilities_data,
         });
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch building metrics: ' + error.message });
@@ -80,87 +84,84 @@ exports.getRoomMetrics = async (req, res) => {
         const totalRooms = await Room.countDocuments();
 
         const roomPurposeDistribution = await Room.aggregate([
-            { $group: { _id: '$type', count: { $sum: 1 } } }
-        ]);
+          {
+            '$lookup': {
+              'from': 'buildings', 
+              'localField': 'building', 
+              'foreignField': '_id', 
+              'as': 'buildingDetails'
+            }
+          }, {
+            '$unwind': {
+              'path': '$buildingDetails'
+            }
+          }, {
+            '$lookup': {
+              'from': 'campus', 
+              'localField': 'buildingDetails.campus', 
+              'foreignField': '_id', 
+              'as': 'campusDetails'
+            }
+          }, {
+            '$unwind': {
+              'path': '$campusDetails'
+            }
+          }, {
+            '$group': {
+              '_id': {
+                'campusName': '$campusDetails.name',
+                'buildingName': '$buildingDetails.name',
+                'roomPurpose': '$type'
+              }, 
+              'count': {'$sum': 1}
+            }
+          }, {
+            '$group': {
+              '_id': {
+                'campusName': '$_id.campusName',
+                'buildingName': '$_id.buildingName'
+              }, 
+              'types': {
+                  '$push': {
+                    'purpose': '$_id.roomPurpose',
+                    'count': '$count'
+                  }
+              }
+            }
+          }, {
+            '$group': {
+              '_id': '$_id.campusName',
+              'buildings': {
+                '$push': {
+                  'buildingName': '$_id.buildingName',
+                  'roomTypes': '$types'
+                }
+              }
+            }
+          }
+      ]);
+
+          const roomPurpose_data = roomPurposeDistribution.map(item => {
+            return {
+              campusName: item._id,
+              buildings: item.buildings.map(building => ({
+                buildingName: building.buildingName,
+                roomTypes: building.roomTypes.map(type => ({
+                  purpose: type.purpose,
+                  count: type.count
+                }))
+              }))
+            };
+          });
 
         res.json({
             totalRooms,
-            roomPurposeDistribution: roomPurposeDistribution.map(item => ({
-                purpose: item._id,
-                count: item.count
-            })),
+            roomPurposeDistribution: roomPurpose_data,
         });
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch room metrics: ' + error.message });
     }
 };
-
-/*exports.getRoomDistribution = async (req, res) => {
-  try {
-    const roomDistribution = await Room.aggregate([
-      {
-        '$lookup': {
-          'from': 'buildings', 
-          'localField': 'building', 
-          'foreignField': '_id', 
-          'as': 'buildingDetails'
-        }
-      }, {
-        '$unwind': {
-          'path': '$buildingDetails'
-        }
-      }, {
-        '$lookup': {
-          'from': 'campus', 
-          'localField': 'buildingDetails.campus', 
-          'foreignField': '_id', 
-          'as': 'campusDetails'
-        }
-      }, {
-        '$unwind': {
-          'path': '$campusDetails'
-        }
-      }, {
-        '$group': {
-          '_id': {
-            'campusId': '$buildingDetails.campus', 
-            'campusName': '$campusDetails.name', 
-            'type': '$type'
-          }, 
-          'count': {
-            '$sum': 1
-          }
-        }
-      }, {
-        '$group': {
-          '_id': {
-            'campusId': '$_id.campusId', 
-            'campusName': '$_id.campusName'
-          }, 
-          'types': {
-              '$push': {
-                'type': '$_id.type', 
-                'count': '$count'
-              }
-          }
-        }
-      }
-  ]);
-
-  const result = {};
-  roomDistribution.forEach(item => {
-    const types = {};
-    item.types.forEach(type => {
-      types[type.type.toLowerCase()] = type.count;
-    });
-    result[item._id.campusName] = types;
-  });
-
-  res.json(result);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};*/
 
 exports.getActivityLog = async (req, res) => {
     try {

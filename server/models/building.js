@@ -2,24 +2,27 @@ const mongoose = require('mongoose');
 
 const buildingSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: true
-  },
-  purpose: {
-    type: [String],
-    required: true
-  },
-  numFloor: {
-    type: Number,
-    required: true
+      type: String,
+      required: true,
+      unique: true
   },
   campus: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Campus',
-    required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Campus',
+      required: true
   },
-  numOfStory: Number,
-  yearOfCompletion: Number
+  numberOfFloors: {
+      type: Number,
+      required: true
+  },
+  yearBuilt: {
+      type: Number,
+      required: true
+  },
+  facilities: [{
+      type: String // e.g., "Library", "Laboratory", "Classroom"
+  }]
+
 }, { timestamps: true });
 
 const Building = mongoose.model('Building', buildingSchema);
