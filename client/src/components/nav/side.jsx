@@ -28,7 +28,7 @@ export default function Sidebar() {
 							</NavLink>
 						</li>
 						<li>
-							<NavLink to='/catalog/building' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
+							<NavLink to='/catalog/buildings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Catalog'>
 								<MdBook className='h-6 w-6 mx-4' />
 								<span className={`${expanded ? "" : "sr-only"}`}>Catalog</span>
 							</NavLink>

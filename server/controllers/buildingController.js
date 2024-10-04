@@ -1,7 +1,6 @@
 const Building = require('../models/Building');
 const Room = require('../models/Room');
 const Asset = require('../models/Asset');
-const logActivity = require('../middleware/logger');
 
 module.exports = {
   getAllBuildings: async (req, res) => {

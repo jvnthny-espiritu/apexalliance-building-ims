@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Room = require('../models/Room');
 const Asset = require('../models/Asset');
-const logActivity = require('../middleware/logger');
 const updateBuildingFacilities = require('../utils/updateBuildingFacilities');
 
 module.exports = {

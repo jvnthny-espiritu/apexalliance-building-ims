@@ -1,53 +1,54 @@
-import * as ActionTypes from '../_actions/ActionTypes';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 const initialState = {
-  token: localStorage.getItem('token') || null,
-  isLoggedIn: !!localStorage.getItem('token'),
+  token: null,
   user: null,
-  error: null
+  error: null,
+  isLoggedIn: false,
 };
 
-const decodeToken = (token) => {
-  try {
-    return jwtDecode(token);
-  } catch (error) {
-    return null;
-  }
-};
-
-initialState.user = initialState.token ? decodeToken(initialState.token) : null;
-
-const authReducer = (state = initialState, action) => {
+export default function authReducer(state = initialState, action) {
   switch (action.type) {
-    case ActionTypes.LOGIN_SUCCESS:
-      const user = decodeToken(action.payload); 
+    case 'LOGIN_SUCCESS':
       return {
         ...state,
-        isLoggedIn: true,
         token: action.payload,
-        user,
-        error: null
+        error: null,
+        isLoggedIn: true,
       };
-    case ActionTypes.LOGIN_FAILURE:
+    case 'LOGIN_FAILURE':
       return {
         ...state,
-        isLoggedIn: false,
         token: null,
         user: null,
-        error: action.payload
+        error: action.payload,
+        isLoggedIn: false,
       };
-    case ActionTypes.LOGOUT:
+    case 'FETCH_USER_SUCCESS':
       return {
         ...state,
-        isLoggedIn: false,
+        user: action.payload,
+      };
+    case 'FETCH_USER_FAILURE':
+      return {
+        ...state,
+        user: null,
+        error: action.payload,
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
         token: null,
         user: null,
-        error: null
+        error: null,
+        isLoggedIn: false,
+      };
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.payload,
       };
     default:
       return state;
   }
-};
-
-export default authReducer;
+}
