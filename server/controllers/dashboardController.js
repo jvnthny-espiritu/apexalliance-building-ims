@@ -106,16 +106,16 @@ exports.getRoomMetrics = async (req, res) => {
             '$unwind': {
               'path': '$campusDetails'
             }
-          }, /*{
+          }, {
             '$match': {
-              'type': { '$ne': null }  // Filter out records where purpose is null or undefined
+              'purpose': { '$ne': null } 
             }
-          },*/ {
+          }, {
             '$group': {
               '_id': {
                 'campusId': '$buildingDetails.campus', 
                 'campusName': '$campusDetails.name', 
-                'type': '$purpose'
+                'purpose': '$purpose'
               }, 
               'count': {'$sum': 1}
             }
@@ -123,11 +123,11 @@ exports.getRoomMetrics = async (req, res) => {
             '$group': {
               '_id': {
                 'campusId': '$_id.campusId', 
-                'campusName': '$_id.campusName'
+                'name': '$_id.campusName'
               }, 
               'types': {
                   '$push': {
-                    'type': '$_id.type', 
+                    'purpose': '$_id.purpose', 
                     'count': '$count'
                   }
               }
@@ -138,9 +138,9 @@ exports.getRoomMetrics = async (req, res) => {
         const roomPurpose_data = roomPurposeDistribution.map(campus => {
           return{
             campusId: campus._id.campusId,
-            campusName: campus._id.campusName,
+            name: campus._id.name,
             roomTypes: campus.types.map(type => ({
-              purpose: type.type,
+              purpose: type.purpose,
               count: type.count
             }))
           };
