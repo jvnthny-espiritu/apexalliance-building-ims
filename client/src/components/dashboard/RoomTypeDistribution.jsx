@@ -16,7 +16,7 @@ const RoomTypeDistribution = () => {
         fetchData();
     }, []);
 
-    const roomTypes = ['Administrative', 'Classroom', 'Laboratory'];
+    const roomTypes = ['Administrative', 'Classroom', 'Laboratory', 'Library', 'Canteen', 'Clinic', 'Others'];
     const series = roomTypes.map(roomType => ({
       name: roomType,
       type: 'bar',

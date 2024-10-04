@@ -42,15 +42,11 @@ const RoomCard = ({ room, selectedType, selectedStatus }) => {
   return (
     <>
       <div
-        className="p-3 text-darkGray shadow-md m-2 rounded-lg cursor-pointer bg-white border border-darkGray"
-        style={{
-          width: '300px',
-          height: 'fit-content',
-        }}
+        className="  w-250 md:w-[300px]height: 'fit-content'p-3 text-darkGray shadow-md m-2 rounded-lg cursor-pointer bg-white border border-darkGray"
         onClick={toggleModal}
       >
-        <div className="flex flex-col justify-start items-start font-body">
-          <h3 className="text-xl text-black font-extrabold">{room.name}</h3>
+        <div className="flex flex-col justify-start items-start font-body px-2 py-1">
+          <h3 className="text-base md:text-xl text-black font-extrabold">{room.name}</h3>
           <div className="flex justify-between w-full">
             <p className="mb-2">Dimension:</p>
             <p className="mb-2">{room.dimension}</p>

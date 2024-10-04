@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import FloorSection from "../components/FloorSection";
 import { AiOutlineSearch } from "react-icons/ai";
+import { IoFilterOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
 import api from "../services/api";
 import AddButton from "../components/AddButton";
@@ -37,7 +38,8 @@ function RoomPage() {
       let apiUrl = `/building/${buildingId}/rooms`;
 
       if (selectedType) apiUrl += `?type=${selectedType}`;
-      if (selectedStatus) apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
+      if (selectedStatus)
+        apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
 
       const response = await api.get(apiUrl);
       const floorsArray = Object.keys(response.data).map((floorNumber) => ({
@@ -64,7 +66,7 @@ function RoomPage() {
 
   const handleAddRoom = () => {
     toggleAddRoomModalLocal();
-    fetchFloors(); 
+    fetchFloors();
   };
 
   const handleBack = () => {
@@ -80,9 +82,17 @@ function RoomPage() {
         setSelectedType={setSelectedType}
         setSelectedStatus={setSelectedStatus}
       />
+
       <div className="pt-24 mx-6">
-        <div className="hidden md:flex justify-end mt-8 mb-4">
+        <div className="justify-end">
+        <div className="hidden md:flex justify-between mt-18 mb-5">
+        <h1 className="font-bold text-3xl text-black mt-8">
+          Room Catalog
+        </h1>
+        </div>
+        <div className="flex md:hidden justify-between mt-18 pt-8 mb-5">
           <AddButton onClick={toggleAddRoomModalLocal} />
+          </div>
         </div>
         {isAddRoomOpen && (
           <AddRoomModal
@@ -98,7 +108,7 @@ function RoomPage() {
           setSelectedStatus={setSelectedStatus}
           handleAddRoom={handleAddRoom}
         />
-        <div className="mx-3">
+        <div className="md:mx-3">
           {filteredFloors.length > 0 ? (
             filteredFloors.map((floor, index) => (
               <FloorSection
@@ -118,16 +128,24 @@ function RoomPage() {
   );
 }
 
-function Header({ handleBack, searchQuery, setSearchQuery, setSelectedType, setSelectedStatus }) {
+function Header({handleBack,searchQuery,setSearchQuery,setSelectedType,setSelectedStatus,}) {
   return (
     <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-      <div className="flex bg-primary justify-between items-center p-1 max-w-screen-auto w-full">
+      <div className="flex items-center bg-primary p-1 max-w-screen-auto w-full">
         <button
           onClick={handleBack}
-          className="mx-10 bg-red-600 text-white font-bold text-xl hover:bg-white hover:border hover:border-gray-300 hover:text-red-600 px-4 py-0 rounded-full transition-all duration-300 flex items-center"
+          className="md:mx-10 md:bg-red-600 text-white font-bold text-md justify-item items-start hover:bg-white hover:border hover:border-gray-300 hover:text-red-600 md:px-4 py-0 rounded-full transition-all duration-300 flex items-center"
         >
-          <FaArrowLeft className="mr-2" /> Back
+          <FaArrowLeft className="ml-1" />
+          <span className="hidden md:inline">Back</span>
         </button>
+        <div className="flex-grow flex justify-center">
+          <h1 className="block md:hidden font-bold text-base text-white p-2">
+            Room Catalog
+          </h1>
+        </div>
+        <AiOutlineSearch className="absolute top-0 right-0 mr-9 mt-4 text-xl md:hidden text-white" />
+        <IoFilterOutline className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white" />
         <div className="hidden md:flex items-center space-x-4">
           <TypeFilter onChange={setSelectedType} />
           <StatusFilter onChange={setSelectedStatus} />
@@ -144,27 +162,15 @@ function Header({ handleBack, searchQuery, setSearchQuery, setSelectedType, setS
       </div>
     </div>
   );
+  
 }
 
-function MobileFilters({ searchQuery, setSearchQuery, setSelectedType, setSelectedStatus, handleAddRoom }) {
+function MobileFilters({searchQuery,setSearchQuery,setSelectedType,setSelectedStatus,handleAddRoom,}) {
   return (
     <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
       <div className="w-full mb-4 mt-5">
         <div className="relative">
-          <AiOutlineSearch className="absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400 text-sm md:text-base lg:text-lg" />
-          <input
-            type="text"
-            placeholder="Search rooms..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-md pl-8 pr-2 py-1 focus:outline-none focus:border-blue-500 text-black text-sm md:text-base lg:text-lg w-full"
-          />
         </div>
-      </div>
-      <div className="flex items-center space-x-4 w-full mb-4">
-        <TypeFilter onChange={setSelectedType} />
-        <StatusFilter onChange={setSelectedStatus} />
-        <AddButton onClick={handleAddRoom} />
       </div>
     </div>
   );
