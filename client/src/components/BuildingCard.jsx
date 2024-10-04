@@ -3,33 +3,15 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import DeleteConfirmationModal from "../components/modals/DeleteConfirmationModal";
+import { getFacilityColor } from '../utils/colorUtils';
+
 
 const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) => {
-  const { _id, name, purpose } = building;
-  const [totalRooms, setTotalRooms] = useState(0);
+  const { _id, name, facilities } = building;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showModal, setShowModal] = useState(false); // Modal state
   const [confirmDelete, setConfirmDelete] = useState(false); // Confirmation state
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchTotalRooms = async () => {
-      try {
-        const response = await api.get(`/building/${_id}/total-rooms`);
-        setTotalRooms(response.data.totalRooms);
-      } catch (error) {
-        console.error('Error fetching total rooms:', error);
-      }
-    };
-
-    fetchTotalRooms();
-  }, [_id]);
-
-  const purposeColors = {
-    Classroom: 'bg-room-use-classroom',
-    Laboratory: 'bg-room-use-laboratory',
-    Administrative: 'bg-room-use-administrative',
-  };
 
   // Toggle dropdown
   const toggleDropdown = (event) => {
@@ -116,15 +98,15 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
           <div className="text-darkGray font-body text-sm md:text-base lg:text-[14px] mt-2 gap-2 flex-grow">
             <p className="flex justify-between font-bold">Facilities:</p>
             <ul className="ml-1 md:ml-3">
-              {purpose &&
-                purpose.map((use, index) => (
-                  <li
-                    key={index}
-                    className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${purposeColors[use]}`}
-                  >
-                    {use}
-                  </li>
-                ))}
+              {facilities && facilities.map((facility, index) => (
+                <li
+                  key={index}
+                  className="building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg"
+                  style={{ backgroundColor: getFacilityColor(facility) }}
+                >
+                  {facility}
+                </li>
+              ))}
             </ul>
           </div>
         </div>

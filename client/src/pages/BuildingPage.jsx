@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -7,89 +7,124 @@ import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
 import AddBuildingModal from "../components/modals/AddBuildingModal";
-
+import Filter from "../components/Filter";
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
-  const [buildings, setBuildings] = useState([]);
-  const [selectedCampus, setSelectedCampus] = useState(user.campus);
-  const [selectedPurpose, setSelectedPurpose] = useState("");
-  const [campuses, setCampuses] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [apiError, setApiError] = useState("");
-  const [isAddBuildingOpen, setIsAddBuildingOpen] = useState(false);
+  const [state, setState] = useState({
+    buildings: [],
+    selectedCampus: user ? user.campus : '',
+    selectedPurpose: "",
+    campuses: [],
+    purposes: [],
+    searchQuery: "",
+    loading: false,
+    error: null,
+    successMessage: "",
+    apiError: "",
+    isAddBuildingOpen: false,
+  });
   const navigate = useNavigate();
 
-  const toggleAddBuildingModalLocal = () => {
-    setIsAddBuildingOpen((prev) => !prev);
-  };
+  const toggleAddBuildingModal = useCallback(() => {
+    setState((prevState) => ({
+      ...prevState,
+      isAddBuildingOpen: !prevState.isAddBuildingOpen,
+    }));
+  }, []);
 
   useEffect(() => {
     const fetchCampuses = async () => {
       try {
-        setLoading(true);
-        const response = await api.get("/campus");
-        const data = response.data;
-        const campusNames = data.map((campus) => [campus.name, campus._id]);
-        setCampuses(campusNames);
+        setState((prevState) => ({ ...prevState, loading: true }));
+        const response = await api.get("/api/campuses");
+        const campusNames = response.data.map((campus) => [campus.name, campus._id]);
+        setState((prevState) => ({ ...prevState, campuses: campusNames }));
       } catch (error) {
         console.error("Error fetching campuses:", error);
-        setError("Error fetching campuses");
+        setState((prevState) => ({ ...prevState, error: "Error fetching campuses" }));
       } finally {
-        setLoading(false);
+        setState((prevState) => ({ ...prevState, loading: false }));
       }
     };
+
     fetchCampuses();
   }, []);
 
   useEffect(() => {
-    fetchBuildings();
-  }, [selectedPurpose, selectedCampus]);
-
-  const fetchBuildings = async () => {
-    try {
-      setLoading(true);
-      let apiUrl = "/building?";
-      if (selectedPurpose) {
-        apiUrl += `&purpose=${selectedPurpose}`;
-      }
-      if (selectedCampus) {
-        apiUrl += `&campus=${selectedCampus}`;
-      }
-      const response = await api.get(apiUrl);
-      setBuildings(response.data);
-    } catch (error) {
-      console.error("Error fetching buildings:", error);
-      setError("Error fetching buildings");
-    } finally {
-      setLoading(false);
+    if (user) {
+      setState((prevState) => ({ ...prevState, selectedCampus: user.campus._id }));
     }
-  };
+  }, [user]);
 
-  const filteredBuildings = buildings.filter((building) =>
-    building.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (user && state.selectedCampus) {
+      fetchFacilities();
+      fetchBuildings();
+    }
+  }, [state.selectedPurpose, state.selectedCampus, user]);
 
-  const handleBuildingClick = (building) => {
-    navigate(`/rooms/${building.id}`);
-  };
+  const fetchFacilities = useCallback(async () => {
+    try {
+      setState((prevState) => ({ ...prevState, loading: true }));
+      const response = await api.get(`/api/buildings/facilities?campusId=${state.selectedCampus}`);
+      const facilities = response.data.map((facility) => [facility, facility]);
+      setState((prevState) => ({ ...prevState, purposes: facilities }));
+    } catch (error) {
+      console.error("Error fetching facilities:", error);
+      setState((prevState) => ({ ...prevState, error: "Error fetching facilities" }));
+    } finally {
+      setState((prevState) => ({ ...prevState, loading: false }));
+    }
+  }, [state.selectedCampus]);
 
-  const handleAddBuilding = () => {
+  const fetchBuildings = useCallback(async () => {
+    try {
+      setState((prevState) => ({ ...prevState, loading: true }));
+      const params = new URLSearchParams();
+      if (state.selectedPurpose) {
+        params.append('facilities', state.selectedPurpose);
+      }
+      if (state.selectedCampus) {
+        params.append('campus', state.selectedCampus);
+      }
+      const response = await api.get(`/api/buildings?${params.toString()}`);
+      setState((prevState) => ({ ...prevState, buildings: response.data }));
+    } catch (error) {
+      console.error('Error fetching buildings:', error);
+      setState((prevState) => ({ ...prevState, error: 'Error fetching buildings' }));
+    } finally {
+      setState((prevState) => ({ ...prevState, loading: false }));
+    }
+  }, [state.selectedPurpose, state.selectedCampus]);
+
+  const filteredBuildings = useMemo(() => {
+    return state.buildings.filter((building) =>
+      building.name.toLowerCase().includes(state.searchQuery.toLowerCase())
+    );
+  }, [state.buildings, state.searchQuery]);
+
+  const handleBuildingClick = useCallback((building) => {
+    navigate(`/catalog/rooms/${building.id}`);
+  }, [navigate]);
+
+  const handleAddBuilding = useCallback(() => {
     fetchBuildings();
-    toggleAddBuildingModalLocal();
-  };
+    toggleAddBuildingModal();
+  }, [fetchBuildings, toggleAddBuildingModal]);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
       {/* Alert for success */}
-      {successMessage && (
+      {state.successMessage && (
         <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
-          {successMessage}
+          {state.successMessage}
           <button
-            onClick={() => setSuccessMessage("")}
+            onClick={() => setState((prevState) => ({ ...prevState, successMessage: "" }))}
             className="ml-4 text-lg font-bold"
           >
             &times;
@@ -98,11 +133,11 @@ function BuildingPage() {
       )}
 
       {/* Alert for errors */}
-      {apiError && (
+      {state.apiError && (
         <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
-          {apiError}
+          {state.apiError}
           <button
-            onClick={() => setApiError("")}
+            onClick={() => setState((prevState) => ({ ...prevState, apiError: "" }))}
             className="ml-4 text-lg font-bold"
           >
             &times;
@@ -112,25 +147,31 @@ function BuildingPage() {
 
       <div className="h-screen w-auto pb-20 mt-16">
         <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-          <div className="flex bg-primary items-center  md:justify-end  p-1 max-w-screen-auto w-full">
-          <h1 className=" block md:hidden  font-bold text-md text-white p-2 justify-items-start">
-            Building Catalog
-          </h1>
-          <AiOutlineSearch className="absolute top-0 right-0 mr-10 mt-4 text-xl md:hidden text-white" />
-          <IoFilterOutline className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white" />
+          <div className="flex bg-primary items-center md:justify-end p-1 max-w-screen-auto w-full">
+            <h1 className="block md:hidden font-bold text-md text-white p-2 justify-items-start">
+              Building Catalog
+            </h1>
+            <AiOutlineSearch className="absolute top-0 right-0 mr-10 mt-4 text-xl md:hidden text-white" />
+            <IoFilterOutline className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white" />
             <div className="hidden md:flex items-center space-x-4">
-              <PurposeFilter onChange={setSelectedPurpose} />
-              <CampusFilter
-                campuses={campuses}
-                selectedCampus={selectedCampus}
-                onChange={setSelectedCampus}
+              <Filter
+                options={state.purposes}
+                selectedValue={state.selectedPurpose}
+                onChange={(value) => setState((prevState) => ({ ...prevState, selectedPurpose: value }))}
+                placeholder="All Purposes"
+              />
+              <Filter
+                options={state.campuses}
+                selectedValue={state.selectedCampus}
+                onChange={(value) => setState((prevState) => ({ ...prevState, selectedCampus: value }))}
+                placeholder="All Campuses"
               />
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search buildings..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={state.searchQuery}
+                  onChange={(e) => setState((prevState) => ({ ...prevState, searchQuery: e.target.value }))}
                   className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
                 />
               </div>
@@ -144,20 +185,19 @@ function BuildingPage() {
               <input
                 type="text"
                 placeholder="Search buildings..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={state.searchQuery}
+                onChange={(e) => setState((prevState) => ({ ...prevState, searchQuery: e.target.value }))}
                 className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
               />
             </div>
           </div>
-          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4">
-          </div>
+          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4"></div>
         </div>
         <div className="md:relative mx-5 md:mx-8 md:mt-24">
           <div className="justify-end md:absolute top-0 right-0 py-8 mr-4">
-            <AddButton onClick={toggleAddBuildingModalLocal} />
+            <AddButton onClick={toggleAddBuildingModal} />
           </div>
-          <h1 className=" hidden md:block font-bold text-3xl text-black mt-18 py-8">
+          <h1 className="hidden md:block font-bold text-3xl text-black mt-18 py-8">
             Building Catalog
           </h1>
           <div className="flex flex-wrap">
@@ -170,63 +210,26 @@ function BuildingPage() {
                   building={building}
                   onClick={() => handleBuildingClick(building)}
                   onDelete={(deletedId) =>
-                    setBuildings(buildings.filter((b) => b._id !== deletedId))
+                    setState((prevState) => ({
+                      ...prevState,
+                      buildings: prevState.buildings.filter((b) => b._id !== deletedId),
+                    }))
                   }
-                  setSuccessMessage={setSuccessMessage}
-                  setApiError={setApiError}
+                  setSuccessMessage={(message) => setState((prevState) => ({ ...prevState, successMessage: message }))}
+                  setApiError={(error) => setState((prevState) => ({ ...prevState, apiError: error }))}
                 />
               </div>
             ))}
           </div>
-          {isAddBuildingOpen && (
+          {state.isAddBuildingOpen && (
             <AddBuildingModal
-              isOpen={isAddBuildingOpen}
-              toggleModal={toggleAddBuildingModalLocal}
+              isOpen={state.isAddBuildingOpen}
+              toggleModal={toggleAddBuildingModal}
               onBuildingAdded={handleAddBuilding}
-              cla
             />
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function CampusFilter({ campuses, selectedCampus, onChange }) {
-  return (
-    <div className="flex items-center space-x-2">
-      <select
-        value={selectedCampus}
-        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="">All Campuses</option>
-        {campuses.map(([name, id], index) => (
-          <option key={index} value={id}>
-            {name}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function PurposeFilter({ onChange }) {
-  const handlePurposeChange = (e) => {
-    onChange(e.target.value);
-  };
-
-  return (
-    <div className="flex items-center space-x-2">
-      <select
-        className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-        onChange={handlePurposeChange}
-      >
-        <option value="">All Purposes</option>
-        <option value="Classroom">Classroom</option>
-        <option value="Laboratory">Laboratory</option>
-        <option value="Administrative">Administrative</option>
-      </select>
     </div>
   );
 }

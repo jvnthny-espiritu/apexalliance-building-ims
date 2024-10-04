@@ -1,8 +1,8 @@
-const Asset = require('../models/asset');
-const Building = require('../models/building');
-const Room = require('../models/room');
+const Asset = require('../models/Asset');
+const Building = require('../models/Building');
+const Room = require('../models/Room');
 //const Activity = require('../models/activity');
-const Campus = require('../models/campus');
+const Campus = require('../models/Campus');
 
 // asset metrics
 exports.getAssetMetrics = async (req, res) => {

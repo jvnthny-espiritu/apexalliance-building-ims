@@ -8,12 +8,12 @@ module.exports = {
       const { faciliites, campus } = req.query;
       let query = {};
       if (faciliites) {
-        query.faciliites = { $in: [faciliites] };
+        query.facilities = { $in: [facilities] };
       }
       if (campus) {
         query.campus = campus;
       }
-      const buildings = await Building.find(query).populate('campus', 'name');
+      const buildings = await Building.find(query).select('-createdAt -updatedAt');
       res.json(buildings);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -21,9 +21,9 @@ module.exports = {
   },
   
   createBuilding: async (req, res) => {
-    const { name, campus, numberOfFloors, yearBuilt, faciliites } = req.body;
+    const { name, campus, numberOfFloors, yearBuilt, facilities } = req.body;
     try {
-      const building = await Building.create({ name, campus, numberOfFloors, yearBuilt, faciliites });
+      const building = await Building.create({ name, campus, numberOfFloors, yearBuilt, facilities });
       res.status(201).json(building);
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -87,6 +87,20 @@ module.exports = {
     } catch (err) {
         console.error('Error deleting building, rooms, or assets:', err);
         res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  getFacilities: async (req, res) => {
+    const { campusId } = req.query;
+    try {
+      if (!campusId) {
+        return res.status(400).json({ error: 'Campus ID is required' });
+      }
+      const facilities = await Building.distinct('facilities', { campus: campusId });
+      res.json(facilities);
+    } catch (err) {
+      console.error('Error fetching facilities:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   },
 

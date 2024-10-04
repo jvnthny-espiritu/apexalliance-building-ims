@@ -11,7 +11,7 @@ module.exports = {
       req.login(user, { session: false }, (err) => {
         if (err) return next(err);
 
-        const token = jwt.sign({ id: user._id, role: user.role }, 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return res.status(200).json({ message: 'Logged in successfully', token });
       });
     })(req, res, next);

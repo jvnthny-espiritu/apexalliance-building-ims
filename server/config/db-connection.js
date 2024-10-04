@@ -1,5 +1,5 @@
+require('dotenv').config();
 let mongoose = require('mongoose');
-const dbURI = 'mongodb+srv://admin:admin@facility-assets.cd8kndv.mongodb.net/?retryWrites=true&w=majority&appName=facility-assets';
 
 class Database {
   constructor() {
@@ -8,7 +8,7 @@ class Database {
 
   _connect() {
     mongoose
-      .connect(dbURI)
+      .connect(process.env.MONGO_URI)
       .then(() => {
         console.log('Database connection successful');
       })

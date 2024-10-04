@@ -17,7 +17,7 @@ const campusRoutes = require('./routes/campus');
 const buildingRoutes = require('./routes/buildings');
 const roomRoutes = require('./routes/rooms');
 const assetRoutes = require('./routes/assets');
-const dashboardRoutes = require('.routes/dashboard');
+const dashboardRoutes = require('./routes/dashboard');
 
 app.use('/api/users', userRoutes);
 app.use('/api/campuses', campusRoutes);
