@@ -80,7 +80,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   };
 
   return (
-    <div className="w-[300px] h-[150px] md:h-[200px] my-2 md:my-15 flex flex-col relative">
+    <div className="w-[250px] md:w-[300px] h-[185px] md:h-[250px] my-2 md:my-15 flex flex-col relative">
       <div
         className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray"
         onClick={handleCardClick}
