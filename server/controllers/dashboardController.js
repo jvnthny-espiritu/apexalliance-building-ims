@@ -106,53 +106,45 @@ exports.getRoomMetrics = async (req, res) => {
             '$unwind': {
               'path': '$campusDetails'
             }
-          }, {
+          }, /*{
+            '$match': {
+              'type': { '$ne': null }  // Filter out records where purpose is null or undefined
+            }
+          },*/ {
             '$group': {
               '_id': {
-                'campusName': '$campusDetails.name',
-                'buildingName': '$buildingDetails.name',
-                'roomPurpose': '$type'
+                'campusId': '$buildingDetails.campus', 
+                'campusName': '$campusDetails.name', 
+                'type': '$purpose'
               }, 
               'count': {'$sum': 1}
             }
           }, {
             '$group': {
               '_id': {
-                'campusName': '$_id.campusName',
-                'buildingName': '$_id.buildingName'
+                'campusId': '$_id.campusId', 
+                'campusName': '$_id.campusName'
               }, 
               'types': {
                   '$push': {
-                    'purpose': '$_id.roomPurpose',
+                    'type': '$_id.type', 
                     'count': '$count'
                   }
-              }
-            }
-          }, {
-            '$group': {
-              '_id': '$_id.campusName',
-              'buildings': {
-                '$push': {
-                  'buildingName': '$_id.buildingName',
-                  'roomTypes': '$types'
-                }
               }
             }
           }
       ]);
 
-          const roomPurpose_data = roomPurposeDistribution.map(item => {
-            return {
-              campusName: item._id,
-              buildings: item.buildings.map(building => ({
-                buildingName: building.buildingName,
-                roomTypes: building.roomTypes.map(type => ({
-                  purpose: type.purpose,
-                  count: type.count
-                }))
-              }))
-            };
-          });
+        const roomPurpose_data = roomPurposeDistribution.map(campus => {
+          return{
+            campusId: campus._id.campusId,
+            campusName: campus._id.campusName,
+            roomTypes: campus.types.map(type => ({
+              purpose: type.type,
+              count: type.count
+            }))
+          };
+        }); 
 
         res.json({
             totalRooms,
