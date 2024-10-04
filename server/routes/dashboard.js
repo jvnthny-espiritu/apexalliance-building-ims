@@ -5,7 +5,6 @@ const dashboardController = require('../controllers/dashboardController');
 router.get('/metrics/assets', dashboardController.getAssetMetrics);
 router.get('/metrics/buildings', dashboardController.getBuildingMetrics);
 router.get('/metrics/rooms', dashboardController.getRoomMetrics);
-//router.get('/room-distribution', dashboardController.getRoomDistribution);
-router.get('/activity-log', dashboardController.getActivityLog);
+//router.get('/activity-log', dashboardController.getActivityLog);
 
 module.exports = router;

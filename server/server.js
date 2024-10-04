@@ -17,12 +17,14 @@ const campusRoutes = require('./routes/campus');
 const buildingRoutes = require('./routes/buildings');
 const roomRoutes = require('./routes/rooms');
 const assetRoutes = require('./routes/assets');
+const dashboardRoutes = require('.routes/dashboard');
 
 app.use('/api/users', userRoutes);
 app.use('/api/campuses', campusRoutes);
 app.use('/api/buildings', buildingRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/assets', assetRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 const PORT = process.env.PORT || 5000;

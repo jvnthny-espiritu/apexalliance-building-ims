@@ -1,7 +1,7 @@
 const Asset = require('../models/asset');
 const Building = require('../models/building');
 const Room = require('../models/room');
-const Activity = require('../models/activity');
+//const Activity = require('../models/activity');
 const Campus = require('../models/campus');
 
 // asset metrics
@@ -155,11 +155,11 @@ exports.getRoomMetrics = async (req, res) => {
     }
 };
 
-exports.getActivityLog = async (req, res) => {
+/*exports.getActivityLog = async (req, res) => {
     try {
         const activities = await Activity.find().populate('user', 'firstName lastName');
         res.json(activities);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-};
+};*/
