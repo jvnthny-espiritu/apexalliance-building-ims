@@ -11,7 +11,6 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     },
     role: "Staff",
     username: "",
-    email: "",
     password: "",
     confirmPassword: "",
     campus: "",
@@ -65,7 +64,6 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     if (!formData.fullName.firstName) errors.firstName = "First name is required.";
     if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
-    if (!formData.email) errors.email = "Email is required.";
     if (!formData.password) errors.password = "Password is required.";
     if (!formData.confirmPassword) errors.confirmPassword = "Confirm password is required.";
     if (!formData.campus) errors.campus = "Campus is required.";
@@ -116,7 +114,6 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
       },
       role: "Staff",
       username: "",
-      email: "",
       password: "",
       confirmPassword: "",
       campus: "",
@@ -257,20 +254,6 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
               />
               {validationErrors.username && (
                 <span className="text-red-500 text-sm">{validationErrors.username}</span>
-              )}
-            </div>
-
-            <div className="flex flex-col mb-4">
-              <label className="text-black">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="border-b-2 border-black p-3 outline-none"
-              />
-              {validationErrors.email && (
-                <span className="text-red-500 text-sm">{validationErrors.email}</span>
               )}
             </div>
 

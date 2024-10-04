@@ -13,7 +13,6 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     },
     role: user ? user.role : "Staff",
     username: user ? user.username : "",
-    email: user ? user.email : "",
     password: "",
     confirmPassword: "",
     campus: user ? user.campus._id : "",
@@ -62,7 +61,6 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     if (!formData.fullName.firstName) errors.firstName = "First name is required.";
     if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
-    if (!formData.email) errors.email = "Email is required.";
     if (formData.password && formData.password.length < 8) {
       errors.password = "Password must be at least 8 characters long.";
     }
@@ -269,19 +267,6 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   <span className="text-red-500 text-sm">{validationErrors.confirmPassword}</span>
                 )}
                 </div>
-              </div>
-              <div className="flex flex-col mb-4">
-                <label className="text-black">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="border-b-2 border-black p-3 outline-none"
-                />
-                 {validationErrors.email && (
-                <span className="text-red-500 text-sm">{validationErrors.email}</span>
-              )}
               </div>
             </div>
             <div className="flex justify-end">

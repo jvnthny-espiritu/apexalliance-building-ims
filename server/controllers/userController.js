@@ -36,17 +36,11 @@ module.exports = {
     console.log("Received request body:", req.body);
 
     try {
-      const [existingEmail, existingUser] = await Promise.all([
-        User.findOne({ email }),
+      const [ existingUser] = await Promise.all([
         User.findOne({ username })
       ]);
 
       const errors = {};
-
-      if (existingEmail) {
-        errors.email = "Email already in use";
-      }
-
       if (existingUser) {
           errors.username = "Username already in use";
       }
@@ -105,15 +99,6 @@ module.exports = {
           errors.username = 'Username already exists';
         }
       }
-  
-      if (email && email !== user.email) {
-        console.log('Checking if email is available:', email);
-        const existingEmail = await User.findOne({ email });
-        if (existingEmail && existingEmail._id.toString() !== id) {
-          console.error('Email already exists:', email);
-          errors.email = 'Email already exists';
-        }
-      }
 
       if (Object.keys(errors).length > 0) {
         return res.status(400).json({ success: false, errors });
@@ -121,7 +106,6 @@ module.exports = {
   
       if (username) user.username = username;
       if (password) user.password = password; 
-      if (email) user.email = email;
       if (campus) user.campus = campus;
       
       if (fullName) {

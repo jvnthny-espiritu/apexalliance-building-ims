@@ -14,7 +14,6 @@ const UserAccount = () => {
     id: "",
     firstName: "",
     lastName: "",
-    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -56,7 +55,6 @@ const UserAccount = () => {
         id: response.data._id,
         firstName: response.data.fullName.firstName,
         lastName: response.data.fullName.lastName,
-        email: response.data.email,
       });
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -83,7 +81,6 @@ const UserAccount = () => {
 
     try {
       const response = await api.put(`/user/${user.id}`, {
-        email: user.email,
         password: user.password,
         fullName: {
           firstName: user.firstName,
@@ -175,18 +172,6 @@ const UserAccount = () => {
                 >
                   {user.lastName}
                 </div>
-              </div>
-              <div>
-                <label htmlFor="email" className="text-lg font-bold text-black">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={user.email}
-                  onChange={(e) => setUser({ ...user, email: e.target.value })}
-                  className="mt-2 bg-transparent border border-black text-black text-sm rounded-lg block w-full p-2.5 "
-                />
               </div>
             </div>
             <div className="grid gap-6 mb-6 md:grid-cols-2">
@@ -470,9 +455,6 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                 Role
               </th>
               <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -488,9 +470,6 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                 </td>
                 <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
                   {user.role}
-                </td>
-                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  {user.email}
                 </td>
                 <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
                   <button
@@ -557,7 +536,6 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                       {user.fullName.firstName} {user.fullName.lastName}
                     </h3>
                     <p className="text-gray-800 text-sm">Role: {user.role}</p>
-                    <p className="text-gray-800 text-sm">Email: {user.email}</p>
                     <p className="text-gray-800 text-sm">
                       Campus: {user.campus.name}
                     </p>
