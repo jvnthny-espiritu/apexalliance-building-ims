@@ -13,7 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 
 const App = () => {
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const { isLoggedIn } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
 

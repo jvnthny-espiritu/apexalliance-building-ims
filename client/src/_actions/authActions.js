@@ -28,3 +28,12 @@ export const fetchUserById = (id) => async (dispatch) => {
     return { success: false, error: errorMessage };
   }
 };
+
+export const rehydrateAuth = () => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    dispatch({ type: 'LOGIN_SUCCESS', payload: token });
+    dispatch(fetchUserById(decodedToken.id));
+  }
+};

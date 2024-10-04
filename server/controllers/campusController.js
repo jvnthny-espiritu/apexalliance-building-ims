@@ -3,7 +3,7 @@ const Campus = require('../models/Campus');
 module.exports = {
   getAllCampuses: async (req, res) => {
     try {
-      const campuses = await Campus.find();
+      const campuses = await Campus.find().select('name _id');
       res.json(campuses);
     } catch (err) {
       res.status(500).json({ message: err.message });

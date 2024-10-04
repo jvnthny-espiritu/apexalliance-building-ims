@@ -1,10 +1,8 @@
-import jwtDecode from 'jwt-decode';
-
 const initialState = {
-  token: null,
+  token:  localStorage.getItem('token') || null,
   user: null,
   error: null,
-  isLoggedIn: false,
+  isLoggedIn: !!localStorage.getItem('token'),
 };
 
 export default function authReducer(state = initialState, action) {
