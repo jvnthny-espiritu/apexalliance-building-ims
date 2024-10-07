@@ -24,7 +24,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        let apiUrl = `/room/${room._id}/assets?`;
+        let apiUrl = `/api/assets?room=${room.id}`;
 
         if (selectedType) {
           apiUrl += `&type=${selectedType}`;
@@ -40,6 +40,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
 
         const response = await api.get(apiUrl);
         setAssets(response.data);
+        console.log(response.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching assets:", error);

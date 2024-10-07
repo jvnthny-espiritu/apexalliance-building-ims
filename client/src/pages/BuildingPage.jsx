@@ -13,7 +13,7 @@ function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
   const [state, setState] = useState({
     buildings: [],
-    selectedCampus: user ? user.campus : '',
+    selectedCampus: user ? user.campus._id : '',
     selectedPurpose: "",
     campuses: [],
     purposes: [],
@@ -105,7 +105,7 @@ function BuildingPage() {
   }, [state.buildings, state.searchQuery]);
 
   const handleBuildingClick = useCallback((building) => {
-    navigate(`/catalog/rooms/${building.id}`);
+    navigate(`/catalog/rooms/${building._id}`);
   }, [navigate]);
 
   const handleAddBuilding = useCallback(() => {

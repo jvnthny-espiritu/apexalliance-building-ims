@@ -17,7 +17,7 @@ module.exports = {
       if (condition) {
           filter.condition = condition;
       }
-      const assets = await Asset.find(filter).populate('location', 'name');
+      const assets = await Asset.find(filter);
       res.json(assets);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });

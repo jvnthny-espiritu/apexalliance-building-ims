@@ -57,7 +57,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
     if (dropdownVisible) {
       setDropdownVisible(false);
     } else {
-      navigate(`/catalog/room/${_id}`);
+      navigate(`/catalog/rooms/${_id}`);
     }
   };
 

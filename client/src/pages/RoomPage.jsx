@@ -10,8 +10,7 @@ import AddRoomModal from "../components/modals/AddRoomModal";
 
 function RoomPage() {
   const { buildingId } = useParams();
-  const [building, setBuilding] = useState(null);
-  const [floors, setFloors] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [selectedType, setSelectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,41 +22,21 @@ function RoomPage() {
     setIsAddRoomOpen((prev) => !prev);
   };
 
-  const fetchBuildingDetails = async () => {
+  const fetchRooms = async () => {
     try {
-      const response = await api.get(`/building/${buildingId}`);
-      setBuilding(response.data);
+      const response = await api.get(`/api/rooms?building=${buildingId}`);
+      setRooms(response.data);
     } catch (error) {
-      console.error("Error fetching building details:", error);
+      console.error("Error fetching rooms:", error);
     }
   };
 
-  const fetchFloors = async () => {
-    try {
-      const queryParams = new URLSearchParams(location.search);
-      let apiUrl = `/building/${buildingId}/rooms`;
-
-      if (selectedType) apiUrl += `?type=${selectedType}`;
-      if (selectedStatus)
-        apiUrl += `${selectedType ? "&" : "?"}status=${selectedStatus}`;
-
-      const response = await api.get(apiUrl);
-      const floorsArray = Object.keys(response.data).map((floorNumber) => ({
-        buildingFloor: parseInt(floorNumber),
-        rooms: response.data[floorNumber],
-      }));
-      setFloors(floorsArray);
-    } catch (error) {
-      console.error("Error fetching floors:", error);
-    }
-  };
 
   useEffect(() => {
-    fetchBuildingDetails();
-    fetchFloors();
+    fetchRooms();
   }, [buildingId, selectedType, selectedStatus, location.search]);
 
-  const filteredFloors = floors.map((floor) => ({
+  const filteredFloors = rooms.map((floor) => ({
     ...floor,
     rooms: floor.rooms.filter((room) =>
       room.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -66,7 +45,6 @@ function RoomPage() {
 
   const handleAddRoom = () => {
     toggleAddRoomModalLocal();
-    fetchFloors();
   };
 
   const handleBack = () => {
@@ -113,7 +91,7 @@ function RoomPage() {
             filteredFloors.map((floor, index) => (
               <FloorSection
                 key={index}
-                floorName={floor.buildingFloor}
+                floorName={floor._id}
                 rooms={floor.rooms}
                 selectedType={selectedType}
                 selectedStatus={selectedStatus}

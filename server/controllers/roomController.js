@@ -21,6 +21,7 @@ module.exports = {
 						_id: '$floor',
 						rooms: {
 							$push: {
+								id: '$_id',
 								name: '$name',
 								purpose: '$purpose',
 								status: '$status'

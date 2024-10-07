@@ -9,23 +9,23 @@ export default function Dashboard() {
     const [totalRooms, setTotalRooms] = useState(null);
     const [totalAssets, setTotalAssets] = useState(null);
 
-    useEffect(() => {
-      const fetchData = async () => {
-          try {
-              const buildingsMetrics = await api.get('/dashboard/metrics/buildings');
-              setTotalBuildings(buildingsMetrics.data.totalBuildings);
+  //   useEffect(() => {
+  //     const fetchData = async () => {
+  //         try {
+  //             const buildingsMetrics = await api.get('/dashboard/metrics/buildings');
+  //             setTotalBuildings(buildingsMetrics.data.totalBuildings);
 
-              const roomsMetrics = await api.get('/dashboard/metrics/rooms');
-              setTotalRooms(roomsMetrics.data.totalRooms);
+  //             const roomsMetrics = await api.get('/dashboard/metrics/rooms');
+  //             setTotalRooms(roomsMetrics.data.totalRooms);
 
-              const assetsMetrics = await api.get('/dashboard/metrics/assets');
-              setTotalAssets(assetsMetrics.data.totalAssets);
-          } catch (error) {
-              console.error('Error fetching data:', error);
-          }
-      };
-      fetchData();
-  }, []);
+  //             const assetsMetrics = await api.get('/dashboard/metrics/assets');
+  //             setTotalAssets(assetsMetrics.data.totalAssets);
+  //         } catch (error) {
+  //             console.error('Error fetching data:', error);
+  //         }
+  //     };
+  //     fetchData();
+  // }, []);
 
   return (
     <div className='mb-24 md:mb-0'>
@@ -59,18 +59,18 @@ export default function Dashboard() {
               <span className='font-bold font-body text-lg'>Building Distribution</span>
             </div>
             <hr className='border-black' />
-            <BuildingDistribution />
+            {/* <BuildingDistribution /> */}
           </div>
           <div className='shrink w-auto h-auto p-5 mb-2'>
             <div>
               <span className='font-bold font-body text-lg'>Room Distribution</span>
             </div>
             <hr className='border-black' />
-            <RoomTypeDistribution />
+            {/* <RoomTypeDistribution /> */}
           </div>
         </div>
         <div className="relative flex-none right-0 md:ml-5 mt-1 md:mt-0 w-auto sm:w-auto">
-          <ActivityLog />
+          {/* <ActivityLog /> */}
         </div>
       </div>
     </div>
