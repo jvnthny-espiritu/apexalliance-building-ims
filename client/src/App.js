@@ -7,15 +7,25 @@ import Login from "./pages/auth/Login";
 import BuildingPage from "./pages/BuildingPage";
 import RoomPage from "./pages/RoomPage";
 import Sidebar from "./components/nav/side";
-// import AccountHead from "./components/nav/AccountHead";
+import Bottombar from "./components/nav/bottom";
 import TopBar from "./components/nav/top";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 
 const App = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Checks if the screen is mobile size
+
+  // Handle screen resize to toggle between mobile and desktop views
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (location.pathname === "/login" && isLoggedIn) {
@@ -29,7 +39,7 @@ const App = () => {
     <div className="flex flex-col h-full w-screen bg-lightGray">
       {!isLoginPage && <TopBar />}
       <div className="flex flex-1">
-        {!isLoginPage && <Sidebar />}
+        {!isLoginPage && !isMobile && <Sidebar />} {/* Show sidebar only on non-mobile views */}
         <main className="flex-1">
           <Routes>
             <Route
@@ -46,6 +56,7 @@ const App = () => {
           </Routes>
         </main>
       </div>
+      {!isLoginPage && isMobile && <Bottombar />} {/* Show bottombar only on mobile views */}
     </div>
   );
 };

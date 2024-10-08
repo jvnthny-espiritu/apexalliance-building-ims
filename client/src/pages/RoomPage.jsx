@@ -112,7 +112,7 @@ function Header({handleBack,searchQuery,setSearchQuery,setSelectedType,setSelect
       <div className="flex items-center bg-primary p-1 max-w-screen-auto w-full">
         <button
           onClick={handleBack}
-          className="md:mx-10 md:bg-red-600 text-white font-bold text-md justify-item items-start hover:bg-white hover:border hover:border-gray-300 hover:text-red-600 md:px-4 py-0 rounded-full transition-all duration-300 flex items-center"
+          className="md:mx-30 space-x-2 md:bg-red-600 text-white font-bold text-md justify-item items-start hover:bg-red-400 hover:text-white md:px-4 py-0 rounded-full transition-all duration-300 flex items-center"
         >
           <FaArrowLeft className="ml-1" />
           <span className="hidden md:inline">Back</span>
