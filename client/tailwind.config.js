@@ -17,7 +17,7 @@ module.exports = {
         'primary': '#FF0000', // Renamed primary color
         'primary-light': '#ff2222',
         'primary-dark': '#ff6666',
-        'room-use': {
+        'facilities': {
           'laboratory': '#0000FF',
           'classroom': '#008000',
           'administrative': '#FF0000',
