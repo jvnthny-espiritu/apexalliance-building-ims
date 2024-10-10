@@ -28,7 +28,7 @@ function BuildingPage() {
     isFilterModalOpen: false,
     activeTab: "purposes", // State to handle active tab in mobile filter modal
     isSearchBoxVisible: false,
-    isDialogVisible: false, 
+    isDialogVisible: false,
   });
 
   const navigate = useNavigate();
@@ -176,155 +176,113 @@ function BuildingPage() {
         </div>
       )}
 
-<div className="h-screen w-auto pb-20 mt-16">
-  <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-    <div className="flex bg-primary items-center md:justify-end p-1 max-w-screen-auto w-full">
-      {state.isSearchBoxVisible && (
-        <div className="w-full p-2 flex items-center">
-          <button
-            className="mr-2 pr-5 text-white text-xl"
-            onClick={() =>
-              setState((prevState) => ({
-                ...prevState,
-                isSearchBoxVisible: false,
-              }))
-            }
-          >
-            <FaArrowLeft />
-          </button>
-          <input
-            type="text"
-            placeholder="Search buildings..."
-            value={state.searchQuery}
-            onChange={(e) =>
-              setState((prevState) => ({
-                ...prevState,
-                searchQuery: e.target.value,
-              }))
-            }
-            className="w-full border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-          />
-          <FaEllipsisVertical
-                className="ml-2 text-xl text-white"
-                onClick={() =>
+      <div className="h-screen w-auto pb-20 mt-16">
+        <div className="fixed top-16 left-0 right-0 z-10 shadow-md">
+          <div className="flex bg-primary items-center md:justify-end p-1 max-w-screen-auto w-full">
+            {state.isSearchBoxVisible && (
+              <div className="w-full flex items-center">
+                <button
+                  className="mx-3 pr-5 text-white text-xl"
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      isSearchBoxVisible: false,
+                    }))
+                  }
+                >
+                  <FaArrowLeft />
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search buildings..."
+                  value={state.searchQuery}
+                  onChange={(e) =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      searchQuery: e.target.value,
+                    }))
+                  }
+                  className="text-white bg-primary block md:hidden w-full border-b-2 px-2 py-1 focus:outline-none focus:border-b-2 "
+                />
+                <IoFilterOutline
+                  className="block md:hidden ml-4 mr-2 top-1/2 text-3xl text-white"
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      isFilterModalOpen: true,
+                    }))
+                  }
+                />
+              </div>
+            )}
+            {!state.isSearchBoxVisible && (
+              <>
+                <h1 className="block md:hidden font-bold text-md text-white p-2">
+                  Building Catalog
+                </h1>
+                <AiOutlineSearch
+                  className="absolute top-0 right-0 mr-10 mt-4 text-xl md:hidden text-white"
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      isSearchBoxVisible: !prevState.isSearchBoxVisible,
+                    }))
+                  }
+                />
+                <IoFilterOutline
+                  className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white"
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      isFilterModalOpen: true,
+                    }))
+                  }
+                />
+              </>
+            )}
+            <div className="hidden md:flex items-center space-x-4">
+              <Filter
+                options={state.purposes}
+                selectedValue={state.selectedPurpose}
+                onChange={(value) =>
                   setState((prevState) => ({
                     ...prevState,
-                    isDialogVisible: true,
+                    selectedPurpose: value,
                   }))
                 }
+                placeholder="All Purposes"
               />
-        </div>
-      )}
-      {!state.isSearchBoxVisible && (
-        <>
-          <h1 className="block md:hidden font-bold text-md text-white p-2">
-            Building Catalog
-          </h1>
-          <AiOutlineSearch
-            className="absolute top-0 right-0 mr-10 mt-4 text-xl md:hidden text-white"
-            onClick={() =>
-              setState((prevState) => ({
-                ...prevState,
-                isSearchBoxVisible: !prevState.isSearchBoxVisible,
-              }))
-            }
-          />
-          <IoFilterOutline
-            className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white"
-            onClick={() =>
-              setState((prevState) => ({
-                ...prevState,
-                isFilterModalOpen: true,
-              }))
-            }
-          />
-        </>
-      )}
-      <div className="hidden md:flex items-center space-x-4">
-        <Filter
-          options={state.purposes}
-          selectedValue={state.selectedPurpose}
-          onChange={(value) =>
-            setState((prevState) => ({
-              ...prevState,
-              selectedPurpose: value,
-            }))
-          }
-          placeholder="All Purposes"
-        />
-        <Filter
-          options={state.campuses}
-          selectedValue={state.selectedCampus}
-          onChange={(value) =>
-            setState((prevState) => ({
-              ...prevState,
-              selectedCampus: value,
-            }))
-          }
-          placeholder="All Campuses"
-        />
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search buildings..."
-            value={state.searchQuery}
-            onChange={(e) =>
-              setState((prevState) => ({
-                ...prevState,
-                searchQuery: e.target.value,
-              }))
-            }
-            className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  {/* Dialog box */}
-  {state.isDialogVisible && (
-  <div className="absolute top-18 right-2 z-20 bg-white px-10 shadow-md rounded-md">
-    <div className="p-4">
-      <button
-        className="text-black"
-        onClick={() =>
-          setState((prevState) => ({
-            ...prevState,
-            isFilterModalOpen: true,
-            isDialogVisible: false,
-          }))
-        }
-      >
-        Filter
-      </button>
-          </div>
-        </div>
-      )}
-
-
-
-        <div className="flex flex-wrap ml-3 mt-5 text-sm md:hidden font-normal relative">
-          <div className="flex md:space-x-4 mb-4 sticky top-0">
-            <div className="relative">
-              <AiOutlineSearch className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search buildings..."
-                value={state.searchQuery}
-                onChange={(e) =>
+              <Filter
+                options={state.campuses}
+                selectedValue={state.selectedCampus}
+                onChange={(value) =>
                   setState((prevState) => ({
                     ...prevState,
-                    searchQuery: e.target.value,
+                    selectedCampus: value,
                   }))
                 }
-                className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+                placeholder="All Campuses"
               />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search buildings..."
+                  value={state.searchQuery}
+                  onChange={(e) =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      searchQuery: e.target.value,
+                    }))
+                  }
+                  className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-nonetext-black"
+                />
+              </div>
             </div>
           </div>
-          <div className="flex sm:ml-4 md:ml-4 mb-4 space-x-4"></div>
         </div>
 
         <div className="md:relative mx-5 md:mx-8 md:mt-24">
-          <div className="justify-end md:absolute top-0 right-0 py-8 mr-4">
+          <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
             <AddButton onClick={toggleAddBuildingModal} />
           </div>
 
