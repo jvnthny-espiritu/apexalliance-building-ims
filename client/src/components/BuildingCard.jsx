@@ -8,7 +8,28 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   const { _id, name, campus, yearBuilt, numberOfFloors, facilities } = building;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [facilityColorMap, setFacilityColorMap] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Create a mapping of facility names to random colors
+    const facilityColors = [
+      'bg-facilities-1',
+      'bg-facilities-2',
+      'bg-facilities-3',
+      'bg-facilities-4',
+      'bg-facilities-5',
+    ];
+    
+    const colorMap = {};
+    const facilityNames = Array.from(new Set(facilities)); // Get unique facility names
+
+    facilityNames.forEach((facility, index) => {
+      colorMap[facility] = facilityColors[index % facilityColors.length];
+    });
+
+    setFacilityColorMap(colorMap); // Set the mapping state
+  }, [facilities]);
 
   // Toggle dropdown
   const toggleDropdown = (event) => {
@@ -47,20 +68,6 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   // Cancel deletion
   const handleCancelDelete = () => {
     setShowModal(false);
-  };
-
-  // Function to apply the corresponding color to each facility type
-  const getFacilityColorClass = (facility) => {
-    switch (facility.toLowerCase()) {
-      case 'laboratory':
-        return 'bg-facilities-laboratory';
-      case 'classroom':
-        return 'bg-facilities-classroom';
-      case 'administrative':
-        return 'bg-facilities-administrative';
-      default:
-        return 'bg-primary'; // Default color if no match
-    }
   };
 
   return (
@@ -103,7 +110,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
               {facilities && facilities.map((facility, index) => (
                 <li
                   key={index}
-                  className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${getFacilityColorClass(facility)}`}
+                  className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${facilityColorMap[facility] || 'bg-primary'}`} // Use mapped color
                 >
                   {facility}
                 </li>
