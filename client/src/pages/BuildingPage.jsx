@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoFilterOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
-import { FaEllipsisVertical } from "react-icons/fa6";
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
@@ -307,11 +306,12 @@ function BuildingPage() {
       </div>
 
       {state.isAddBuildingOpen && (
-        <AddBuildingModal
-          onClose={toggleAddBuildingModal}
-          onAddBuilding={handleAddBuilding}
-        />
-      )}
+            <AddBuildingModal
+              isOpen={state.isAddBuildingOpen}
+              toggleModal={toggleAddBuildingModal}
+              onBuildingAdded={handleAddBuilding}
+            />
+          )}
 
       {/* Mobile filter modal */}
       {state.isFilterModalOpen && (
