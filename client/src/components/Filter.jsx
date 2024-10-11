@@ -44,5 +44,5 @@ function Filtermobile({ options, selectedValue, onChange, placeholder }) {
   }
 
 
-export { Filter, Filtermobile };
+export {Filtermobile} ;
 export default Filter;

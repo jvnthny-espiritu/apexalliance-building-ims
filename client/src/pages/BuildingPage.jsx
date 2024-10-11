@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoFilterOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
+import { FaEllipsisVertical } from "react-icons/fa6";
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
 import AddBuildingModal from "../components/modals/AddBuildingModal";
-import { Filter, Filtermobile } from "../components/Filter";
+import Filter from "../components/Filter";
+import ModalFilter from "../components/modals/ModalFilter";
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
@@ -25,9 +27,8 @@ function BuildingPage() {
     apiError: "",
     isAddBuildingOpen: false,
     isFilterModalOpen: false,
-    activeTab: "purposes", // State to handle active tab in mobile filter modal
+    activeTab: "purposes", 
     isSearchBoxVisible: false,
-    isDialogVisible: false,
   });
 
   const navigate = useNavigate();
@@ -138,6 +139,19 @@ function BuildingPage() {
     fetchBuildings();
     toggleAddBuildingModal();
   }, [fetchBuildings, toggleAddBuildingModal]);
+
+  const filterOptions = {
+    purposes: {
+      options: state.purposes,
+      selectedValue: state.selectedPurpose,
+      selectedValueKey: "selectedPurpose",
+    },
+    campuses: {
+      options: state.campuses,
+      selectedValue: state.selectedCampus,
+      selectedValueKey: "selectedCampus",
+    },
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -306,94 +320,14 @@ function BuildingPage() {
       </div>
 
       {state.isAddBuildingOpen && (
-            <AddBuildingModal
-              isOpen={state.isAddBuildingOpen}
-              toggleModal={toggleAddBuildingModal}
-              onBuildingAdded={handleAddBuilding}
-            />
-          )}
+        <AddBuildingModal
+          onClose={toggleAddBuildingModal}
+          onAddBuilding={handleAddBuilding}
+        />
+      )}
 
-      {/* Mobile filter modal */}
       {state.isFilterModalOpen && (
-        <div className=" block md:hidden fixed bottom-0 left-0 right-0 bg-white border border-gray-300 rounded-xl p-4 shadow-md z-20 h-[250px]">
-          <div className="flex justify-end items-center">
-            <button
-              onClick={() =>
-                setState((prevState) => ({
-                  ...prevState,
-                  isFilterModalOpen: false,
-                }))
-              }
-              className="text-lg font-bold"
-            >
-              &times;
-            </button>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex border-b">
-            <button
-              className={`py-2 px-4 focus:outline-none ${
-                state.activeTab === "purposes"
-                  ? "border-b-2 border-primary text-black"
-                  : "text-gray-500"
-              }`}
-              onClick={() =>
-                setState((prevState) => ({
-                  ...prevState,
-                  activeTab: "purposes",
-                }))
-              }
-            >
-              Purposes
-            </button>
-            <button
-              className={`py-2 px-4 focus:outline-none ${
-                state.activeTab === "campuses"
-                  ? "border-b-2 border-primary text-black"
-                  : "text-gray-500"
-              }`}
-              onClick={() =>
-                setState((prevState) => ({
-                  ...prevState,
-                  activeTab: "campuses",
-                }))
-              }
-            >
-              Campuses
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          <div className="mt-4">
-            {state.activeTab === "purposes" && (
-              <Filtermobile
-                options={state.purposes}
-                selectedValue={state.selectedPurpose}
-                onChange={(value) =>
-                  setState((prevState) => ({
-                    ...prevState,
-                    selectedPurpose: value,
-                  }))
-                }
-                placeholder="Select Purpose"
-              />
-            )}
-            {state.activeTab === "campuses" && (
-              <Filtermobile
-                options={state.campuses}
-                selectedValue={state.selectedCampus}
-                onChange={(value) =>
-                  setState((prevState) => ({
-                    ...prevState,
-                    selectedCampus: value,
-                  }))
-                }
-                placeholder="Select Campus"
-              />
-            )}
-          </div>
-        </div>
+        <ModalFilter state={state} setState={setState} filterOptions={filterOptions} />
       )}
     </div>
   );
