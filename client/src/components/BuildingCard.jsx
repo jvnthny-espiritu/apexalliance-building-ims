@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
+import EditBuildingModal from '../components/modals/EditBuildingModal'; 
 
 const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) => {
   const { _id, name, campus, yearBuilt, numberOfFloors, facilities } = building;
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); 
   const [facilityColorMap, setFacilityColorMap] = useState({});
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Create a mapping of facility names to random colors
@@ -20,7 +21,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
       'bg-facilities-4',
       'bg-facilities-5',
     ];
-    
+
     const colorMap = {};
     const facilityNames = Array.from(new Set(facilities)); // Get unique facility names
 
@@ -38,36 +39,42 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
     setDropdownVisible(!dropdownVisible);
   };
 
-  // Handle Edit Action (redirect to edit form)
+  // Handle Edit Action (show the modal)
   const handleEdit = (event) => {
-    event.stopPropagation();
-    navigate(`/edit-building/${_id}`);
+    event.stopPropagation(); 
+    event.preventDefault(); 
+    setDropdownVisible(false); 
+    setShowEditModal(true); 
   };
 
-  // Handle Delete Action (show modal first)
+  // Handle Delete Action 
   const handleDeleteClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
     setDropdownVisible(false);
-    setShowModal(true); // Show confirmation modal
+    setShowDeleteModal(true); 
   };
 
   // Handle Delete Confirmation
   const handleConfirmDelete = async () => {
     try {
       await api.delete(`/building/${_id}`);
-      onDelete(_id); // Inform parent to update the list
-      setShowModal(false); // Close modal after delete
-      setSuccessMessage('Building successfully deleted.'); // Show success alert
+      onDelete(_id); 
+      setShowDeleteModal(false); 
+      setSuccessMessage('Building successfully deleted.'); 
     } catch (error) {
       setApiError('Failed to delete building.');
-      setShowModal(false); // Close modal even if there's an error
+      setShowDeleteModal(false); 
     }
   };
 
   // Cancel deletion
   const handleCancelDelete = () => {
-    setShowModal(false);
+    setShowDeleteModal(false);
+  };
+
+  const handleModalClose = () => {
+    setShowEditModal(false); 
   };
 
   return (
@@ -122,9 +129,20 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
-        isOpen={showModal}
+        isOpen={showDeleteModal}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
+      />
+
+      {/* Edit Building Modal */}
+      <EditBuildingModal
+        isOpen={showEditModal}
+        toggleModal={handleModalClose}
+        building={building}
+        onBuildingUpdated={() => {
+          setSuccessMessage('Building successfully updated.');
+          setShowEditModal(false); 
+        }}
       />
     </div>
   );
