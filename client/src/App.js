@@ -6,13 +6,12 @@ import Settings from "./pages/admin/Settings";
 import Login from "./pages/auth/Login";
 import BuildingPage from "./pages/BuildingPage";
 import RoomPage from "./pages/RoomPage";
-import Sidebar from "./components/nav/side";
-import Bottombar from "./components/nav/bottom";
+import DualNav from "./components/nav/dual";
 import TopBar from "./components/nav/top";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn, userRole } = useSelector((state) => state.auth); // Access userRole from Redux store
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Checks if the screen is mobile size
@@ -27,11 +26,18 @@ const App = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Handle redirect logic after login based on user role
   useEffect(() => {
-    if (location.pathname === "/login" && isLoggedIn) {
-      navigate("/dashboard");
+    if (isLoggedIn) {
+      if (location.pathname === "/login") {
+        if (userRole === "admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/catalog/buildings"); // Redirect staff and guests to catalog
+        }
+      }
     }
-  }, [isLoggedIn, location.pathname, navigate]);
+  }, [isLoggedIn, userRole, location.pathname, navigate]);
 
   const isLoginPage = location.pathname === "/login";
 
@@ -39,16 +45,16 @@ const App = () => {
     <div className="flex flex-col h-full w-screen bg-lightGray">
       {!isLoginPage && <TopBar />}
       <div className="flex flex-1">
-        {!isLoginPage && !isMobile && <Sidebar />} {/* Show sidebar only on non-mobile views */}
+        {!isLoginPage && <DualNav />} 
         <main className="flex-1">
           <Routes>
             <Route
               path="/login"
-              element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
+              element={isLoggedIn ? <Navigate to={userRole === "admin" ? "/dashboard" : "/catalog/buildings"} /> : <Login />}
             />
             <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/dashboard" element={userRole === "admin" ? <Dashboard /> : <Navigate to="/catalog/buildings" />} />
+              <Route path="/settings" element={userRole === "admin" ? <Settings /> : <Navigate to="/catalog/buildings" />} />
               <Route path="/catalog/buildings" element={<BuildingPage />} />
               <Route path="/catalog/rooms/:buildingId" element={<RoomPage />} />
             </Route>
@@ -56,7 +62,7 @@ const App = () => {
           </Routes>
         </main>
       </div>
-      {!isLoginPage && isMobile && <Bottombar />} {/* Show bottombar only on mobile views */}
+      
     </div>
   );
 };

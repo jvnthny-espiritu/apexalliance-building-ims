@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Ensure you're importing this if you plan to use it
 import { login } from '../../_actions/authActions';
 import { useNavigate } from 'react-router-dom';
 import image from '../../assets/img/building.jpg';
@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,8 +19,15 @@ const Login = () => {
     try {
       const actionResult = await dispatch(login({ username, password }));
       if (actionResult.success) {
+        // Save the token and user role to local storage
         localStorage.setItem('token', actionResult.token);
-        navigate('/');
+        localStorage.setItem('userRole', actionResult.role); // Assuming the role is part of the actionResult
+
+        // Optional: You can decode the token here to get the role
+       const decodedToken = jwtDecode(actionResult.token);
+      localStorage.setItem('userRole', decodedToken.role); //If the role is encoded in the token
+
+        navigate('/'); 
       } else {
         setErrorMessage(
           <>
@@ -69,7 +76,7 @@ const Login = () => {
                 <input
                   id="username"
                   name="username"
-                  type="text" 
+                  type="text"
                   autoComplete="username"
                   required
                   value={username}
@@ -98,24 +105,24 @@ const Login = () => {
                 type="submit"
                 className="group relative flex w-full justify-center py-2 px-4 text-sm font-medium rounded-xl text-white bg-primary-light hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Log In 
+                Log In
               </button>
             </div>
           </form>
         </div>
         <div className='mt-3'>
-        {errorMessage && (
-              <div className="text-center text-primary-light text-sm font-semibold">
-                {errorMessage}
-              </div>
-            )}
+          {errorMessage && (
+            <div className="text-center text-primary-light text-sm font-semibold">
+              {errorMessage}
+            </div>
+          )}
         </div>
       </div>
       <div
         className="text-center text-white text-xs font-semibold"
         style={{ position: 'absolute', bottom: '7%', left: '50%', transform: 'translateX(-50%)', zIndex: 2 }}
       >
-        <h2>Copyright ©apexalliance 2024 </h2>
+        <h2>Copyright ©apexalliance 2024</h2>
       </div>
     </div>
   );
