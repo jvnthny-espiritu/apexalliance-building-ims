@@ -3,34 +3,18 @@ const Building = require('../models/Building');
 const Room = require('../models/Room');
 const Campus = require('../models/Campus');
 
-// asset metrics
-exports.getAssetMetrics = async (req, res) => {
-    try {
-        const totalAssets = await Asset.countDocuments();
-        res.json({ totalAssets });
-    } catch (error) {
-        res.status(500).json({ message: `Failed to fetch asset metrics: ${error.message}` });
-    }
-};
+exports.getAllMetrics = async (req, res) => {
+  try {
+      const [totalAssets, totalBuildings, totalRooms] = await Promise.all([
+          Asset.countDocuments(),
+          Building.countDocuments(),
+          Room.countDocuments()
+      ]);
 
-// building metrics
-exports.getBuildingMetrics = async (req, res) => {
-    try {
-        const totalBuildings = await Building.countDocuments();
-        res.json({ totalBuildings });
-    } catch (error) {
-        res.status(500).json({ message: `Failed to fetch building metrics: ${error.message}` });
-    }
-};
-
-// room metrics
-exports.getRoomMetrics = async (req, res) => {
-    try {
-        const totalRooms = await Room.countDocuments();
-        res.json({ totalRooms });
-    } catch (error) {
-        res.status(500).json({ message: `Failed to fetch room metrics: ${error.message}` });
-    }
+      res.json({ totalAssets, totalBuildings, totalRooms });
+  } catch (error) {
+      res.status(500).json({ message: `Failed to fetch metrics: ${error.message}` });
+  }
 };
 
 exports.getBuildingDistribution = async (req, res) => {

@@ -8,9 +8,7 @@ import SummaryCard from '../../components/dashboard/SummaryCard';
 import api from '../../services/api';
 
 export default function Dashboard() {
-    const [totalBuildings, setTotalBuildings] = useState(0);
-    const [totalRooms, setTotalRooms] = useState(0);
-    const [totalAssets, setTotalAssets] = useState(0);
+    const [totalMetrics, setTotalMetrics] = useState({ totalAssets: 0, totalBuildings: 0, totalRooms: 0 });
     const [buildingDistribution, setBuildingDistribution] = useState([]);
     const [roomDistribution, setRoomDistribution] = useState([]);
     const [campuses, setCampuses] = useState([]);
@@ -19,18 +17,13 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const campusResponse = await api.get('/api/campuses');
-                const buildingMetricsResponse = await api.get('/api/dashboard/metrics/buildings');
-                const roomMetricsResponse = await api.get('/api/dashboard/metrics/rooms');
-                const assetMetricsResponse = await api.get('/api/dashboard/metrics/assets');
+                const campusResponse = await api.get('/api/campuses');            const metricsResponse = await api.get('/api/dashboard/metrics/all');
                 const buildingDistributionResponse = await api.get('/api/dashboard/metrics/building-distribution');
                 const roomDistributionResponse = await api.get('/api/dashboard/metrics/room-distribution');
                 const assetDistributionResponse = await api.get('/api/dashboard/metrics/asset-distribution');
 
                 setCampuses(campusResponse.data);
-                setTotalBuildings(buildingMetricsResponse.data.totalBuildings);
-                setTotalRooms(roomMetricsResponse.data.totalRooms);
-                setTotalAssets(assetMetricsResponse.data.totalAssets);
+                setTotalMetrics(metricsResponse.data);
                 setBuildingDistribution(buildingDistributionResponse.data);
                 setRoomDistribution(roomDistributionResponse.data);
                 setAssetData(assetDistributionResponse.data);
@@ -49,9 +42,9 @@ export default function Dashboard() {
                     <div className='grow flex-col'>
                         <div className='flex-col flex-grow'>
                             <div className='flex flex-col lg:flex-row gap-4 w-full'>
-                                <TotalMetricCard title="Total No of Buildings" total={totalBuildings} icon={<FaBuilding />} />
-                                <TotalMetricCard title="Total No of Rooms" total={totalRooms} icon={<FaDoorOpen />} />
-                                <TotalMetricCard title="Total No of Assets" total={totalAssets} icon={<FaBox />} />
+                                <TotalMetricCard title="Total No of Buildings" total={totalMetrics.totalBuildings} icon={<FaBuilding />} />
+                                <TotalMetricCard title="Total No of Rooms" total={totalMetrics.totalRooms} icon={<FaDoorOpen />} />
+                                <TotalMetricCard title="Total No of Assets" total={totalMetrics.totalAssets} icon={<FaBox />} />
                             </div>
                         </div>
                     </div>
@@ -69,7 +62,7 @@ export default function Dashboard() {
                         <RoomChartCard campuses={campuses} roomDistribution={roomDistribution} />
                     </div>
                     <div className='col-span-1'>
-                        <AssetChartCard assetData={assetData} campuses={campuses} />
+                        {/* <AssetChartCard assetData={assetData} campuses={campuses} /> */}
                     </div>
                 </div>
             </div>
