@@ -1,78 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import BuildingDistribution from '../../components/dashboard/BuildingDistribution'; 
-import RoomTypeDistribution from '../../components/dashboard/RoomTypeDistribution';
-import ActivityLog from '../../components/dashboard/ActivityLog';
+import { FaBuilding, FaDoorOpen, FaBox } from 'react-icons/fa';
+import TotalMetricCard from '../../components/dashboard/TotalMetricCard';
+import BuildingChartCard from '../../components/dashboard/BuildingChartCard';
+import RoomChartCard from '../../components/dashboard/RoomChartCard';
+import AssetChartCard from '../../components/dashboard/AssetChartCard';
+import SummaryCard from '../../components/dashboard/SummaryCard';
 import api from '../../services/api';
 
 export default function Dashboard() {
-    const [totalBuildings, setTotalBuildings] = useState(null);
-    const [totalRooms, setTotalRooms] = useState(null);
-    const [totalAssets, setTotalAssets] = useState(null);
+    const [totalBuildings, setTotalBuildings] = useState(0);
+    const [totalRooms, setTotalRooms] = useState(0);
+    const [totalAssets, setTotalAssets] = useState(0);
+    const [buildingDistribution, setBuildingDistribution] = useState([]);
+    const [roomDistribution, setRoomDistribution] = useState([]);
+    const [campuses, setCampuses] = useState([]);
+    const [assetData, setAssetData] = useState({ data1: [], data2: [], data3: [] });
 
-  //   useEffect(() => {
-  //     const fetchData = async () => {
-  //         try {
-  //             const buildingsMetrics = await api.get('/dashboard/metrics/buildings');
-  //             setTotalBuildings(buildingsMetrics.data.totalBuildings);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const campusResponse = await api.get('/api/campuses');
+                const buildingMetricsResponse = await api.get('/api/dashboard/metrics/buildings');
+                const roomMetricsResponse = await api.get('/api/dashboard/metrics/rooms');
+                const assetMetricsResponse = await api.get('/api/dashboard/metrics/assets');
+                const buildingDistributionResponse = await api.get('/api/dashboard/metrics/building-distribution');
+                const roomDistributionResponse = await api.get('/api/dashboard/metrics/room-distribution');
+                const assetDistributionResponse = await api.get('/api/dashboard/metrics/asset-distribution');
 
-  //             const roomsMetrics = await api.get('/dashboard/metrics/rooms');
-  //             setTotalRooms(roomsMetrics.data.totalRooms);
+                setCampuses(campusResponse.data);
+                setTotalBuildings(buildingMetricsResponse.data.totalBuildings);
+                setTotalRooms(roomMetricsResponse.data.totalRooms);
+                setTotalAssets(assetMetricsResponse.data.totalAssets);
+                setBuildingDistribution(buildingDistributionResponse.data);
+                setRoomDistribution(roomDistributionResponse.data);
+                setAssetData(assetDistributionResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-  //             const assetsMetrics = await api.get('/dashboard/metrics/assets');
-  //             setTotalAssets(assetsMetrics.data.totalAssets);
-  //         } catch (error) {
-  //             console.error('Error fetching data:', error);
-  //         }
-  //     };
-  //     fetchData();
-  // }, []);
+        fetchData();
+    }, []);
 
-  return (
-    <div className='mb-24 md:mb-0'>
-      <div className='flex-grow h-full'> 
-        <div className='flex w-auto fixed top-0 z-10'>
-          <div className="flex lg:fixed bg-primary justify-between items-center p-5 h-20 pb-5 md:p-17 lg:p-5 w-screen ">
-              <h1 className='font-bold text-2xl text-white mb-3 md:mb-5 md:mr-5 my-auto'>Dashboard</h1>
-          </div>
-        </div>
-      </div>
-      <div className='w-auto mt-24 md:mt-24 mx-5 flex flex-col md:flex-row'>
-        <div className='grow flex-col'>
-          <div className='flex-col flex-grow'>
-            <div className='flex h-52 gap-2 justify-evenly w-full mb-2'>
-              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
-                <p className='text-5xl'>{totalBuildings || '???'}</p>
-                <p className="text-xs sm:text-base">Total No of Buildings</p>
-              </div>
-              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
-                <p className='text-5xl'>{totalRooms || '???'}</p>
-                <p className="text-xs sm:text-sm">Total No of Rooms</p>
-              </div>
-              <div className='flex flex-col w-full md:w-1/3 items-center justify-center'>
-                <p className='text-5xl'>{totalAssets || '???'}</p>
-                <p className="text-xs sm:text-base">Total No of Assets</p>
-              </div>
+    return (
+        <div className='container mx-auto mb-20 lg:mb-auto'>
+            <div className='flex flex-col gap-4'>
+                <div className='w-auto mt-24 mx-5 flex flex-col md:flex-row'>
+                    <div className='grow flex-col'>
+                        <div className='flex-col flex-grow'>
+                            <div className='flex flex-col lg:flex-row gap-4 w-full'>
+                                <TotalMetricCard title="Total No of Buildings" total={totalBuildings} icon={<FaBuilding />} />
+                                <TotalMetricCard title="Total No of Rooms" total={totalRooms} icon={<FaDoorOpen />} />
+                                <TotalMetricCard title="Total No of Assets" total={totalAssets} icon={<FaBox />} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='grid grid-cols-1 lg:grid-cols-4 gap-4 mx-5'>
+                    <div className='lg:col-span-3'>
+                        <BuildingChartCard data={buildingDistribution} campuses={campuses} />
+                    </div>
+                    <div className='lg:col-span-1'>
+                        <SummaryCard />
+                    </div>
+                </div>
+                <div className='grid grid-cols-1 gap-4 mx-5 mb-5'>
+                    <div className='col-span-1'>
+                        <RoomChartCard campuses={campuses} roomDistribution={roomDistribution} />
+                    </div>
+                    <div className='col-span-1'>
+                        <AssetChartCard assetData={assetData} campuses={campuses} />
+                    </div>
+                </div>
             </div>
-          </div>
-          <div className='shrink w-auto h-auto p-5 mb-2'>
-            <div>
-              <span className='font-bold font-body text-lg'>Building Distribution</span>
-            </div>
-            <hr className='border-black' />
-            {/* <BuildingDistribution /> */}
-          </div>
-          <div className='shrink w-auto h-auto p-5 mb-2'>
-            <div>
-              <span className='font-bold font-body text-lg'>Room Distribution</span>
-            </div>
-            <hr className='border-black' />
-            {/* <RoomTypeDistribution /> */}
-          </div>
         </div>
-        <div className="relative flex-none right-0 md:ml-5 mt-1 md:mt-0 w-auto sm:w-auto">
-          {/* <ActivityLog /> */}
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
