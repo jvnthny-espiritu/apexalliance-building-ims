@@ -7,6 +7,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import api from "../services/api";
 import AddButton from "../components/AddButton";
 import AddRoomModal from "../components/modals/AddRoomModal";
+import ModalFilter from "../components/modals/ModalFilter";
+import Filter from "../components/Filter"; // Assuming you have a Filter component
 
 function RoomPage() {
   const { buildingId } = useParams();
@@ -15,11 +17,25 @@ function RoomPage() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [state, setState] = useState({
+    type: [],
+    status: [],
+    selectedType: "",
+    selectedStatus: "",
+    activeTab: "type",
+    isFilterModalOpen: false,
+    isSearchBoxVisible: false,
+  });
 
-  const toggleAddRoomModalLocal = () => {
+  function toggleAddRoomModalLocal() {
     setIsAddRoomOpen((prev) => !prev);
+  }
+
+  const toggleFilterModal = () => {
+    setIsFilterModalOpen((prev) => !prev);
   };
 
   const fetchRooms = async () => {
@@ -30,7 +46,6 @@ function RoomPage() {
       console.error("Error fetching rooms:", error);
     }
   };
-
 
   useEffect(() => {
     fetchRooms();
@@ -51,26 +66,131 @@ function RoomPage() {
     navigate(-1);
   };
 
+  const filterOptions = {
+    type: {
+      options: state.type || [],
+      selectedValue: state.selectedType,
+      selectedValueKey: "selectedType",
+    },
+    status: {
+      options: state.status || [],
+      selectedValue: state.selectedStatus,
+      selectedValueKey: "selectedStatus",
+    },
+  };
+
   return (
     <div className="h-screen w-auto pb-20">
-      <Header
-        handleBack={handleBack}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        setSelectedType={setSelectedType}
-        setSelectedStatus={setSelectedStatus}
-      />
+      <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
+        <div className="flex items-center bg-primary p-1 max-w-screen-auto w-full">
+          <button
+            onClick={handleBack}
+            className="md:mx-30 space-x-2 md:bg-red-600 text-white font-bold text-md justify-item items-start hover:bg-red-400 hover:text-white md:px-4 py-0 rounded-full transition-all duration-300 flex items-center"
+          >
+            <FaArrowLeft className="ml-1" />
+            <span className="hidden md:inline">Back</span>
+          </button>
+          <div className="flex-grow flex justify-center">
+            {state.isSearchBoxVisible && (
+              <div className="w-full flex items-center">
 
-      <div className="pt-24 mx-6">
-        <div className="justify-end">
-        <div className="hidden md:flex justify-between mt-18 mb-5">
-        <h1 className="font-bold text-3xl text-black mt-8">
-          Room Catalog
-        </h1>
-        </div>
-        <div className="flex md:hidden justify-between mt-18 pt-8 mb-5">
-          <AddButton onClick={toggleAddRoomModalLocal} />
+                <input
+                  type="text"
+                  placeholder="Search rooms..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="ml-5 text-white bg-primary block md:hidden w-full border-b-2 px-2 py-1 focus:outline-none focus:border-b-2"
+                />
+                <IoFilterOutline
+                  className="block md:hidden ml-4 mr-2 top-1/2 text-3xl text-white"
+                  onClick={() =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      isFilterModalOpen: true,
+                    }))
+                  }
+                />
+              </div>
+            )}
+            {!state.isSearchBoxVisible && (
+              <div className="flex-grow flex justify-center items-center">
+                <h1 className="block md:hidden font-bold text-base text-white p-2">
+                  Room Catalog
+                </h1>
+              </div>
+            )}
           </div>
+          {!state.isSearchBoxVisible && (
+            <>
+              <AiOutlineSearch
+                className="absolute top-0 right-0 mr-10 mt-4 text-xl md:hidden text-white"
+                onClick={() =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    isSearchBoxVisible: !prevState.isSearchBoxVisible,
+                  }))
+                }
+              />
+              <IoFilterOutline
+                className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white"
+                onClick={() =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    isFilterModalOpen: true,
+                  }))
+                }
+              />
+            </>
+          )}
+          <div className="hidden md:flex items-center space-x-4">
+            <Filter
+              options={state.type || []}
+              selectedValue={state.selectedType}
+              onChange={(value) =>
+                setState((prevState) => ({ ...prevState, selectedType: value }))
+              }
+              placeholder="All Type"
+            />
+            <Filter
+              options={state.status || []}
+              selectedValue={state.selectedStatus}
+              onChange={(value) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  selectedStatus: value,
+                }))
+              }
+              placeholder="All Status"
+            />
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search rooms..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
+              />
+            </div>
+          </div>
+        </div>
+        {state.isFilterModalOpen && (
+          <ModalFilter
+            state={state}
+            setState={setState}
+            filterOptions={filterOptions}
+          />
+        )}
+      </div>
+
+      <div className="mx-4 md:mx-6">
+        <div className="md:relative md:mt-24">
+          <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
+            <AddButton onClick={toggleAddRoomModalLocal} />
+          </div>
+
+          <h1 className="hidden md:block font-bold text-3xl text-black mt-18 py-6">
+            Room Catalog
+          </h1>
         </div>
         {isAddRoomOpen && (
           <AddRoomModal
@@ -79,13 +199,7 @@ function RoomPage() {
             onRoomAdded={handleAddRoom}
           />
         )}
-        <MobileFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          setSelectedType={setSelectedType}
-          setSelectedStatus={setSelectedStatus}
-          handleAddRoom={handleAddRoom}
-        />
+
         <div className="md:mx-3">
           {filteredFloors.length > 0 ? (
             filteredFloors.map((floor, index) => (
@@ -102,82 +216,15 @@ function RoomPage() {
           )}
         </div>
       </div>
+
+      {state.isFilterModalOpen && (
+        <ModalFilter
+          state={state}
+          setState={setState}
+          filterOptions={filterOptions}
+        />
+      )}
     </div>
-  );
-}
-
-function Header({handleBack,searchQuery,setSearchQuery,setSelectedType,setSelectedStatus,}) {
-  return (
-    <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
-      <div className="flex items-center bg-primary p-1 max-w-screen-auto w-full">
-        <button
-          onClick={handleBack}
-          className="md:mx-30 space-x-2 md:bg-red-600 text-white font-bold text-md justify-item items-start hover:bg-red-400 hover:text-white md:px-4 py-0 rounded-full transition-all duration-300 flex items-center"
-        >
-          <FaArrowLeft className="ml-1" />
-          <span className="hidden md:inline">Back</span>
-        </button>
-        <div className="flex-grow flex justify-center">
-          <h1 className="block md:hidden font-bold text-base text-white p-2">
-            Room Catalog
-          </h1>
-        </div>
-        <AiOutlineSearch className="absolute top-0 right-0 mr-9 mt-4 text-xl md:hidden text-white" />
-        <IoFilterOutline className="absolute top-0 right-0 mr-3 mt-3 text-2xl md:hidden text-white" />
-        <div className="hidden md:flex items-center space-x-4">
-          <TypeFilter onChange={setSelectedType} />
-          <StatusFilter onChange={setSelectedStatus} />
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search rooms..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 pl-8 focus:outline-none focus:border-blue-500 text-black"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-  
-}
-
-function MobileFilters({searchQuery,setSearchQuery,setSelectedType,setSelectedStatus,handleAddRoom,}) {
-  return (
-    <div className="flex flex-wrap ml-3 text-sm md:hidden font-normal relative">
-      <div className="w-full mb-4 mt-5">
-        <div className="relative">
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TypeFilter({ onChange }) {
-  return (
-    <select
-      className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">All Types</option>
-      <option value="Classroom">Classroom</option>
-      <option value="Laboratory">Laboratory</option>
-      <option value="Administrative">Administrative</option>
-    </select>
-  );
-}
-
-function StatusFilter({ onChange }) {
-  return (
-    <select
-      className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">All Statuses</option>
-      <option value="Available">Available</option>
-      <option value="Not Available">Not Available</option>
-    </select>
   );
 }
 
