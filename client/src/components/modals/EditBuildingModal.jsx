@@ -16,6 +16,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
 
   const [campuses, setCampuses] = useState([]);
   const [facilitiesList, setFacilitiesList] = useState([]);
+  const [facilityColorMap, setFacilityColorMap] = useState({});
 
   useEffect(() => {
     const fetchCampusesAndFacilities = async () => {
@@ -25,7 +26,18 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
           api.get("/facilities")
         ]);
         setCampuses(campusResponse.data);
+
+        console.log("Facilities Response:", facilitiesResponse.data); 
         setFacilitiesList(facilitiesResponse.data);
+
+
+        const facilityColors = ['bg-facilities-1', 'bg-facilities-2', 'bg-facilities-3', 'bg-facilities-4', 'bg-facilities-5'];
+        const colorMap = {};
+        facilitiesResponse.data.forEach((facility, index) => {
+          colorMap[facility] = facilityColors[index % facilityColors.length];
+        });
+        setFacilityColorMap(colorMap);
+
       } catch (error) {
         setApiError("Failed to fetch data. Please try again later.");
       }
@@ -37,13 +49,14 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
         setFormData({
           name: building.name,
           campus: building.campus._id,
-          yearBuilt: building.yearBuilt, 
+          yearBuilt: building.yearBuilt,
           numberOfFloors: building.numberOfFloors,
-          facilities: building.facilities,
+          facilities: building.facilities || [], 
         });
+        console.log("Building Facilities:", building.facilities); 
       }
     }
-  }, [isOpen, building]); 
+  }, [isOpen, building]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -187,12 +200,19 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
             </div>
             <div className="mb-4">
               <label className="text-black">Facilities</label>
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 flex-wrap">
+                {facilitiesList.length === 0 && (
+                  <p className="text-red-500">No facilities available.</p>
+                )}
                 {facilitiesList.map((facility) => (
                   <button
                     type="button"
                     key={facility}
-                    className={`px-4 py-2 rounded-lg ${formData.facilities.includes(facility) ? "bg-red-500 text-white" : "border border-gray-500"}`}
+                    className={`px-4 py-2 rounded-full text-white shadow-md hover:shadow-lg transition-all ${
+                      formData.facilities.includes(facility)
+                        ? `${facilityColorMap[facility]} text-white`
+                        : "border border-gray-500 text-black"
+                    }`}
                     onClick={() => handleFacilityChange(facility)}
                   >
                     {facility}
