@@ -152,197 +152,199 @@ exports.getAssetDistribution = async (req, res) => {
     try {
         // aggregate data for categories
         const categoryDistribution = await Asset.aggregate([
-            {
-                '$group': {
-                    '_id': {
-                        'category': '$category',
-                        'campus': '$location'
-                    },
-                    'count': {
-                        '$sum': 1
-                    }
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'rooms',
-                    'localField': '_id.campus',
-                    'foreignField': '_id',
-                    'as': 'room'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$room'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'buildings',
-                    'localField': 'room.building',
-                    'foreignField': '_id',
-                    'as': 'building'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$building'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'campus',
-                    'localField': 'building.campus',
-                    'foreignField': '_id',
-                    'as': 'campus'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$campus'
-                }
-            },
-            {
-                '$project': {
-                    '_id': 0,
-                    'category': '$_id.category',
-                    'campus': '$campus.name',
-                    'count': '$count'
-                }
+          {
+            '$lookup': {
+              'from': 'rooms', 
+              'localField': 'location', 
+              'foreignField': '_id', 
+              'as': 'room'
             }
+          }, {
+            '$unwind': '$room'
+          }, {
+            '$lookup': {
+              'from': 'buildings', 
+              'localField': 'room.building', 
+              'foreignField': '_id', 
+              'as': 'building'
+            }
+          }, {
+            '$unwind': '$building'
+          }, {
+            '$lookup': {
+              'from': 'campus', 
+              'localField': 'building.campus', 
+              'foreignField': '_id', 
+              'as': 'campus'
+            }
+          }, {
+            '$unwind': '$campus'
+          }, {
+            '$group': {
+              '_id': {
+                'campus': '$campus.name', 
+                'category': '$category'
+              }, 
+              'count': {
+                '$sum': 1
+              }
+            }
+          }, {
+            '$group': {
+              '_id': '$_id.category', 
+              'campuses': {
+                '$push': {
+                  'campus': '$_id.campus', 
+                  'count': '$count'
+                }
+              }, 
+              'total': {
+                '$sum': '$count'
+              }
+            }
+          }, {
+            '$project': {
+              '_id': 0, 
+              'category': '$_id', 
+              'campuses': 1, 
+              'total': 1
+            }
+          }
         ]);
 
         // aggregate data for conditions
         const conditionDistribution = await Asset.aggregate([
-            {
-                '$group': {
-                    '_id': {
-                        'condition': '$condition',
-                        'campus': '$location'
-                    },
-                    'count': {
-                        '$sum': 1
-                    }
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'rooms',
-                    'localField': '_id.campus',
-                    'foreignField': '_id',
-                    'as': 'room'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$room'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'buildings',
-                    'localField': 'room.building',
-                    'foreignField': '_id',
-                    'as': 'building'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$building'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'campus',
-                    'localField': 'building.campus',
-                    'foreignField': '_id',
-                    'as': 'campus'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$campus'
-                }
-            },
-            {
-                '$project': {
-                    '_id': 0,
-                    'condition': '$_id.condition',
-                    'campus': '$campus.name',
-                    'count': '$count'
-                }
+          {
+            '$lookup': {
+              'from': 'rooms', 
+              'localField': 'location', 
+              'foreignField': '_id', 
+              'as': 'room'
             }
+          }, {
+            '$unwind': '$room'
+          }, {
+            '$lookup': {
+              'from': 'buildings', 
+              'localField': 'room.building', 
+              'foreignField': '_id', 
+              'as': 'building'
+            }
+          }, {
+            '$unwind': '$building'
+          }, {
+            '$lookup': {
+              'from': 'campus', 
+              'localField': 'building.campus', 
+              'foreignField': '_id', 
+              'as': 'campus'
+            }
+          }, {
+            '$unwind': '$campus'
+          }, {
+            '$group': {
+              '_id': {
+                'campus': '$campus.name', 
+                'condition': '$condition'
+              }, 
+              'count': {
+                '$sum': 1
+              }
+            }
+          }, {
+            '$group': {
+              '_id': '$_id.condition', 
+              'campuses': {
+                '$push': {
+                  'campus': '$_id.campus', 
+                  'count': '$count'
+                }
+              }, 
+              'total': {
+                '$sum': '$count'
+              }
+            }
+          }, {
+            '$project': {
+              '_id': 0, 
+              'condition': '$_id', 
+              'campuses': 1, 
+              'total': 1
+            }
+          }
         ]);
 
         // aggregate data for statuses
         const statusDistribution = await Asset.aggregate([
-            {
-                '$group': {
-                    '_id': {
-                        'status': '$status',
-                        'campus': '$location'
-                    },
-                    'count': {
-                        '$sum': 1
-                    }
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'rooms',
-                    'localField': '_id.campus',
-                    'foreignField': '_id',
-                    'as': 'room'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$room'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'buildings',
-                    'localField': 'room.building',
-                    'foreignField': '_id',
-                    'as': 'building'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$building'
-                }
-            },
-            {
-                '$lookup': {
-                    'from': 'campus',
-                    'localField': 'building.campus',
-                    'foreignField': '_id',
-                    'as': 'campus'
-                }
-            },
-            {
-                '$unwind': {
-                    'path': '$campus'
-                }
-            },
-            {
-                '$project': {
-                    '_id': 0,
-                    'status': '$_id.status',
-                    'campus': '$campus.name',
-                    'count': '$count'
-                }
+          {
+            '$lookup': {
+              'from': 'rooms', 
+              'localField': 'location', 
+              'foreignField': '_id', 
+              'as': 'room'
             }
+          }, {
+            '$unwind': '$room'
+          }, {
+            '$lookup': {
+              'from': 'buildings', 
+              'localField': 'room.building', 
+              'foreignField': '_id', 
+              'as': 'building'
+            }
+          }, {
+            '$unwind': '$building'
+          }, {
+            '$lookup': {
+              'from': 'campus', 
+              'localField': 'building.campus', 
+              'foreignField': '_id', 
+              'as': 'campus'
+            }
+          }, {
+            '$unwind': '$campus'
+          }, {
+            '$group': {
+              '_id': {
+                'campus': '$campus.name', 
+                'status': '$status'
+              }, 
+              'count': {
+                '$sum': 1
+              }
+            }
+          }, {
+            '$group': {
+              '_id': '$_id.status', 
+              'campuses': {
+                '$push': {
+                  'campus': '$_id.campus', 
+                  'count': '$count'
+                }
+              }, 
+              'total': {
+                '$sum': '$count'
+              }
+            }
+          }, {
+            '$project': {
+              '_id': 0, 
+              'status': '$_id', 
+              'campuses': 1, 
+              'total': 1
+            }
+          }
         ]);
 
-        const categoryData = aggregateData(categoryDistribution, 'category');
-        const conditionData = aggregateData(conditionDistribution, 'condition');
-        const statusData = aggregateData(statusDistribution, 'status');
+        // const categoryData = aggregateData(categoryDistribution, 'category');
+        // const conditionData = aggregateData(conditionDistribution, 'condition');
+        // const statusData = aggregateData(statusDistribution, 'status');
 
-        const response = { categoryData, conditionData, statusData };
+        // const response = { categoryData, conditionData, statusData };
 
-        res.status(200).json(response);
+        // res.status(200).json(response);
+
+        res.status(200).json({ categoryDistribution, conditionDistribution, statusDistribution });
     } catch (error) {
         res.status(500).json({ message: `Failed to fetch asset distribution: ${error.message}` });
     }

@@ -62,7 +62,7 @@ export default function Dashboard() {
                         <RoomChartCard campuses={campuses} roomDistribution={roomDistribution} />
                     </div>
                     <div className='col-span-1'>
-                        {/* <AssetChartCard assetData={assetData} campuses={campuses} /> */}
+                        <AssetChartCard assetData={assetData} campuses={campuses} />
                     </div>
                 </div>
             </div>

@@ -26,17 +26,23 @@ const AssetChartCard = ({ assetData, campuses }) => {
         setShowDropdown(false); // Hide dropdown after selection
     };
 
-    const filteredData = selectedCampus === 'all' 
-        ? {
-            category: assetData.categoryData || [],
-            condition: assetData.conditionData || [],
-            status: assetData.statusData || [],
-        }
-        : {
-            category: (assetData.categoryData || []).filter(item => item.campus === selectedCampus),
-            condition: (assetData.conditionData || []).filter(item => item.campus === selectedCampus),
-            status: (assetData.statusData || []).filter(item => item.campus === selectedCampus),
-        };
+    const transformDataForChart = (data, selectedCampus) => {
+        return data.map(item => {
+            const campuses = selectedCampus === 'all' ? item.campuses : item.campuses.filter(campus => campus.campus === selectedCampus);
+            const total = campuses.reduce((sum, campus) => sum + campus.count, 0);
+            return {
+                id: item.category || item.condition || item.status,
+                label: item.category || item.condition || item.status,
+                value: total
+            };
+        }).filter(item => item.value > 0);
+    };
+
+    const filteredData = {
+        category: transformDataForChart(assetData.categoryDistribution || [], selectedCampus),
+        condition: transformDataForChart(assetData.conditionDistribution || [], selectedCampus),
+        status: transformDataForChart(assetData.statusDistribution || [], selectedCampus),
+    };
 
 
     return (
