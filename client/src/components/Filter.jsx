@@ -8,7 +8,7 @@ function Filter({ options, selectedValue, onChange, placeholder }) {
         className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
         onChange={(e) => onChange(e.target.value)}
       >
-        <option value="">{placeholder}</option>
+        <option value="all">{placeholder}</option>
         {options.map(([label, value], index) => (
           <option key={index} value={value}>
             {label}

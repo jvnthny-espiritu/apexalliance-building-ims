@@ -17,7 +17,7 @@ function BuildingPage() {
   const [state, setState] = useState({
     buildings: [],
     selectedCampus: user ? user.campus._id : "",
-    selectedPurpose: "",
+    selectedPurpose: "all",
     campuses: [],
     purposes: [],
     searchQuery: "",
@@ -83,16 +83,15 @@ function BuildingPage() {
   const fetchFacilities = useCallback(async () => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
-      const response = await api.get(
-        `/api/buildings/facilities?campusId=${state.selectedCampus}`
-      );
+      const campusId = state.selectedCampus === 'all' ? '' : `?campusId=${state.selectedCampus}`;
+      const response = await api.get(`/api/buildings/facilities${campusId}`);
       const facilities = response.data.map((facility) => [facility, facility]);
       setState((prevState) => ({ ...prevState, purposes: facilities }));
     } catch (error) {
       console.error("Error fetching facilities:", error);
       setState((prevState) => ({
         ...prevState,
-        error: "Error fetching facilities",
+        apiError: "Error fetching facilities",
       }));
     } finally {
       setState((prevState) => ({ ...prevState, loading: false }));
@@ -102,25 +101,19 @@ function BuildingPage() {
   const fetchBuildings = useCallback(async () => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
-      const params = new URLSearchParams();
-      if (state.selectedPurpose) {
-        params.append("facilities", state.selectedPurpose);
-      }
-      if (state.selectedCampus) {
-        params.append("campus", state.selectedCampus);
-      }
-      const response = await api.get(`/api/buildings?${params.toString()}`);
+      const campusId = state.selectedCampus === 'all' ? '' : `?campus=${state.selectedCampus}`;
+      const response = await api.get(`/api/buildings${campusId}`);
       setState((prevState) => ({ ...prevState, buildings: response.data }));
     } catch (error) {
       console.error("Error fetching buildings:", error);
       setState((prevState) => ({
         ...prevState,
-        error: "Error fetching buildings",
+        apiError: "Error fetching buildings",
       }));
     } finally {
       setState((prevState) => ({ ...prevState, loading: false }));
     }
-  }, [state.selectedPurpose, state.selectedCampus]);
+  }, [state.selectedCampus]);
 
   const filteredBuildings = useMemo(() => {
     return state.buildings.filter((building) =>
@@ -254,20 +247,10 @@ function BuildingPage() {
               </>
             )}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Filters */}
               <Filter
-                options={state.purposes}
-                selectedValue={state.selectedPurpose}
-                onChange={(value) =>
-                  setState((prevState) => ({
-                    ...prevState,
-                    selectedPurpose: value,
-                  }))
-                }
-                placeholder="All Purposes"
-              />
-              <Filter
-                options={state.campuses}
-                selectedValue={state.selectedCampus}
+                options={filterOptions.campuses.options}
+                selectedValue={filterOptions.campuses.selectedValue}
                 onChange={(value) =>
                   setState((prevState) => ({
                     ...prevState,
@@ -275,6 +258,17 @@ function BuildingPage() {
                   }))
                 }
                 placeholder="All Campuses"
+              />
+              <Filter
+                options={filterOptions.purposes.options}
+                selectedValue={filterOptions.purposes.selectedValue}
+                onChange={(value) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    selectedPurpose: value,
+                  }))
+                }
+                placeholder="All Facilities"
               />
               <div className="relative">
                 <input
