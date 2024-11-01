@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { IoFilterOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
-import { FaEllipsisVertical } from "react-icons/fa6";
+
 import BuildingCard from "../components/BuildingCard";
 import AddButton from "../components/AddButton";
 import api from "../services/api";
@@ -290,39 +290,44 @@ function BuildingPage() {
 
         <div className="md:relative mx-5 md:mx-8 md:mt-24">
           <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
-            <AddButton onClick={toggleAddBuildingModal} />
+            <AddButton onClick={toggleAddBuildingModal} /> 
           </div>
 
           <h1 className="hidden md:block font-bold text-3xl text-black mt-18 py-6">
             Building Catalog
           </h1>
 
-          {filteredBuildings.length === 0 ? (
-            <p className="text-center">No buildings found.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-              {filteredBuildings.map((building) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {filteredBuildings.length > 0 ? (
+              filteredBuildings.map((building) => (
                 <BuildingCard
                   key={building._id}
                   building={building}
                   onClick={() => handleBuildingClick(building)}
                 />
-              ))}
-            </div>
-          )}
+              ))
+            ) : (
+              <div>No buildings found</div>
+            )}
+          </div>
         </div>
+
+        {state.isAddBuildingOpen && (
+          <AddBuildingModal
+            isOpen={state.isAddBuildingOpen} 
+            toggleModal={toggleAddBuildingModal} 
+            onBuildingAdded={handleAddBuilding} 
+          />
+        )}
+
+        {state.isFilterModalOpen && (
+          <ModalFilter
+            state={state}
+            setState={setState}
+            filterOptions={filterOptions}
+          />
+        )}
       </div>
-
-      {state.isAddBuildingOpen && (
-        <AddBuildingModal
-          onClose={toggleAddBuildingModal}
-          onAddBuilding={handleAddBuilding}
-        />
-      )}
-
-      {state.isFilterModalOpen && (
-        <ModalFilter state={state} setState={setState} filterOptions={filterOptions} />
-      )}
     </div>
   );
 }
