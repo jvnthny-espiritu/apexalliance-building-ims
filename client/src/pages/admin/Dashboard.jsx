@@ -8,7 +8,8 @@ import Card from '../../components/dashboard/Card';
 import api from '../../services/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Skeleton from '@mui/material/Skeleton';
+import { Skeleton } from '@mui/material';
+
 
 export default function Dashboard() {
     const [totalMetrics, setTotalMetrics] = useState({ totalAssets: 0, totalBuildings: 0, totalRooms: 0 });
