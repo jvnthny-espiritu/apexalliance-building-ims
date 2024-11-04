@@ -1,9 +1,9 @@
 import React from 'react';
 import { FaChartLine } from 'react-icons/fa';
 
-const Card = ({ logs }) => {
+const LogCard = ({ logs }) => {
     return (
-        <div className='flex flex-col p-4 border-4 border-primary border-opacity-50 rounded-lg shadow-lg bg-white h-full'>
+        <div className='flex flex-col p-4 border-4 border-primary rounded-lg shadow-lg bg-white h-full'>
             <div className='flex items-center mt-5 ml-5'>
                 <div className='text-primary mr-2'>
                     <FaChartLine />
@@ -27,4 +27,4 @@ const Card = ({ logs }) => {
     );
 };
 
-export default Card;
+export default LogCard;

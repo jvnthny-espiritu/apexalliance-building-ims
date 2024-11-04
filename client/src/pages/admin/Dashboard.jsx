@@ -4,7 +4,7 @@ import TotalMetricCard from '../../components/dashboard/TotalMetricCard';
 import BuildingChartCard from '../../components/dashboard/BuildingChartCard';
 import RoomChartCard from '../../components/dashboard/RoomChartCard';
 import AssetChartCard from '../../components/dashboard/AssetChartCard';
-import Card from '../../components/dashboard/Card';
+import LogCard from '../../components/dashboard/LogCard';
 import api from '../../services/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -39,7 +39,7 @@ export default function Dashboard() {
                 setAuditLogs(auditLogsResponse.data);
             } catch (error) {
                 setError('Error fetching data');
-                toast.error('Error fetching data');
+                toast.error(error);
             } finally {
                 setLoading(false);
             }
@@ -84,7 +84,7 @@ export default function Dashboard() {
                         {loading ? <Skeleton variant="rectangular" height={300} /> : <BuildingChartCard data={buildingDistribution} campuses={campuses} />}
                     </div>
                     <div className='col-span-1'>
-                        {loading ? <Skeleton variant="rectangular" height={300} /> : <Card logs={auditLogs} loading={loading} />}
+                        {loading ? <Skeleton variant="rectangular" height={300} /> : <LogCard logs={auditLogs} loading={loading} />}
                     </div>
                 </div>
                 <div className='grid grid-cols-1 gap-4 mx-5 mb-5'>

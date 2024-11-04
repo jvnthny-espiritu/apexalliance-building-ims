@@ -46,7 +46,7 @@ const AssetChartCard = ({ assetData, campuses }) => {
 
 
     return (
-        <div className='w-full p-4 md:p-7 border-primary border-4 border-opacity-50 rounded-lg shadow-lg bg-white'>
+        <div className='w-full p-4 md:p-7 border-primary border-4 rounded-lg shadow-lg bg-white'>
             <div className='flex flex-row w-full justify-between items-center mb-4'>
                 <p className='text-lg md:text-xl font-semibold'>Asset Distribution</p>
                 {isMobile ? (
@@ -74,7 +74,7 @@ const AssetChartCard = ({ assetData, campuses }) => {
                     <select 
                         onChange={handleCampusChange} 
                         value={selectedCampus} 
-                        className='p-2 border border-primary rounded-lg text-sm md:text-base bg-white text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
+                        className='p-2 border border-black rounded-lg text-sm md:text-base bg-white text-black focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent'
                     >
                         <option value='all'>All Campus</option>
                         {campuses.map(campus => (
