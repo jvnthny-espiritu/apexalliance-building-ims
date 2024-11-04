@@ -6,7 +6,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   const [formData, setFormData] = useState({
     buildingName: "",
     campus: "",
-    facilities: "",
+    facilities: [],
     numberOfFloors: "", 
     yearOfCompletion: "", 
   });
@@ -14,6 +14,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [campuses, setCampuses] = useState([]);
   const [successMessage, setSuccessMessage] = useState(""); 
+  const [facilityColorMap, setFacilityColorMap] = useState({}); 
 
   useEffect(() => {
     const fetchCampuses = async () => {
@@ -29,6 +30,24 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       fetchCampuses();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const facilityColors = [
+      'bg-facilities-1',
+      'bg-facilities-2',
+      'bg-facilities-3',
+      'bg-facilities-4',
+      'bg-facilities-5',
+    ];
+    const colorMap = {};
+    const facilityNames = ["Lab", "Office", "Conference Room", "Storage", "Lecture Hall"]; 
+
+    facilityNames.forEach((facility, index) => {
+      colorMap[facility] = facilityColors[index % facilityColors.length];
+    });
+
+    setFacilityColorMap(colorMap); 
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,7 +105,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     setFormData({
       buildingName: "",
       campus: "",
-      facilities: "", 
+      facilities: [], // Empty array
       numberOfFloors: "", 
       yearOfCompletion: "", 
     });
@@ -100,21 +119,16 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   const handleFacilitiesChange = (facility) => {
     setFormData((prevData) => ({
       ...prevData,
-      facilities: facility, 
+      facilities: prevData.facilities.includes(facility)
+        ? prevData.facilities.filter((f) => f !== facility)
+        : [...prevData.facilities, facility], 
     }));
   };
 
   const getFacilityColor = (facility) => {
-    switch (facility) {
-      case "Classroom":
-        return formData.facilities === facility ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
-      case "Laboratory":
-        return formData.facilities === facility ? "bg-blue-600 text-white" : "border border-gray-600 text-gray-600";
-      case "Administrative":
-        return formData.facilities === facility ? "bg-primary text-white" : "border border-gray-600 text-gray-600"; 
-      default:
-        return "";
-    }
+    return formData.facilities.includes(facility)
+      ? `${facilityColorMap[facility]} text-white`
+      : "border border-gray-600 text-gray-600";
   };
 
   return (
@@ -225,10 +239,10 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                   </div>
                 </div>
 
-                <div className="flex flex-col w-full  md:pr-2">
+                <div className="flex flex-col w-full md:pr-2">
                   <label className="text-black mb-3 font-semibold">Facilities</label>
                   <div className="flex gap-4 flex-wrap">
-                    {["Classroom", "Laboratory", "Administrative"].map((facility) => (
+                    {["Lab", "Office", "Conference Room", "Storage", "Lecture Hall"].map((facility) => (
                       <button
                         key={facility}
                         className={`px-4 py-2 ${getFacilityColor(facility)} rounded-md`}
