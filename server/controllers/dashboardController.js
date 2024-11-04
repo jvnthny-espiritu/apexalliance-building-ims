@@ -2,16 +2,20 @@ const Asset = require('../models/Asset');
 const Building = require('../models/Building');
 const Room = require('../models/Room');
 const Campus = require('../models/Campus');
+const User = require('../models/User');
+const AuditLog = require('../models/AuditLog');
 
 exports.getAllMetrics = async (req, res) => {
   try {
-      const [totalAssets, totalBuildings, totalRooms] = await Promise.all([
+      const [totalAssets, totalBuildings, totalRooms, totalCampuses, totalUsers] = await Promise.all([
           Asset.countDocuments(),
           Building.countDocuments(),
-          Room.countDocuments()
+          Room.countDocuments(),
+          Campus.countDocuments(),
+          User.countDocuments()
       ]);
 
-      res.json({ totalAssets, totalBuildings, totalRooms });
+      res.json({ totalAssets, totalBuildings, totalRooms, totalCampuses, totalUsers });
   } catch (error) {
       res.status(500).json({ message: `Failed to fetch metrics: ${error.message}` });
   }
@@ -53,12 +57,14 @@ exports.getBuildingDistribution = async (req, res) => {
                 'facility': '$_id.facility', 
                 'count': '$count'
               }
-            }
+            },
+            'totalBuildings': { '$sum': 1 }
           }
         }, {
           '$project': {
             'campus': '$_id', 
             'facilities': 1, 
+            'totalBuildings': 1,
             '_id': 0
           }
         }
@@ -127,26 +133,6 @@ exports.getRoomDistribution = async (req, res) => {
   }
 };
 
-
-// helper ni porman sa baba
-const aggregateData = (data, key) => {
-    return data.reduce((acc, item) => {
-        const id = item[key];
-        const campus = item.campus;
-        const existing = acc.find(i => i.id === id && i.campus === campus);
-        if (existing) {
-            existing.value += item.count;
-        } else {
-            acc.push({
-                id,
-                label: id,
-                value: item.count,
-                campus
-            });
-        }
-        return acc;
-    }, []);
-};
 // asset distribution
 exports.getAssetDistribution = async (req, res) => {
     try {
@@ -336,16 +322,18 @@ exports.getAssetDistribution = async (req, res) => {
           }
         ]);
 
-        // const categoryData = aggregateData(categoryDistribution, 'category');
-        // const conditionData = aggregateData(conditionDistribution, 'condition');
-        // const statusData = aggregateData(statusDistribution, 'status');
-
-        // const response = { categoryData, conditionData, statusData };
-
-        // res.status(200).json(response);
-
         res.status(200).json({ categoryDistribution, conditionDistribution, statusDistribution });
     } catch (error) {
         res.status(500).json({ message: `Failed to fetch asset distribution: ${error.message}` });
     }
+};
+
+// user actions log
+exports.getAuditLogs = async (req, res) => {
+  try {
+    const logs = await AuditLog.find().sort({ createdAt: -1 });
+    res.status(200).json(logs);
+  } catch (error) {
+    res.status(500).json({ message: `Failed to fetch audit logs: ${error.message}` });
+  }
 };

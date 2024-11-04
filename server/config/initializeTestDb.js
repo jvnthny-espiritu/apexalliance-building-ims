@@ -43,28 +43,28 @@ const initializeDatabase = async () => {
       },
       {
         username: 'staff1',
-        fullname: { firstName: 'Staff', lastName: 'User1' },
+        fullname: { firstName: 'John', lastName: 'Doe' },
         password: hashedStaffPassword,
         role: 'staff',
         campus: campuses[1]._id,
       },
       {
         username: 'staff2',
-        fullname: { firstName: 'Staff', lastName: 'User2' },
+        fullname: { firstName: 'Jane', lastName: 'Doe' },
         password: hashedStaffPassword,
         role: 'staff',
         campus: campuses[2]._id,
       },
       {
         username: 'guest1',
-        fullname: { firstName: 'Guest', lastName: 'User1' },
+        fullname: { firstName: 'Guest', lastName: 'User' },
         password: hashedGuestPassword,
         role: 'guest',
         campus: campuses[0]._id,
       },
       {
         username: 'guest2',
-        fullname: { firstName: 'Guest', lastName: 'User2' },
+        fullname: { firstName: 'Guest', lastName: 'User' },
         password: hashedGuestPassword,
         role: 'guest',
         campus: campuses[1]._id,
@@ -74,12 +74,12 @@ const initializeDatabase = async () => {
     // Insert buildings
     const buildings = [];
     for (const campus of campuses) {
-      for (let i = 1; i <= 2; i++) {
+      for (let i = 1; i <= 3; i++) {
         buildings.push({
           name: `Building ${i} - ${campus.name}`,
           campus: campus._id,
-          numberOfFloors: 3,
-          yearBuilt: 2000 + i,
+          numberOfFloors: 2 + i,
+          yearBuilt: 1990 + i * 5,
           facilities: []
         });
       }
@@ -88,15 +88,16 @@ const initializeDatabase = async () => {
 
     // Insert rooms
     const rooms = [];
+    const purposes = ['Lecture Hall', 'Lab', 'Office', 'Conference Room', 'Storage']; 
     for (const building of insertedBuildings) {
       for (let floor = 1; floor <= building.numberOfFloors; floor++) {
-        for (let i = 1; i <= 2; i++) {
+        for (let i = 1; i <= 5; i++) {
           rooms.push({
             building: building._id,
-            name: `Room ${i} - Floor ${floor}`,
+            name: `Room ${i}`,
             floor: floor,
-            purpose: `Purpose ${i}`,
-            status: 'Available'
+            purpose: purposes[i % purposes.length],
+            status: i % 3 === 0 ? 'Under Maintenance' : 'Available' 
           });
         }
       }
@@ -108,20 +109,25 @@ const initializeDatabase = async () => {
     for (const room of insertedRooms) {
       for (let i = 1; i <= 3; i++) {
         assets.push({
-          name: `Asset ${i} - ${room.name}`,
-          category: 'electric',
-          condition: 'new',
-          status: 'good condition',
+          name: `Asset ${i}`,
+          category: i % 2 === 0 ? 'electric' : 'non-electric',
+          condition: i % 3 === 0 ? 'new' : i % 3 === 1 ? 'good' : 'fair',
+          status: i % 4 === 0 ? 'good condition' : i % 4 === 1 ? 'not working' : i % 4 === 2 ? 'for replacement' : 'under maintenance',
           location: room._id,
-          purchaseDate: new Date(),
+          purchaseDate: new Date(2020, i % 12, i * 2),
           value: 1000 * i,
-          numberOfUnits: 1,
-          electricDetails: {
+          numberOfUnits: i,
+          electricDetails: i % 2 === 0 ? {
             voltage: 220,
             power: 100 * i,
-            manufacturer: 'Manufacturer A',
-            warranty: '1 year'
-          }
+            manufacturer: `Manufacturer ${String.fromCharCode(65 + i)}`,
+            warranty: `${i} year`
+          } : undefined,
+          nonElectricDetails: i % 2 !== 0 ? {
+            material: `Material ${String.fromCharCode(65 + i)}`,
+            dimensions: `${i * 10}x${i * 20}x${i * 30} cm`,
+            weight: i * 5
+          } : undefined
         });
       }
     }

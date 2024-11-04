@@ -1,16 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import { ResponsiveRadialBar } from '@nivo/radial-bar';
+import { useDimensions } from '@nivo/core';
+
+const CustomLayer = ({ centerX, centerY, data, isMobile }) => {
+    const totalBuildings = data.length > 0 ? data[0].totalBuildings : 0;
+
+    return (
+        <g transform={`translate(${centerX}, ${centerY})`}>
+            <text
+                y={isMobile ? -25 : -35}
+                textAnchor="middle"
+                dominantBaseline="central"
+                style={{
+                    fontSize: isMobile ? '40px' : '60px',
+                    fontWeight: 'bold',
+                    fill: '#333',
+                }}
+            >
+                {totalBuildings}
+            </text>
+            <text
+                y={isMobile ? 15 : 25}
+                textAnchor="middle"
+                dominantBaseline="central"
+                style={{
+                    fontSize: isMobile ? '10px' : '16px',
+                    fill: '#666',
+                }}
+            >
+                Buildings
+            </text>
+        </g>
+    );
+};
+
+const calculateTextWidth = (text, font = '12px Arial') => {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+};
 
 const BuildingChartCard = ({ data, campuses }) => {
     const [selectedCampus, setSelectedCampus] = useState('all');
     const [isMobile, setIsMobile] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [legendSize, setLegendSize] = useState(10);
+    const chartRef = useRef(null);
 
     useEffect(() => {
         // Check if the screen is mobile
         const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768);
+            const isMobileScreen = window.innerWidth <= 768;
+            setIsMobile(isMobileScreen);
+            setLegendSize(isMobileScreen ? 6 : 10);
         };
 
         handleResize();
@@ -37,6 +82,21 @@ const BuildingChartCard = ({ data, campuses }) => {
             y: facility.count
         }))
     }));
+
+    const keys = [...new Set(filteredData.flatMap(item => item.facilities.map(facility => facility.facility)))];
+
+    const legendItems = keys.map(key => ({
+        id: key,
+        label: key,
+        width: calculateTextWidth(key) + 20
+    }));
+
+    const maxLegendItemWidth = Math.max(...legendItems.map(item => item.width));
+
+
+    const dimensions = useDimensions(chartRef.current ? chartRef.current.offsetWidth : 0, chartRef.current ? chartRef.current.offsetHeight : 0, { top: 0, right: 0, bottom: 0, left: 0 });
+    const centerX = dimensions.innerWidth / 2;
+    const centerY = dimensions.innerHeight / 2;
 
     return (
         <div className='w-full p-4 md:p-7 border-primary border-4 border-opacity-50 rounded-lg shadow-lg bg-white'>
@@ -76,38 +136,32 @@ const BuildingChartCard = ({ data, campuses }) => {
                     </select>
                 )}
             </div>
-            <div className='h-[300px] md:h-[500px]'>
+            <div className='h-[300px] md:h-[500px]' ref={chartRef}>
                 <ResponsiveRadialBar
                     data={chartData}
                     keys={['y']}
                     indexBy='x'
-                    margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                    margin={{ top: 25, right: 0, bottom: 0, left: 0 }}
                     padding={0.2}
-                    innerRadius={0.5}
-                    cornerRadius={10}
+                    innerRadius={isMobile ? (selectedCampus === 'all' ? 0.025 : 0.7) : 0.5}
+                    cornerRadius={isMobile ? 5 : 10}
                     colors={{ scheme: 'nivo' }}
-                    borderWidth={1}
-                    borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                    axisTop={null}
-                    axisRight={null}
-                    axisBottom={null}
-                    axisLeft={null}
                     enableLabel={false}
                     legends={[
                         {
-                            anchor: 'bottom',
-                            direction: 'row',
+                            anchor: 'top-left',
+                            direction: 'column',
                             justify: false,
                             translateX: 0,
-                            translateY: 56,
+                            translateY: 0,
                             itemsSpacing: 0,
-                            itemWidth: 100,
-                            itemHeight: 18,
+                            itemHeight: isMobile ? 6 : 10,
+                            itemWidth: maxLegendItemWidth,
                             itemTextColor: '#999',
                             itemDirection: 'left-to-right',
                             itemOpacity: 1,
-                            symbolSize: 18,
-                            symbolShape: 'circle',
+                            symbolSize: isMobile ? 6 : 10,
+                            symbolShape: 'square',
                             effects: [
                                 {
                                     on: 'hover',
@@ -117,6 +171,21 @@ const BuildingChartCard = ({ data, campuses }) => {
                                 }
                             ]
                         }
+                    ]}
+                    theme={{
+                        "legends": {
+                            "text": {
+                                "fontSize": legendSize
+                            }
+                        }
+                    }}
+                    layers={[
+                        'grid',
+                        'tracks',
+                        'bars',
+                        'labels',
+                        'legends',
+                        (props) => selectedCampus !== 'all' ? <CustomLayer {...props} data={filteredData} centerX={centerX} centerY={centerY} isMobile={isMobile} /> : null
                     ]}
                 />
             </div>

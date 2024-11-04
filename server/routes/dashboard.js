@@ -6,5 +6,6 @@ router.get('/metrics/all', dashboardController.getAllMetrics);
 router.get('/metrics/building-distribution', dashboardController.getBuildingDistribution);
 router.get('/metrics/room-distribution', dashboardController.getRoomDistribution);
 router.get('/metrics/asset-distribution', dashboardController.getAssetDistribution);
+router.get('/audit-log', dashboardController.getAuditLogs);
 
 module.exports = router;

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaFilter } from 'react-icons/fa';
-import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveBar, Bar } from '@nivo/bar';
 
 const RoomChartCard = ({ campuses, roomDistribution }) => {
     const [selectedCampus, setSelectedCampus] = useState('all');
     const [isMobile, setIsMobile] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const chartContainerRef = useRef();
 
     useEffect(() => {
-        // Check if the screen is mobile
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
         };
@@ -23,7 +23,7 @@ const RoomChartCard = ({ campuses, roomDistribution }) => {
 
     const handleCampusChange = (event) => {
         setSelectedCampus(event.target.value);
-        setShowDropdown(false); // Hide dropdown after selection
+        setShowDropdown(false); 
     };
 
     const filteredRooms = selectedCampus === 'all' 
@@ -51,6 +51,39 @@ const RoomChartCard = ({ campuses, roomDistribution }) => {
         }, []);
 
     const keys = [...new Set(roomDistribution.map(room => room.purpose))];
+
+    const calculateTextWidth = (text, font = '12px Arial') => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = font;
+        const metrics = context.measureText(text);
+        return metrics.width;
+    };
+
+    const legendItems = keys.map(key => ({
+        id: key,
+        label: key,
+        width: calculateTextWidth(key) + 20
+    }));
+
+    const maxLegendItemWidth = Math.max(...legendItems.map(item => item.width));
+
+    // Calculate the minimum width for the chart based on the number of bars
+    const minWidth = isMobile ? chartData.length * 150 : Math.max(1200, chartData.length * 25);
+
+    const props = {
+        data: chartData,
+        height: 500,
+        keys: keys,
+        margin: ['bottom', 'left', 'right', 'top'].reduce(
+            (acc, key) => ({ ...acc, [key]: 50 }),
+            {}
+        ),
+        colors: { scheme: 'spectral' },
+        width: minWidth,
+        indexBy: selectedCampus === 'all' ? 'campus' : 'building',
+        groupMode: 'grouped',
+    };
 
     return (
         <div className='w-full p-4 md:p-7 border-primary border-4 border-opacity-50 rounded-lg shadow-lg bg-white'>
@@ -90,63 +123,115 @@ const RoomChartCard = ({ campuses, roomDistribution }) => {
                     </select>
                 )}
             </div>
-            <div className='h-[300px] md:h-[500px]'>
-                <ResponsiveBar
-                    data={chartData}
-                    keys={keys}
-                    indexBy={selectedCampus === 'all' ? 'campus' : 'building'}
-                    margin={{ top: 40, right: 60, bottom: 80, left: 60 }}
-                    padding={0.2}
-                    groupMode='grouped'
-                    colors={{ scheme: 'nivo' }}
-                    borderWidth={1}
-                    borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                    axisTop={null}
-                    axisRight={null}
-                    axisBottom={{
-                        tickSize: 5,
-                        tickPadding: 5,
-                        tickRotation: window.innerWidth < 768 ? 45 : 0, 
-                    }}
-                    axisLeft={{
-                        tickSize: 5,
-                        tickPadding: 5,
-                        tickRotation: 0,
-                        legend: 'Count',
-                        legendPosition: 'middle',
-                        legendOffset: -40
-                    }}
-                    enableLabel={false}
-                    labelSkipWidth={12}
-                    labelSkipHeight={12}
-                    labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-                    legends={[
-                        {
-                            dataFrom: 'keys',
-                            anchor: 'top',
-                            direction: 'row',
-                            justify: false,
-                            translateX: 0,
-                            translateY: -40,
-                            itemsSpacing: 0,
-                            itemWidth: 100,
-                            itemHeight: 18,
-                            itemTextColor: '#999',
-                            itemDirection: 'left-to-right',
-                            itemOpacity: 1,
-                            symbolSize: 18,
-                            symbolShape: 'circle',
-                            effects: [
-                                {
-                                    on: 'hover',
-                                    style: {
-                                        itemTextColor: '#000'
+            <div className='flex h-[500px]'>
+                <div className='h-full'>
+                    <Bar
+                        {...props}
+                        width={50}
+                        // data={chartData}
+                        // keys={keys}
+                        layers={['axes']}
+                        // indexBy={selectedCampus === 'all' ? 'campus' : 'building'}
+                        // margin={{ top: 40, right: 40, bottom: 40, left: 50 }}
+                        // padding={0.2}
+                        // groupMode='grouped'
+                        // colors={{ scheme: 'nivo' }}
+                        // borderWidth={1}
+                        // borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+                        // axisTop={null}
+                        // axisRight={null}
+                        axisBottom={null}
+                        axisLeft={{
+                            tickSize: 5,
+                            tickPadding: 5,
+                            tickRotation: 0,
+                            legend: 'Count',
+                            legendPosition: 'middle',
+                            legendOffset: -40
+                        }}
+                        enableLabel={false}
+                        // labelSkipWidth={12}
+                        // labelSkipHeight={12}
+                        // labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+                        // legends={[
+                        //     {
+                        //         dataFrom: 'keys',
+                        //         anchor: 'bottom-right',
+                        //         direction: 'column',
+                        //         justify: false,
+                        //         translateX: 0,
+                        //         translateY: 0,
+                        //         itemsSpacing: 0,
+                        //         itemWidth: maxLegendItemWidth,
+                        //         itemHeight: 15,
+                        //         itemTextColor: '#999',
+                        //         itemDirection: 'left-to-right',
+                        //         itemOpacity: 1,
+                        //         symbolSize: 15,
+                        //         symbolShape: 'square',
+                        //         effects: [
+                        //             {
+                        //                 on: 'hover',
+                        //                 style: {
+                        //                     itemTextColor: '#000'
+                        //                 }
+                        //             }
+                        //         ]
+                        //     }
+                        // ]}
+                    />
+                </div>
+                <div className='w-full h-full overflow-x-auto' ref={chartContainerRef}>
+                    <div style={{ minWidth: `${minWidth}px` }}>
+                        <Bar
+                            {...props}
+                            margin={{ ...props.margin, right:0, left: 0 }}
+                            padding={isMobile ? 0.1 : 0.2}
+                            axisBottom={{
+                                tickSize: 5,
+                                tickPadding: 5,
+                                tickRotation: 0, 
+                            }}
+                            axisLeft={null}
+                            enableLabel={false}
+                        />
+                    </div>
+                </div>
+                <div className='ml-2 lg:ml-0 h-full'>
+                    <Bar
+                        {...props}
+                        margin={{ ...props.margin, right: 0, left: 0 }}
+                        width={maxLegendItemWidth}
+                        layers={['legends']}
+                        enableLabel={false}
+                        legends={[
+                            {
+                                dataFrom: 'keys',
+                                anchor: 'bottom-right',
+                                direction: 'column',
+                                justify: false,
+                                translateX: 0,
+                                translateY: 0,
+                                itemsSpacing: 0,
+                                itemWidth: maxLegendItemWidth,
+                                itemHeight: 15,
+                                itemTextColor: '#999',
+                                itemDirection: 'left-to-right',
+                                itemOpacity: 1,
+                                symbolSize: 15,
+                                symbolShape: 'square',
+                                effects: [
+                                    {
+                                        on: 'hover',
+                                        style: {
+                                            itemTextColor: '#000'
+                                        }
                                     }
-                                }
-                            ]
-                        }
-                    ]}
-                />
+                                ]
+                            }
+                        ]}
+                    />
+                </div>
             </div>
         </div>
     );

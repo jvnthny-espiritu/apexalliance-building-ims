@@ -7,9 +7,13 @@ const passport = require('./config/passport-config');
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(cors({
+    origin: (origin, callback) => { 
+        callback(null, true)
+    },
+}));
 
 // Routes
 const userRoutes = require('./routes/users');
