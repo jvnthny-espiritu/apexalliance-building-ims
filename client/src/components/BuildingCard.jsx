@@ -13,7 +13,6 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   const [facilityColorMap, setFacilityColorMap] = useState({});
 
   useEffect(() => {
-    // Create a mapping of facility names to random colors
     const facilityColors = [
       'bg-facilities-1',
       'bg-facilities-2',
@@ -139,6 +138,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
         isOpen={showEditModal}
         toggleModal={handleModalClose}
         building={building}
+        facilities={facilities}
         onBuildingUpdated={() => {
           setSuccessMessage('Building successfully updated.');
           setShowEditModal(false); 
