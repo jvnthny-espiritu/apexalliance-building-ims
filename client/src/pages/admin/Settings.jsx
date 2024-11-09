@@ -49,12 +49,12 @@ const UserAccount = () => {
       return;
     }
     try {
-      const response = await api.get(`/user/${userId}`);
+      const response = await api.get(`/api/users/${userId}`);
       setUser({
         ...user,
         id: response.data._id,
-        firstName: response.data.fullName.firstName,
-        lastName: response.data.fullName.lastName,
+        firstName: response.data.fullname.firstName,
+        lastName: response.data.fullname.lastName,
       });
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -80,9 +80,9 @@ const UserAccount = () => {
     }
 
     try {
-      const response = await api.put(`/user/${user.id}`, {
+      const response = await api.put(`/api/users/${user.id}`, {
         password: user.password,
-        fullName: {
+        fullname: {
           firstName: user.firstName,
           lastName: user.lastName,
         },
@@ -286,7 +286,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get("/user");
+      const response = await api.get("/api/users");
       setUsers(response.data);
       const campuses = [
         ...new Set(response.data.map((user) => user.campus.name)),
@@ -313,7 +313,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
 
   const deleteUser = async (userId) => {
     try {
-      const response = await api.delete(`/user/${userId}`);
+      const response = await api.delete(`/api/users/${userId}`);
       if (response.status === 200) {
         setUsers(users.filter((user) => user._id !== userId));
 
@@ -337,7 +337,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
 
   const confirmDeleteUser = async () => {
     try {
-      const response = await api.delete(`/user/${deleteUserId}`);
+      const response = await api.delete(`/api/users/${deleteUserId}`);
       if (response.status === 200) {
         setUsers(users.filter((user) => user._id !== deleteUserId));
         setSuccessMessage("User deleted successfully!");
@@ -364,14 +364,14 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   };
 
   const filteredUsers = users.filter((user) => {
-    const fullName =
-      `${user.fullName.firstName} ${user.fullName.lastName}`.toLowerCase();
+    const fullname =
+      `${user.fullname.firstName} ${user.fullname.lastName}`.toLowerCase();
     const role = user.role.toLowerCase();
     const searchValue = searchTerm.toLowerCase();
     return (
       (filterRole ? user.role === filterRole : true) &&
       (filterCampus ? user.campus.name === filterCampus : true) &&
-      (fullName.includes(searchValue) || role.includes(searchValue))
+      (fullname.includes(searchValue) || role.includes(searchValue))
     );
   });
 
@@ -403,8 +403,9 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                 className="border border-black text-black text-sm rounded-lg px-2.5 py-1 w-full"
               >
                 <option value="">All Roles</option>
-                <option value="Staff">Staff</option>
-                <option value="Administrator">Administrator</option>
+                <option value="staff">Staff</option>
+                <option value="administrator">Administrator</option>
+                <option value="guest">Guest</option>
               </select>
             </div>
 
@@ -463,7 +464,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             {filteredUsers.map((user) => (
               <tr key={user._id}>
                 <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  {user.fullName.firstName} {user.fullName.lastName}
+                  {user.fullname.firstName} {user.fullname.lastName}
                 </td>
                 <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
                   {user.campus.name}
@@ -533,7 +534,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                 <div className="flex flex-col md:flex-row">
                   <div className="flex-1">
                     <h3 className="text-lg text-black font-bold">
-                      {user.fullName.firstName} {user.fullName.lastName}
+                      {user.fullname.firstName} {user.fullname.lastName}
                     </h3>
                     <p className="text-gray-800 text-sm">Role: {user.role}</p>
                     <p className="text-gray-800 text-sm">

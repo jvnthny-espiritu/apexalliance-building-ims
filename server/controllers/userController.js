@@ -32,7 +32,7 @@ module.exports = {
   },
 
   createUser: async (req, res) => {
-    const { username, fullName, role, campus, password } = req.body;
+    const { username, fullname, role, campus, password } = req.body;
     console.log("Received request body:", req.body);
 
     try {
@@ -50,7 +50,7 @@ module.exports = {
       }
 
       const newUser = await User.create({
-        fullName,
+        fullname,
         username,
         role,
         campus,
@@ -79,7 +79,7 @@ module.exports = {
   updateUser: async (req, res) => {
     try {
       const { id } = req.params;
-      const { username, password, campus, fullName, role } = req.body; 
+      const { username, password, campus, fullname, role } = req.body; 
   
       console.log('Received request to update user with ID:', id);
   
@@ -108,9 +108,9 @@ module.exports = {
       if (password) user.password = password; 
       if (campus) user.campus = campus;
       
-      if (fullName) {
-        if (fullName.firstName) user.fullName.firstName = fullName.firstName;
-        if (fullName.lastName) user.fullName.lastName = fullName.lastName;
+      if (fullname) {
+        if (fullname.firstName) user.fullname.firstName = fullname.firstName;
+        if (fullname.lastName) user.fullname.lastName = fullname.lastName;
       }
   
       if (role) user.role = role;

@@ -5,7 +5,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
   const [apiError, setApiError] = useState("");
 
   const [formData, setFormData] = useState({
-    fullName: {
+    fullname: {
       firstName: "",
       lastName: "",
     },
@@ -24,7 +24,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
   useEffect(() => {
     const fetchCampuses = async () => {
         try {
-            const response = await api.get("/campus");
+            const response = await api.get("/api/campuses");
             setCampuses(response.data);
         } catch (error) {
             setApiError("Failed to fetch campuses. Please try again later.");
@@ -41,8 +41,8 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     if (name === "firstName" || name === "lastName") {
       setFormData((prevData) => ({
         ...prevData,
-        fullName: {
-          ...prevData.fullName,
+        fullname: {
+          ...prevData.fullname,
           [name]: value,
         },
       }));
@@ -61,8 +61,8 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
   const validateForm = () => {
     const errors = {};
   
-    if (!formData.fullName.firstName) errors.firstName = "First name is required.";
-    if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
+    if (!formData.fullname.firstName) errors.firstName = "First name is required.";
+    if (!formData.fullname.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
     if (!formData.password) errors.password = "Password is required.";
     if (!formData.confirmPassword) errors.confirmPassword = "Confirm password is required.";
@@ -88,7 +88,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
     if (!isValid) return;
 
     try {
-        const response = await api.post("/user", formData);
+        const response = await api.post("/api/users", formData);
         setSuccessMessage("User successfully added!");
         if (onUserAdded) {
             onUserAdded();
@@ -108,7 +108,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
 
   const handleClose = () => {
     setFormData({
-      fullName: {
+      fullname: {
         firstName: "",
         lastName: "",
       },
@@ -173,7 +173,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.fullName.firstName}
+                    value={formData.fullname.firstName}
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
@@ -186,7 +186,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.fullName.lastName}
+                    value={formData.fullname.lastName}
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
@@ -201,18 +201,25 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                   <label className="text-black">Role</label>
                   <div className="flex gap-4 flex-wrap">
                     <button
-                      className={`px-4 py-2 ${formData.role === "Administrator" ? "bg-indigo-500 text-white" : "border border-primary text-black"} rounded-lg`}
-                      onClick={() => handleRoleChange("Administrator")}
+                      className={`px-4 py-2 ${formData.role === "administrator" ? "bg-indigo-500 text-white" : "border border-primary text-black"} rounded-lg`}
+                      onClick={() => handleRoleChange("administrator")}
                       type="button"
                     >
                       Administrator
                     </button>
                     <button
-                      className={`px-4 py-2 ${formData.role === "Staff" ? "bg-red-500 text-white" : "border border-primary text-black"} rounded-lg`}
-                      onClick={() => handleRoleChange("Staff")}
+                      className={`px-4 py-2 ${formData.role === "staff" ? "bg-red-500 text-white" : "border border-primary text-black"} rounded-lg`}
+                      onClick={() => handleRoleChange("staff")}
                       type="button"
                     >
                       Staff
+                    </button>
+                    <button
+                      className={`px-4 py-2 ${formData.role === "guest" ? "bg-blue-500 text-white" : "border border-primary text-black"} rounded-lg`}
+                      onClick={() => handleRoleChange("guest")}
+                      type="button"
+                    >
+                      Guest
                     </button>
                   </div>
                 </div>

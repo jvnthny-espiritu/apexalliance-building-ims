@@ -7,11 +7,11 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
   const [apiError, setApiError] = useState("");
   
   const [formData, setFormData] = useState({
-    fullName: {
-      firstName: user ? user.fullName.firstName : "",
-      lastName: user ? user.fullName.lastName : "",
+    fullname: {
+      firstName: user ? user.fullname.firstName : "",
+      lastName: user ? user.fullname.lastName : "",
     },
-    role: user ? user.role : "Staff",
+    role: user ? user.role : "staff",
     username: user ? user.username : "",
     password: "",
     confirmPassword: "",
@@ -24,7 +24,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
   useEffect(() => {
     const fetchCampuses = async () => {
         try {
-            const response = await api.get("/campus");
+            const response = await api.get("/api/campuses");
             setCampuses(response.data);
         } catch (error) {
             setApiError("Failed to fetch campuses. Please try again later.");
@@ -42,8 +42,8 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     if (name === "firstName" || name === "lastName") {
       setFormData((prevData) => ({
         ...prevData,
-        fullName: {
-          ...prevData.fullName,
+        fullname: {
+          ...prevData.fullname,
           [name]: value,
         },
       }));
@@ -58,8 +58,8 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
   const validateForm = async () => {
     const errors = {};
   
-    if (!formData.fullName.firstName) errors.firstName = "First name is required.";
-    if (!formData.fullName.lastName) errors.lastName = "Last name is required.";
+    if (!formData.fullname.firstName) errors.firstName = "First name is required.";
+    if (!formData.fullname.lastName) errors.lastName = "Last name is required.";
     if (!formData.username) errors.username = "Username is required.";
     if (formData.password && formData.password.length < 8) {
       errors.password = "Password must be at least 8 characters long.";
@@ -80,7 +80,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
     if (!isValid) return;
   
     try {
-      const response = await api.put(`/user/${user._id}`, formData);
+      const response = await api.put(`/api/users/${user._id}`, formData);
   
       setSuccessMessage("User updated successfully!");
       if (onUserUpdated) {
@@ -151,7 +151,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.fullName.firstName}
+                    value={formData.fullname.firstName}
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
@@ -164,7 +164,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.fullName.lastName}
+                    value={formData.fullname.lastName}
                     onChange={handleChange}
                     className="border-b-2 border-black p-3 outline-none"
                   />
@@ -179,25 +179,36 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   <div className="flex gap-4 flex-wrap">
                     <button
                       className={`px-4 py-2 ${
-                        formData.role === "Administrator"
+                        formData.role === "administrator"
                           ? "bg-indigo-500 text-white"
                           : "border border-primary text-black"
                       } rounded-lg`}
-                      onClick={() => handleRoleChange("Administrator")}
+                      onClick={() => handleRoleChange("administrator")}
                       type="button"
                     >
                       Administrator
                     </button>
                     <button
                       className={`px-4 py-2 ${
-                        formData.role === "Staff"
+                        formData.role === "staff"
                           ? "bg-red-500 text-white"
                           : "border border-primary text-black"
                       } rounded-lg`}
-                      onClick={() => handleRoleChange("Staff")}
+                      onClick={() => handleRoleChange("staff")}
                       type="button"
                     >
                       Staff
+                    </button>
+                    <button
+                      className={`px-4 py-2 ${
+                        formData.role === "guest"
+                          ? "bg-red-500 text-white"
+                          : "border border-primary text-black"
+                      } rounded-lg`}
+                      onClick={() => handleRoleChange("guest")}
+                      type="button"
+                    >
+                      Guest
                     </button>
                   </div>
                 </div>
