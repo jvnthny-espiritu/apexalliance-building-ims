@@ -6,8 +6,8 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
     const [formData, setFormData] = useState({
         RoomName: "",
         building: "",
-        facilities: "", // Change to a string for single selection
-        floorNumber: "",
+        purpose: "", // Change to a string for single selection
+        floor: "",
         status: "",
     });
 
@@ -18,7 +18,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
     useEffect(() => {
         const fetchBuildings = async () => {
             try {
-                const response = await api.get("/building");
+                const response = await api.get("/api/buildings");
                 setBuildings(response.data);
                 if (response.data.length > 0) {
                     setFormData((prevData) => ({
@@ -52,9 +52,9 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         const errors = {};
         if (!formData.RoomName) errors.RoomName = "Room name is required.";
         if (!formData.building) errors.building = "Building is required.";
-        if (!formData.floorNumber) errors.floorNumber = "Number of floors is required.";
+        if (!formData.floor) errors.floor = "Number of floors is required.";
         if (!formData.status) errors.status = "Status is required.";
-        if (!formData.facilities) errors.facilities = "Facilities are required."; // Validation for facilities
+        if (!formData.purpose) errors.purpose = "Purpose are required."; // Validation for facilities
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
@@ -68,7 +68,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         console.log("Submitting form data:", formData);
 
         try {
-            await api.post("/Room", formData);
+            await api.post("/api/rooms", formData);
             setSuccessMessage("Room successfully added!");
             if (onRoomAdded) {
                 onRoomAdded();
@@ -86,8 +86,8 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         setFormData({
             RoomName: "",
             building: "",
-            facilities: "", // Reset to an empty string
-            floorNumber: "",
+            purpose: "", // Reset to an empty string
+            floor: "",
             status: "",
         });
         setValidationErrors({});
@@ -107,18 +107,18 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
     const handleFacilitiesChange = (facility) => {
         setFormData((prevData) => ({
             ...prevData,
-            facilities: facility,
+            purpose: facility,
         }));
     };
 
     const getFacilityColor = (facility) => {
         switch (facility) {
             case "Classroom":
-                return formData.facilities === facility ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
+                return formData.purpose === facility ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
             case "Laboratory":
-                return formData.facilities === facility ? "bg-blue-600 text-white" : "border border-gray-600 text-gray-600";
+                return formData.purpose === facility ? "bg-blue-600 text-white" : "border border-gray-600 text-gray-600";
             case "Administrative":
-                return formData.facilities === facility ? "bg-primary text-white" : "border border-gray-600 text-gray-600";
+                return formData.purpose === facility ? "bg-primary text-white" : "border border-gray-600 text-gray-600";
             default:
                 return "";
         }
@@ -220,8 +220,8 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                     <div className="flex flex-col md:w-1/2 md:pl-2 md:ml-4">
                                         <label className="text-black font-semibold">Floor No.</label>
                                         <select
-                                            name="floorNumber"
-                                            value={formData.floorNumber}
+                                            name="floor"
+                                            value={formData.floor}
                                             onChange={handleChange}
                                             className="border-b-2 border-black p-3 outline-none"
                                         >
@@ -232,8 +232,8 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                                 </option>
                                             ))}
                                         </select>
-                                        {validationErrors.floorNumber && (
-                                            <span className="text-red-500 text-sm">{validationErrors.floorNumber}</span>
+                                        {validationErrors.floor && (
+                                            <span className="text-red-500 text-sm">{validationErrors.floor}</span>
                                         )}
                                     </div>
                                 </div>
@@ -252,8 +252,8 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                             </button>
                                         ))}
                                     </div>
-                                    {validationErrors.facilities && (
-                                        <span className="text-red-500 text-sm">{validationErrors.facilities}</span>
+                                    {validationErrors.purpose && (
+                                        <span className="text-red-500 text-sm">{validationErrors.purpose}</span>
                                     )}
                                 </div>
                             </div>

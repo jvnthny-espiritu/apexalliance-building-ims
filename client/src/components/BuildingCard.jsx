@@ -57,7 +57,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   // Handle Delete Confirmation
   const handleConfirmDelete = async () => {
     try {
-      await api.delete(`/building/${_id}`);
+      await api.delete(`/api/buildings/${_id}`);
       onDelete(_id); 
       setShowDeleteModal(false); 
       setSuccessMessage('Building successfully deleted.'); 

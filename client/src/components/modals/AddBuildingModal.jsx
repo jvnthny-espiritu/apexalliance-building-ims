@@ -8,7 +8,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     campus: "",
     facilities: [],
     numberOfFloors: "", 
-    yearOfCompletion: "", 
+    yearBuilt: "", 
   });
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -19,7 +19,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   useEffect(() => {
     const fetchCampuses = async () => {
       try {
-        const response = await api.get("/campus");
+        const response = await api.get("/api/campuses");
         setCampuses(response.data);
       } catch (error) {
         setApiError("Failed to fetch campuses. Please try again later.");
@@ -66,12 +66,12 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     if (!formData.buildingName) errors.buildingName = "Building name is required.";
     if (!formData.campus) errors.campus = "Campus is required.";
     if (!formData.numberOfFloors) errors.numberOfFloors = "Number of floors is required.";
-    if (!formData.yearOfCompletion) {
-      errors.yearOfCompletion = "Year of completion is required.";
+    if (!formData.yearBuilt) {
+      errors.yearBuilt = "Year Built is required.";
     } else {
-      const date = new Date(formData.yearOfCompletion);
+      const date = new Date(formData.yearBuilt);
       if (isNaN(date.getTime())) {
-        errors.yearOfCompletion = "Invalid date format.";
+        errors.yearBuilt = "Invalid date format.";
       }
     }
 
@@ -87,7 +87,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     console.log("Submitting form data:", formData); // Log the data being submitted
 
     try {
-      await api.post("/building", formData);
+      await api.post("/api/buildings", formData);
       setSuccessMessage("Building successfully added!");
       if (onBuildingAdded) {
         onBuildingAdded();
@@ -107,7 +107,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       campus: "",
       facilities: [], // Empty array
       numberOfFloors: "", 
-      yearOfCompletion: "", 
+      yearBuilt: "", 
     });
     setValidationErrors({});
     setSuccessMessage(""); 
@@ -205,16 +205,17 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
 
                 <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                   <div className="flex flex-col mb-4 md:w-1/2 md:pr-2">
-                    <label className="text-black font-semibold">Year of Completion</label>
+                    <label className="text-black font-semibold">Year Built</label>
                     <input
-                      type="date"
-                      name="yearOfCompletion"
-                      value={formData.yearOfCompletion}
+                      type="number"
+                      name="yearBuilt"
+                      value={formData.yearBuilt}
                       onChange={handleChange}
+                      min="1950"
                       className="border-b-2 border-black p-3 outline-none"
                     />
-                    {validationErrors.yearOfCompletion && (
-                      <span className="text-red-500 text-sm">{validationErrors.yearOfCompletion}</span>
+                    {validationErrors.yearBuilt && (
+                      <span className="text-red-500 text-sm">{validationErrors.yearBuilt}</span>
                     )}
                   </div>
 

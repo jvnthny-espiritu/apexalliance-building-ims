@@ -6,7 +6,7 @@ import EditRoomModal from '../components/modals/EditRoomModal';
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 
 const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMessage, setApiError }) => {
-  const { _id } = room;
+  const { _id, building, name, floor, purpose, status } = room;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); 
@@ -40,7 +40,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
   // Handle Delete Confirmation
   const handleConfirmDelete = async () => {
     try {
-      await api.delete(`/room/${_id}`);
+      await api.delete(`/api/rooms/${_id}`);
       onDelete(_id); 
       setShowDeleteModal(false); 
       setSuccessMessage('Room successfully deleted.'); 
@@ -55,8 +55,8 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
     setShowDeleteModal(false);
   };
   
-  const getTypeClass = (type) => {
-    switch (type) {
+  const getTypeClass = (purpose) => {
+    switch (purpose) {
       case 'Classroom':
         return 'bg-room-use-classroom';
       case 'Laboratory':
@@ -79,7 +79,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
     }
   };
 
-  const isMatchingType = selectedType ? room.type === selectedType : true;
+  const isMatchingType = selectedType ? room.purpose === selectedType : true;
   const isMatchingStatus = selectedStatus ? room.status === selectedStatus : true;
 
   if (!isMatchingType || !isMatchingStatus) {
@@ -120,13 +120,13 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Type:</p>
-            <p className={`px-3 text-center text-white mb-2 rounded-xl ${getTypeClass(room.type)}`}>
-              {room.type}
+            <p className={`px-3 text-center text-grey mb-2 rounded-xl ${getTypeClass(room.purpose)}`}>
+              {room.purpose}
             </p>
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Status:</p>
-            <div className={`px-3 text-center text-white mb-2 rounded-xl ${getStatusClass(room.status)}`}>
+            <div className={`px-3 text-center text-grey mb-2 rounded-xl ${getStatusClass(room.status)}`}>
               {room.status}
             </div>
           </div>
