@@ -23,13 +23,13 @@ const AssetChartCard = ({ assetData, campuses }) => {
 
     const handleCampusChange = (event) => {
         setSelectedCampus(event.target.value);
-        setShowDropdown(false); // Hide dropdown after selection
+        setShowDropdown(false); 
     };
 
     const transformDataForChart = (data, selectedCampus) => {
         return data.map(item => {
-            const campuses = selectedCampus === 'all' ? item.campuses : item.campuses.filter(campus => campus.campus === selectedCampus);
-            const total = campuses.reduce((sum, campus) => sum + campus.count, 0);
+            const filteredCampuses = selectedCampus === 'all' ? item.campuses : item.campuses.filter(campus => campus.campus === selectedCampus);
+            const total = filteredCampuses.reduce((sum, campus) => sum + campus.count, 0);
             return {
                 id: item.category || item.condition || item.status,
                 label: item.category || item.condition || item.status,
@@ -43,7 +43,6 @@ const AssetChartCard = ({ assetData, campuses }) => {
         condition: transformDataForChart(assetData.conditionDistribution || [], selectedCampus),
         status: transformDataForChart(assetData.statusDistribution || [], selectedCampus),
     };
-
 
     return (
         <div className='w-full p-4 md:p-7 border-primary border-4 rounded-lg shadow-lg bg-white'>
