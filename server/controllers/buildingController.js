@@ -93,11 +93,13 @@ module.exports = {
   getFacilities: async (req, res) => {
     const { campusId } = req.query;
     try {
-      if (!campusId) {
-        return res.status(400).json({ error: 'Campus ID is required' });
+      if (campusId && campusId !== 'all') {
+        const facilities = await Building.distinct('facilities', { campus: campusId });
+        return res.json(facilities);
+      } else {
+        const facilities = await Building.distinct('facilities');
+        res.json(facilities);
       }
-      const facilities = await Building.distinct('facilities', { campus: campusId });
-      res.json(facilities);
     } catch (err) {
       console.error('Error fetching facilities:', err);
       res.status(500).json({ error: 'Internal Server Error' });
