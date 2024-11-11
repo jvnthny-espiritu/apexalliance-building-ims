@@ -7,7 +7,7 @@ import AddAssetModal from '../modals/AddAssetModal';
 const RoomModal = ({ room, toggleModal, onAddAsset }) => { 
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -25,38 +25,53 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
     const fetchAssets = async () => {
       try {
         let apiUrl = `/api/assets?room=${room.id}`;
-
-        if (selectedType) {
-          apiUrl += `&type=${selectedType}`;
+  
+        if (selectedCategory) {
+          apiUrl += `&category=${selectedCategory}`;
         }
-
+  
         if (selectedCondition) {
           apiUrl += `&condition=${selectedCondition}`;
         }
-
+  
         if (selectedDate) {
           apiUrl += `&date=${selectedDate}`;
         }
 
+        console.log("API URL:", apiUrl); // Debugging: Check the URL being called
+  
         const response = await api.get(apiUrl);
+        console.log('Fetched assets:', response.data);  // Debug log for fetched assets
         setAssets(response.data);
-        console.log(response.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching assets:", error);
         setIsLoading(false);
       }
     };
-
+  
     fetchAssets();
-  }, [room._id, selectedType, selectedCondition, selectedDate]);
+  }, [room.id, selectedCategory, selectedCondition, selectedDate]);
 
   const filteredAssets = assets.filter((asset) =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleTypeChange = (e) => {
-    setSelectedType(e.target.value);
+  console.log('Filtered assets:', filteredAssets);  
+  console.log('Asset categories:', filteredAssets.map(asset => asset.category));  
+
+  const nonelectricAssets = filteredAssets.filter(
+    (asset) => asset.category === "non-electric"  
+  );
+  const electricAssets = filteredAssets.filter(
+    (asset) => asset.category === "electric"  
+  );
+
+  console.log('Non-electric assets:', nonelectricAssets);  
+  console.log('Electric assets:', electricAssets);  
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
   };
 
   const handleConditionChange = (e) => {
@@ -67,39 +82,59 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
     setSelectedDate(e.target.value);
   };
 
-  const renderFurnitureRows = (data) => {
+  const renderNonElectricRows = (data) => {
+    console.log(data);
     return data.map((item, index) => (
       <tr key={index} className="text-center text-black bg-white">
         <td>{item.name}</td>
-        <td>{item.type}</td>
-        <td>{item.quantity}</td>
-        <td>{item.serialNumber}</td>
-        <td>{item.purchaseDate}</td>
+        <td>{item.category}</td>
         <td>{item.condition}</td>
+        <td>{item.status}</td>
+        <td>{item.location?.name || 'N/A'}</td>
+        <td>{item.purchaseDate}</td>
+        <td>{item.value}</td>
+        <td>{item.numberOfUnits}</td>
+        <td>
+          {item.nonElectricDetails ? (
+            <div>
+              <p>Material: {item.nonElectricDetails.material}</p>
+              <p>Dimensions: {item.nonElectricDetails.dimensions}</p>
+              <p>Weight: {item.nonElectricDetails.weight}</p>
+            </div>
+          ) : (
+            'N/A'
+          )}
+        </td>
       </tr>
     ));
-  };
+  };  
 
-  const renderAppliancesRows = (data) => {
+  const renderElectricRows = (data) => {
     return data.map((item, index) => (
       <tr key={index} className="text-center bg-white">
         <td>{item.name}</td>
-        <td>{item.type}</td>
-        <td>{item.quantity}</td>
-        <td>{item.serialNumber}</td>
-        <td>{item.purchaseDate}</td>
+        <td>{item.category}</td>
         <td>{item.condition}</td>
-        <td>{item.electricConsumption}</td>
+        <td>{item.status}</td>
+        <td>{item.location?.name || 'N/A'}</td>
+        <td>{item.purchaseDate}</td>
+        <td>{item.value}</td>
+        <td>{item.numberOfUnits}</td>
+        <td>
+          {item.electricDetails ? (
+            <div>
+              <p>Voltage: {item.electricDetails.voltage}</p>
+              <p>Power: {item.electricDetails.power}</p>
+              <p>Manufacturer: {item.electricDetails.manufacturer}</p>
+              <p>Warranty: {item.electricDetails.warranty}</p>
+            </div>
+          ) : (
+            'N/A'
+          )}
+        </td>
       </tr>
     ));
   };
-
-  const furnitureAssets = filteredAssets.filter(
-    (asset) => asset.type === "Furniture"
-  );
-  const applianceAssets = filteredAssets.filter(
-    (asset) => asset.type === "Appliances"
-  );
 
   const toggleAssetModal = () => {
     setAssetModalOpen((prev) => !prev);
@@ -108,36 +143,34 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50">
       <div className="relative bg-white text-darkGray p-6 sm:p-8 rounded-lg w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl max-h-[80vh] overflow-y-auto">
-      <button
-      className={`absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-darkGray text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50 ${isAssetModalOpen ? 'hidden' : ''}`}
-      onClick={toggleModal}>
-        x
+        <button
+          className={`absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-darkGray text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50 ${isAssetModalOpen ? 'hidden' : ''}`}
+          onClick={toggleModal}
+        >
+          x
         </button>
-
 
         <h2 className="text-3xl text-black sm:text-4xl lg:text-5xl font-bold mb-4">{room.name}</h2>
         <div className="mb-4 flex justify-between items-center">
           <div>
-            <p className="mb-2 text-sm sm:text-base">Dimension: {room.dimension}</p>
             <div className="flex flex-wrap">
-              <p className="mr-2">Type:</p>
+              <p className="mr-2">Purpose:</p>
               <p
-                className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${room.type && colors.hasOwnProperty(room.type.toLowerCase()) ? colors[room.type.toLowerCase()] : ""}`}
+                className={`px-3 py-1 text-grey text-center mb-2 mr-2 rounded-xl ${room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase()) ? colors[room.purpose.toLowerCase()] : ""}`}
               >
-                {room.type}
+                {room.purpose}
               </p>
             </div>
             <div className="flex flex-wrap">
               <p className="mr-2">Status:</p>
               <p
-                className={`px-3 py-1 text-white text-center mb-2 rounded-xl ${room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ""}`}
+                className={`px-3 py-1 text-grey text-center mb-2 rounded-xl ${room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ""}`}
               >
                 {room.status}
               </p>
             </div>
           </div>
 
-        
           <AddButton onClick={toggleAssetModal} />
         </div>
 
@@ -157,15 +190,15 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
 
           <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
             <div className="flex items-center">
-              <span className="text-white mr-2">Type:</span>
+              <span className="text-white mr-2">Category:</span>
               <select
-                value={selectedType}
-                onChange={handleTypeChange}
+                value={selectedCategory}
+                onChange={handleCategoryChange}
                 className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
               >
-                <option value="">All Types</option>
-                <option value="Furniture">Furniture</option>
-                <option value="Appliances">Appliances</option>
+                <option value="">All Category</option>
+                <option value="non-electronic">Non-electronic</option>
+                <option value="electronic">Electronic</option>
               </select>
             </div>
             <div className="flex items-center">
@@ -197,51 +230,52 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
             <p className="text-black">Loading...</p>
           ) : (
             <>
-              {furnitureAssets.length > 0 && (
+              {nonelectricAssets.length > 0 && (
                 <>
-                  <p className="text-lg font-semibold sm:text-xl text-black mb-2">Furniture</p>
+                  <p className="text-lg font-semibold sm:text-xl text-black mb-2">Non-Electric</p>
                   <div className="overflow-x-auto">
                     <table className="text-black w-full">
                       <tbody>
                         <tr className="bg-primary text-white uppercase">
                           <th className="col px-3 sm:px-6 py-2">Name</th>
-                          <th className="col px-3 sm:px-6 py-2">Type</th>
-                          <th className="col px-3 sm:px-6 py-2">Quantity</th>
-                          <th className="col px-3 sm:px-6 py-2">Serial Number</th>
-                          <th className="col px-3 sm:px-6 py-2">Purchased Date</th>
-                          <th className="col px-3 sm:px-6 py-2">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
+                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Non-Electric Details</th>
                         </tr>
-                        {renderFurnitureRows(furnitureAssets)}
+                        {renderNonElectricRows(nonelectricAssets)}
                       </tbody>
                     </table>
                   </div>
                 </>
               )}
 
-              {applianceAssets.length > 0 && (
+              {electricAssets.length > 0 && (
                 <>
-                  <p className="text-lg font-semibold sm:text-xl text-black mt-4 mb-2">Appliances</p>
+                  <p className="text-lg font-semibold sm:text-xl text-black mb-2">Electric</p>
                   <div className="overflow-x-auto">
                     <table className="text-black w-full">
                       <tbody>
                         <tr className="bg-primary text-white uppercase">
                           <th className="col px-3 sm:px-6 py-2">Name</th>
-                          <th className="col px-3 sm:px-6 py-2">Type</th>
-                          <th className="col px-3 sm:px-6 py-2">Quantity</th>
-                          <th className="col px-3 sm:px-6 py-2">Serial Number</th>
-                          <th className="col px-3 sm:px-6 py-2">Purchased Date</th>
-                          <th className="col px-3 sm:px-6 py-2">Condition</th>
-                          <th className="col px-3 sm:px-6 py-2">Electric Consumption</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
+                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Electric Details</th>
                         </tr>
-                        {renderAppliancesRows(applianceAssets)}
+                        {renderElectricRows(electricAssets)}
                       </tbody>
                     </table>
                   </div>
                 </>
-              )}
-
-              {filteredAssets.length === 0 && (
-                <p className="text-white">No assets found.</p>
               )}
             </>
           )}
@@ -251,13 +285,13 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
         isOpen={isAssetModalOpen} 
         toggleModal={toggleAssetModal} 
         onAssetAdded={() => {
-          setSelectedType(''); 
+          setSelectedCategory(''); 
           setSelectedCondition(''); 
           setSelectedDate(''); 
           toggleModal();
-  }} 
-/>
-      </div>
+        }} 
+      />  
+    </div>
     </div>
   );
 };

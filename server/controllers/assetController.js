@@ -4,20 +4,24 @@ module.exports = {
   getAllAssets: async (req, res) => {
     try {
       const { room, category, status, condition } = req.query;
+      
       if (!room) {
-          return res.status(400).json({ error: 'Room parameter is required' });
+        return res.status(400).json({ error: 'Room parameter is required' });
       }
+      
       const filter = { location: room };
+      
       if (category) {
-          filter.category = category;
+        filter.category = category;
       }
       if (status) {
-          filter.status = status;
+        filter.status = status;
       }
       if (condition) {
-          filter.condition = condition;
+        filter.condition = condition;
       }
-      const assets = await Asset.find(filter);
+      const assets = await Asset.find(filter).populate('location');
+      
       res.json(assets);
     } catch (err) {
       res.status(500).json({ error: 'Internal Server Error' });

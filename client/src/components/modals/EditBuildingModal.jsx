@@ -20,7 +20,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
   useEffect(() => {
     const fetchCampuses = async () => {
       try {
-        const campusResponse = await api.get("/campus");
+        const campusResponse = await api.get("/api/campuses");
         setCampuses(campusResponse.data);
       } catch (error) {
         setApiError("Failed to fetch campuses. Please try again later.");
