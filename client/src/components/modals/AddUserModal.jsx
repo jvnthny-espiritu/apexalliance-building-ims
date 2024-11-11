@@ -9,7 +9,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
       firstName: "",
       lastName: "",
     },
-    role: "Staff",
+    role: "staff",
     username: "",
     password: "",
     confirmPassword: "",
@@ -201,8 +201,8 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                   <label className="text-black">Role</label>
                   <div className="flex gap-4 flex-wrap">
                     <button
-                      className={`px-4 py-2 ${formData.role === "administrator" ? "bg-indigo-500 text-white" : "border border-primary text-black"} rounded-lg`}
-                      onClick={() => handleRoleChange("administrator")}
+                      className={`px-4 py-2 ${formData.role === "admin" ? "bg-indigo-500 text-white" : "border border-primary text-black"} rounded-lg`}
+                      onClick={() => handleRoleChange("admin")}
                       type="button"
                     >
                       Administrator

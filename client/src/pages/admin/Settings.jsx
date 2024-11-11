@@ -37,7 +37,7 @@ const UserAccount = () => {
     if (token) {
       const decoded = jwtDecode(token);
       console.log("Decoded token:", decoded);
-      fetchUserData(decoded.user);
+      fetchUserData(decoded.id);
     } else {
       console.error("Token not found in localStorage");
     }
