@@ -14,7 +14,6 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
   });
 
   const [campuses, setCampuses] = useState([]);
-  const [facilityColorMap, setFacilityColorMap] = useState({});
 
   useEffect(() => {
     const fetchCampuses = async () => {
