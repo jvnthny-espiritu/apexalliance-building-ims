@@ -594,7 +594,7 @@ const Settings = () => {
 
   return (
     <div className="flex-grow-1 h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-5xl font-extrabold py-5 mt-20 mb-5 px-10 bg-lightGray text-black">
+      <h2 className="font-body text-3xl font-extrabold mt-20 mb-5 px-10 bg-lightGray text-black">
         Settings
       </h2>
 

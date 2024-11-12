@@ -157,7 +157,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
         </div>
        )}
 
-      <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
+      <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
         <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh] rounded-lg">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
