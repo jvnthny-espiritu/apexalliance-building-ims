@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from '../../services/api';
 
-const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, facilities }) => {
+const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [apiError, setApiError] = useState("");
@@ -11,7 +11,6 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
     campus: building ? building.campus._id : "",
     yearBuilt: building ? building.yearBuilt : "",
     numberOfFloors: building ? building.numberOfFloors : "",
-    facilities: building ? building.facilities : [],
   });
 
   const [campuses, setCampuses] = useState([]);
@@ -35,22 +34,10 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
           campus: building.campus._id,
           yearBuilt: building.yearBuilt,
           numberOfFloors: building.numberOfFloors,
-          facilities: building.facilities || [],
         });
       }
     }
   }, [isOpen, building]);
-
-  useEffect(() => {
-    if (facilities.length > 0) {
-      const facilityColors = ['bg-facilities-1', 'bg-facilities-2', 'bg-facilities-3', 'bg-facilities-4', 'bg-facilities-5'];
-      const colorMap = {};
-      facilities.forEach((facility, index) => {
-        colorMap[facility] = facilityColors[index % facilityColors.length];
-      });
-      setFacilityColorMap(colorMap);
-    }
-  }, [facilities]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,18 +45,6 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleFacilityChange = (facility) => {
-    setFormData((prevData) => {
-      const updatedFacilities = prevData.facilities.includes(facility)
-        ? prevData.facilities.filter((f) => f !== facility)
-        : [...prevData.facilities, facility];
-      return {
-        ...prevData,
-        facilities: updatedFacilities,
-      };
-    });
   };
 
   const validateForm = () => {
@@ -89,7 +64,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
     if (!isValid) return;
 
     try {
-      await api.put(`/building/${building._id}`, formData); // Assuming PUT request to update building
+      await api.put(`/building/${building._id}`, formData);
       setSuccessMessage("Building updated successfully!");
       if (onBuildingUpdated) {
         onBuildingUpdated();
@@ -191,28 +166,6 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated, f
                   ))}
                 </select>
                 {validationErrors.numberOfFloors && <span className="text-red-500 text-sm">{validationErrors.numberOfFloors}</span>}
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="text-black">Facilities</label>
-              <div className="flex space-x-4 flex-wrap">
-                {facilities.length === 0 && (
-                  <p className="text-red-500">No facilities available.</p>
-                )}
-                {facilities.map((facility) => (
-                  <button
-                    type="button"
-                    key={facility}
-                    className={`px-4 py-2 rounded shadow-md transition-all ${
-                      formData.facilities.includes(facility)
-                        ? `${facilityColorMap[facility]} text-white`
-                        : "bg-gray-300 text-black border border-gray-500"
-                    }`}
-                    onClick={() => handleFacilityChange(facility)}
-                  >
-                    {facility}
-                  </button>
-                ))}
               </div>
             </div>
             <div className="flex justify-end space-x-4">

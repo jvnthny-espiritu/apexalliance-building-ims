@@ -6,7 +6,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   const [formData, setFormData] = useState({
     buildingName: "",
     campus: "",
-    facilities: [],
     numberOfFloors: "", 
     yearBuilt: "", 
   });
@@ -30,24 +29,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       fetchCampuses();
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    const facilityColors = [
-      'bg-facilities-1',
-      'bg-facilities-2',
-      'bg-facilities-3',
-      'bg-facilities-4',
-      'bg-facilities-5',
-    ];
-    const colorMap = {};
-    const facilityNames = ["Lab", "Office", "Conference Room", "Storage", "Lecture Hall"]; 
-
-    facilityNames.forEach((facility, index) => {
-      colorMap[facility] = facilityColors[index % facilityColors.length];
-    });
-
-    setFacilityColorMap(colorMap); 
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,7 +86,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     setFormData({
       buildingName: "",
       campus: "",
-      facilities: [], // Empty array
       numberOfFloors: "", 
       yearBuilt: "", 
     });
@@ -116,20 +96,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     }
   };
 
-  const handleFacilitiesChange = (facility) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      facilities: prevData.facilities.includes(facility)
-        ? prevData.facilities.filter((f) => f !== facility)
-        : [...prevData.facilities, facility], 
-    }));
-  };
-
-  const getFacilityColor = (facility) => {
-    return formData.facilities.includes(facility)
-      ? `${facilityColorMap[facility]} text-white`
-      : "border border-gray-600 text-gray-600";
-  };
 
   return (
     <>
@@ -237,22 +203,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                     {validationErrors.numberOfFloors && (
                       <span className="text-red-500 text-sm">{validationErrors.numberOfFloors}</span>
                     )}
-                  </div>
-                </div>
-
-                <div className="flex flex-col w-full md:pr-2">
-                  <label className="text-black mb-3 font-semibold">Facilities</label>
-                  <div className="flex gap-4 flex-wrap">
-                    {["Lab", "Office", "Conference Room", "Storage", "Lecture Hall"].map((facility) => (
-                      <button
-                        key={facility}
-                        className={`px-4 py-2 ${getFacilityColor(facility)} rounded-md`}
-                        onClick={() => handleFacilitiesChange(facility)}
-                        type="button"
-                      >
-                        {facility}
-                      </button>
-                    ))}
                   </div>
                 </div>
               </div>
