@@ -20,30 +20,27 @@ const Reports = ({ data = [] }) => {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-    const margin = 72; // equivalent to 1 inch margin
+    const margin = 72; 
 
-    // Define colors from Tailwind configuration
-    const primaryColor = "#FF0000";       // Tailwind 'primary'
-    const primaryLight = "#ff2222";       // Tailwind 'primary-light'
+    const primaryColor = "#FF0000";       
+    const primaryLight = "#ff2222";       
     const darkGray = "#808080";     
 
-    // Add the template image
     doc.addImage(templateImage, 'PNG', 0, 0, 210, 297);
 
-    // Add dynamic content with font size adjustments
     doc.setFont('times');
     doc.setFontSize(12); 
     doc.text(formattedDate, 25, 56);  
     doc.text("Batangas State University - The National Engineering University, Alangilan Campus", 25, 61);
 
-    // Center 
-    const titleText = "STATUS REPORT OF AIR CONDITIONING UNITS";
+
+    const titleText = "STATUS REPORT";
     const titleXPos = (doc.internal.pageSize.width - doc.getTextWidth(titleText)) / 2;
     doc.setFont('times', 'bold');
-    doc.setFontSize(12); // Set font size for title
+    doc.setFontSize(12); 
     doc.text(titleText, titleXPos, margin);
 
-    //Center the table
+
     doc.autoTable({
       startY: margin + 3, //add 3 para sa margin below the title
       margin: { horizontal: 25 },
@@ -71,8 +68,7 @@ const Reports = ({ data = [] }) => {
       },
     });
     
-    doc.output('dataurlnewwindow')  // Open in new tab
-    //doc.save('Report.pdf');  //save
+    doc.output('dataurlnewwindow')  
   };
 
   return (
@@ -80,15 +76,15 @@ const Reports = ({ data = [] }) => {
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="bg-primary text-white p-4 flex justify-between items-center">
           <div>
-            <h1 className="text-lg font-semibold">Status Report of Air Conditioning Units</h1>
-            <p className="text-sm">{formattedDate}</p>  {/* Display the current date */}
+            <h1 className="text-lg font-semibold">Status Report</h1>
+            <p className="text-sm">{formattedDate}</p>  
             <p className="text-sm">Batangas State University - The National Engineering University, Alangilan Campus</p>
           </div>
           <button
-            onClick={downloadPDF} // Make sure this calls downloadPDF correctly
+            onClick={downloadPDF} 
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
-            View PDF
+            Download PDF
           </button>
         </div>
         <table className="min-w-full bg-white">
