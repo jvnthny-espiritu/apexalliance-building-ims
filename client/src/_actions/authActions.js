@@ -4,7 +4,7 @@ import api from '../services/api';
 export const login = (credentials) => async (dispatch) => {
   try {
     const response = await api.post('/api/users/login', credentials);
-    console.log('Login response:', response.data);
+    // console.log('Login response:', response.data);
     const { token } = response.data;
     const decodedToken = jwtDecode(token);
     dispatch({ type: 'LOGIN_SUCCESS', payload: token });

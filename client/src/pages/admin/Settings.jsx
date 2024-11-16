@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import api from "../../services/api";
 import { Link } from "react-router-dom";
 import { FaCirclePlus } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
+import { useSelector } from 'react-redux';
+import api from "../../services/api";
 import AddUserModal from "../../components/modals/AddUserModal";
 import EditUserModal from "../../components/modals/EditUserModal";
 import DeleteConfirmationModal from "../../components/modals/DeleteConfirmationModal";

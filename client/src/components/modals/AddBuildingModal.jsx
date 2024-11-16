@@ -1,34 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import api from '../../services/api';
 
 const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
+  const user = useSelector((state) => state.auth.user);
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     buildingName: "",
-    campus: "",
+    campus: user ? user.campus.name : "",
     numberOfFloors: "", 
     yearBuilt: "", 
   });
 
-  const [validationErrors, setValidationErrors] = useState({});
-  const [campuses, setCampuses] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({}); 
+  const [campuses, setCampuses] = useState([]); 
   const [successMessage, setSuccessMessage] = useState(""); 
-  const [facilityColorMap, setFacilityColorMap] = useState({}); 
+  // const [facilityColorMap, setFacilityColorMap] = useState({}); 
 
   useEffect(() => {
     const fetchCampuses = async () => {
       try {
-        const response = await api.get("/api/campuses");
-        setCampuses(response.data);
+        const response = await api.get("/api/campuses"); 
+        setCampuses(response.data); 
       } catch (error) {
         setApiError("Failed to fetch campuses. Please try again later.");
       }
     };
 
     if (isOpen) {
-      fetchCampuses();
+      fetchCampuses(); 
     }
-  }, [isOpen]);
+  }, [isOpen]); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,7 +39,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       [name]: value,
     }));
     setValidationErrors((prevErrors) => ({
-      ...prevErrors,
+      ...prevErrors, 
       [name]: "", 
     }));
   };
@@ -78,7 +80,11 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       }, 3000);
     } catch (error) {
       console.error("Error adding building:", error.response?.data || error.message); // Log the error
-      setApiError("Failed to add building. Please try again later.");
+      if (error.response && error.response.status === 403) {
+        setApiError("You do not have permission to add a building.");
+      } else {
+        setApiError("Failed to add building. Please try again later.");
+      }
     }
   };  
 

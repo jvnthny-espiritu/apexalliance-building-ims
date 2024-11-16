@@ -1,5 +1,4 @@
 const initialState = {
-  token:  localStorage.getItem('token') || null,
   user: null,
   error: null,
   isLoggedIn: !!localStorage.getItem('token'),
@@ -10,14 +9,12 @@ export default function authReducer(state = initialState, action) {
     case 'LOGIN_SUCCESS':
       return {
         ...state,
-        token: action.payload,
         error: null,
         isLoggedIn: true,
       };
     case 'LOGIN_FAILURE':
       return {
         ...state,
-        token: null,
         user: null,
         error: action.payload,
         isLoggedIn: false,
@@ -36,7 +33,6 @@ export default function authReducer(state = initialState, action) {
     case 'LOGOUT':
       return {
         ...state,
-        token: null,
         user: null,
         error: null,
         isLoggedIn: false,

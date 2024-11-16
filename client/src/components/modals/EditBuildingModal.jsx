@@ -64,7 +64,8 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
     if (!isValid) return;
 
     try {
-      await api.put(`/building/${building._id}`, formData);
+      console.log("Building: ", building);
+      await api.put(`/api/buildings/${building._id}`, formData);
       setSuccessMessage("Building updated successfully!");
       if (onBuildingUpdated) {
         onBuildingUpdated();

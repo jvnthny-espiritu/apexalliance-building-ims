@@ -38,11 +38,11 @@ module.exports = {
 	},
 
 	createRoom: async (req, res) => {
-		const { building, name, floor, purpose, status } = req.body;
+		const { building, RoomName, floor, purpose, status } = req.body;
 
 		try {
-			const newRoom = await Room.create({ building, name, floor, purpose, status });
-			await updateBuildingFacilities(room.building);
+			const newRoom = await Room.create({ building, name: RoomName, floor, purpose, status });
+			await updateBuildingFacilities(newRoom.building);
 			res.status(201).json(newRoom);
 		} catch (err) {
 			res.status(400).json({ error: err.message });
@@ -67,7 +67,7 @@ module.exports = {
 			if (!updatedRoom) {
 				return res.status(404).json({ error: 'Room not found' });
 			}
-			await updateBuildingFacilities(room.building);
+			await updateBuildingFacilities(newRoom	.building);
 			res.json(updatedRoom);
 		} catch (err) {
 			res.status(400).json({ error: err.message });

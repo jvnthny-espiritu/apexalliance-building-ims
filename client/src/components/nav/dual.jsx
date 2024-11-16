@@ -12,7 +12,7 @@ export default function NavBar() {
         console.log("Logging out...");
         dispatch({ type: 'LOGOUT' });
         localStorage.removeItem('token');
-        localStorage.removeItem('userRole');
+        // localStorage.removeItem('userRole');
         navigate('/login');
     }
 

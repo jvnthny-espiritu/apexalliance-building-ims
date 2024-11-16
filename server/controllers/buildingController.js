@@ -21,15 +21,14 @@ module.exports = {
   },
   
   createBuilding: async (req, res) => {
-    const { name, campus, numberOfFloors, yearBuilt, facilities } = req.body;
+    const { buildingName, campus, numberOfFloors, yearBuilt, facilities } = req.body;
     try {
-      const building = await Building.create({ name, campus, numberOfFloors, yearBuilt, facilities });
+      const building = await Building.create({ name: buildingName, campus, numberOfFloors, yearBuilt, facilities });
       res.status(201).json(building);
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
   },
-  
   
   getBuildingById: async (req, res) => {
     try {
@@ -62,7 +61,7 @@ module.exports = {
             return res.status(404).json({ error: 'Building not found' });
         }
 
-        const rooms = await Room.find({ building: id });
+        const rooms = await Room.find({ building: req.params.id });
 
         let deletedAssetsCount = 0;
         if (rooms.length > 0) {

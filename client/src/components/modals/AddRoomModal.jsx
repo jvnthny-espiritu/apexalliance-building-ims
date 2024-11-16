@@ -86,7 +86,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         setFormData({
             RoomName: "",
             building: "",
-            purpose: "", // Reset to an empty string
+            purpose: "", 
             floor: "",
             status: "",
         });
