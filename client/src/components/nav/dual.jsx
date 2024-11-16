@@ -43,7 +43,7 @@ export default function NavBar() {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to='/report' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
+                                <NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
                                     <MdInfo className='h-6 w-6 mx-4' />
                                     <span>Reports</span>
                                 </NavLink>
