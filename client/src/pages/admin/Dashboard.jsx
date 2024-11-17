@@ -9,9 +9,11 @@ import api from '../../services/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Skeleton } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 
 export default function Dashboard() {
+    const user = useSelector((state) => state.auth.user);
     const [totalMetrics, setTotalMetrics] = useState({ totalAssets: 0, totalBuildings: 0, totalRooms: 0 });
     const [buildingDistribution, setBuildingDistribution] = useState([]);
     const [roomDistribution, setRoomDistribution] = useState([]);

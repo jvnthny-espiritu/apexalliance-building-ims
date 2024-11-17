@@ -88,7 +88,7 @@ const Login = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-black placeholder-gray-500 text-black focus:outline-none focus:ring-indigo-500 focus:border-primary focus:border-4 focus:z-10 sm:text-sm w-full"
+                  className="rounded-xl relative block px-3 py-2 bg-transparent border border-black placeholder-gray-500 text-black focus:outline-none focus:ring-primary focus:border-primary focus:border-4 focus:z-10 sm:text-sm w-full"
                   placeholder="Password"
                 />
               </div>
@@ -96,7 +96,7 @@ const Login = () => {
             <div className="flex justify-center mt-4">
               <button
                 type="submit"
-                className="group relative flex w-full justify-center py-2 px-4 text-sm font-medium rounded-xl text-white bg-primary-light hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="group relative flex w-full justify-center py-2 px-4 text-sm font-medium rounded-xl text-white bg-primary-light hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
                 Log In 
               </button>

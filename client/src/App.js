@@ -6,6 +6,7 @@ import Settings from "./pages/admin/Settings";
 import Login from "./pages/auth/Login";
 import BuildingPage from "./pages/BuildingPage";
 import RoomPage from "./pages/RoomPage";
+import Reports from "./pages/admin/Report";
 import DualBar from "./components/nav/dual";
 import TopBar from "./components/nav/top";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/catalog/buildings" element={<BuildingPage />} />
               <Route path="/catalog/rooms/:buildingId" element={<RoomPage />} />
+              <Route path="/reports" element={<Reports />} />
             </Route>
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>

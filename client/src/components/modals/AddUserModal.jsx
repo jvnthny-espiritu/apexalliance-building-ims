@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from '../../services/api';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
   const [apiError, setApiError] = useState("");
-
   const [formData, setFormData] = useState({
     fullname: {
       firstName: "",
@@ -19,6 +19,8 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [campuses, setCampuses] = useState([]);
   const [successMessage, setSuccessMessage] = useState(""); 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const modalRef = useRef();
 
   useEffect(() => {
@@ -157,7 +159,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
         </div>
        )}
 
-      <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-primary bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
+      <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
         <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh] rounded-lg">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
@@ -267,13 +269,22 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
             <div className="flex flex-col mb-4 md:flex-row md:mb-8">
               <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                 <label className="text-black">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="border-b-2 border-black p-3 outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="border-b-2 border-black p-3 outline-none w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-600"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
                 <p className="text-sm">• Must be at least 8 characters long.</p>
                 {validationErrors.password && (
                   <span className="text-red-500 text-sm">{validationErrors.password}</span>
@@ -281,13 +292,22 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
               </div>
               <div className="flex flex-col w-full md:w-1/2 md:pl-2">
                 <label className="text-black">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="border-b-2 border-black p-3 outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="border-b-2 border-black p-3 outline-none w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-3 text-gray-600"
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
                 {validationErrors.confirmPassword && (
                   <span className="text-red-500 text-sm">{validationErrors.confirmPassword}</span>
                 )}

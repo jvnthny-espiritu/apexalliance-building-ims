@@ -6,6 +6,10 @@ const authenticateJWT = (req, res, next) => {
 		const token = authHeader.split(' ')[1];
 		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
 			if (err) {
+				if (err.name === 'TokenExpiredError') {
+					console.log('JWT Verification Error: Token has expired');
+					return res.status(401).json({ message: 'Token has expired. Please log in again.' });
+				}
 				return res.sendStatus(403);
 			}
 			req.user = user;

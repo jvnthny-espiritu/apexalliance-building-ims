@@ -12,13 +12,13 @@ export default function NavBar() {
         console.log("Logging out...");
         dispatch({ type: 'LOGOUT' });
         localStorage.removeItem('token');
-        localStorage.removeItem('userRole');
+        // localStorage.removeItem('userRole');
         navigate('/login');
     }
 
     // Common classes
-    const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-primary hover:bg-opacity-50 hover:text-black';
-    const activeLinkClasses = 'border-l-4 bg-primary bg-opacity-300 transition-colors duration-100 text-white';
+    const linkClasses = 'flex items-center mt-4 py-2 p-1.5 rounded-lg rounded-l-none hover:bg-primary hover:bg-opacity-20 hover:text-black';
+    const activeLinkClasses = 'border-l-4 border-primary bg-primary bg-opacity-75  text-white';
 
     const bottomLinkClasses = 'flex w-full py-1 justify-center items-center py-2 px-4 hover:bg-white hover:bg-opacity-5';
     const activeBottomLinkClasses = 'bg-white bg-opacity-10 transition-colors duration-200';
@@ -27,7 +27,7 @@ export default function NavBar() {
         <>
             {/* Sidebar for larger screens */}
             <div className="hidden lg:block h-screen sticky top-0 transition-width ease-in-out duration-100 font-bold">
-                <nav className='h-full flex flex-col justify-between bg-white text-darkGray px-4 pt-20 w-60'>
+                <nav className='h-full flex flex-col justify-between bg-white text-black px-4 pt-20 w-60'>
                     <div className='mt-5'>
                         <ul className='justify-center'>
                             <li>
@@ -60,7 +60,7 @@ export default function NavBar() {
                                 </NavLink>
                             </li>
                             <li>
-                                <button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-5'>
+                                <button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-'>
                                     <MdExitToApp className='h-6 w-6 mx-4' />
                                     <span>Logout</span>
                                 </button>
