@@ -24,6 +24,18 @@ module.exports = {
           '4': '#3b82f6',
           '5': '#ef4444',
         },
+        'room-use': {
+          'available': '#008000',
+          'notavailable': '#FF0000',
+          'maintenance': '#FFA500',
+        },
+        'room-type': {
+          'lab': '#d53e4f',
+          'office': '#f46d43',
+          'storage': '#fcc777',
+          'lecture': '#9e0142',
+          'conference': '#fdae61',
+        },
       },
     },
   },

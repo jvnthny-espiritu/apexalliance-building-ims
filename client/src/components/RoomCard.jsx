@@ -57,12 +57,16 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
   
   const getTypeClass = (purpose) => {
     switch (purpose) {
-      case 'Classroom':
-        return 'bg-room-use-classroom';
-      case 'Laboratory':
-        return 'bg--room-use-laboratory';
-      case 'Administrative':
-        return 'bg--room-use-administrative';
+      case 'Lab':
+        return 'bg-room-type-lab';
+      case 'Storage':
+        return 'bg-room-type-storage';
+      case 'Office':
+        return 'bg-room-type-office';
+      case 'Lecture Hall':
+        return 'bg-room-type-lecture';
+      case 'Conference Room':
+        return 'bg-room-type-conference';
       default:
         return '';
     }
@@ -74,6 +78,8 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
         return 'bg-room-use-available';
       case 'Not Available':
         return 'bg-room-use-notavailable';
+      case 'Under Maintenance':
+        return 'bg-room-use-maintenance';
       default:
         return '';
     }
@@ -120,13 +126,13 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Type:</p>
-            <p className={`px-3 text-center text-grey mb-2 rounded-xl ${getTypeClass(room.purpose)}`}>
+            <p className={`px-3 text-center text-white mb-2 rounded-xl ${getTypeClass(room.purpose)}`}>
               {room.purpose}
             </p>
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Status:</p>
-            <div className={`px-3 text-center text-grey mb-2 rounded-xl ${getStatusClass(room.status)}`}>
+            <div className={`px-3 text-center text-white mb-2 rounded-xl ${getStatusClass(room.status)}`}>
               {room.status}
             </div>
           </div>
