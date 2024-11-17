@@ -77,7 +77,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
   };
 
   return (
-    <div className="w-[300px] h-[225px] md:h-[250px] my-8 md:my-15 flex flex-col relative">
+    <div className="w-[350px] h-[280px] md:h-[350px] my-8 md:my-15 flex flex-col relative">
       <div className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray">
         <Link to={`/catalog/rooms/${_id}`} className="p-3 md:p-5 flex flex-col flex-grow">
           <div className="building-name text-black text-[24px] md:text-2xl lg:text-[24px] font-black font-body mt-3">

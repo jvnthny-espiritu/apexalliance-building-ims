@@ -14,11 +14,14 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
 
   const colors = {
-    laboratory: "bg-room-use-laboratory",
-    classroom: "bg-room-use-classroom",
-    administrative: "bg-room-use-administrative",
+    lab: "bg-room-type-lab",
+    storage: "bg-room-type-storage",
+    conference: "bg-room-type-conference",
+    'Lecture Hall': "bg-room-type-lecture",
+    office: "bg-room-type-office",
     available: "bg-room-use-available",
     notavailable: "bg-room-use-notavailable",
+    maintenance: "bg-room-use-maintenance",
   };
 
   useEffect(() => {
@@ -156,7 +159,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
             <div className="flex flex-wrap">
               <p className="mr-2">Purpose:</p>
               <p
-                className={`px-3 py-1 text-grey text-center mb-2 mr-2 rounded-xl ${room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase()) ? colors[room.purpose.toLowerCase()] : ""}`}
+                className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase()) ? colors[room.purpose.toLowerCase()] : ""}`}
               >
                 {room.purpose}
               </p>
@@ -164,7 +167,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
             <div className="flex flex-wrap">
               <p className="mr-2">Status:</p>
               <p
-                className={`px-3 py-1 text-grey text-center mb-2 rounded-xl ${room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ""}`}
+                className={`px-3 py-1 text-white text-center mb-2 rounded-xl ${room.status && colors.hasOwnProperty(room.status.toLowerCase()) ? colors[room.status.toLowerCase()] : ""}`}
               >
                 {room.status}
               </p>
@@ -188,9 +191,9 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
             <AiOutlineSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-between mb-4 gap-4">
+          <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
             <div className="flex items-center">
-              <span className="text-white mr-2">Category:</span>
+              <span className="text-black mr-2">Category:</span>
               <select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
@@ -202,7 +205,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
               </select>
             </div>
             <div className="flex items-center">
-              <span className="text-white mr-2">Condition:</span>
+              <span className="text-black mr-2">Condition:</span>
               <select
                 value={selectedCondition}
                 onChange={handleConditionChange}
@@ -216,7 +219,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
               </select>
             </div>
             <div className="flex items-center">
-              <span className="text-white mr-2">Date:</span>
+              <span className="text-black mr-2">Date:</span>
               <input
                 type="date"
                 value={selectedDate}
