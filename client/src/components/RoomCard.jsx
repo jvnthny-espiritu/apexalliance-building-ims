@@ -5,12 +5,14 @@ import RoomModal from '../components/modals/RoomModal';
 import EditRoomModal from '../components/modals/EditRoomModal'; 
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 
-const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMessage, setApiError }) => {
-  const { _id, building, name, floor, purpose, status } = room;
+const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMessage }) => {
+  const { id, building, name, floor, purpose, status } = room;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -34,23 +36,31 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
     event.stopPropagation();
     event.preventDefault();
     setDropdownVisible(false);
+    console.log('Room ID:', id);
     setShowDeleteModal(true); 
   };
 
-  // Handle Delete Confirmation
   const handleConfirmDelete = async () => {
+    if (isDeleting) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/api/rooms/${_id}`);
-      onDelete(_id); 
-      setShowDeleteModal(false); 
-      setSuccessMessage('Room successfully deleted.'); 
+        const response = await api.delete(`/api/rooms/${id}`);
+        if (response.status === 200) {
+            console.log("Delete successful:", response.data);
+            onDelete(id); 
+            setSuccessMessage(response.data.message || 'Room successfully deleted.');
+        } else {
+            throw new Error(`Unexpected response: ${response.status}`);
+        }
     } catch (error) {
-      setApiError('Failed to delete room.');
-      setShowDeleteModal(false); 
+        console.error("Error deleting room:", error);
+        setApiError("Failed to delete room.");
+    } finally {
+        setShowDeleteModal(false);
+        setIsDeleting(false);
     }
   };
 
-  // Cancel deletion
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
   };
@@ -143,6 +153,19 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <RoomModal room={room} toggleModal={toggleModal} />
+        </div>
+      )}
+
+      {/* API Error Message */}
+      {apiError && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+          {apiError}
+          <button
+            onClick={() => setApiError("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
         </div>
       )}
 

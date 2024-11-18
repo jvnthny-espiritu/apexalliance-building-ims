@@ -76,16 +76,27 @@ module.exports = {
 
 	deleteRoom: async (req, res) => {
 		try {
-			const deletedRoom = await Room.findByIdAndDelete(req.params.id);
+			const roomId = req.params.id;
+			console.log("Deleting Room ID:", roomId);
+	
+			const deletedRoom = await Room.findByIdAndDelete(roomId);
 			if (!deletedRoom) {
-				return res.status(404).json({ error: 'Room not found' });
+				console.error(`Room with ID ${roomId} not found.`);
+				return res.status(404).json({ error: "Room not found" });
 			}
-			res.json({ message: 'Room deleted' });
+	
+			const deleteAssetsResult = await Asset.deleteMany({ location: roomId });
+			res.status(200).json({
+				message: "Room successfully deleted.",
+				deletedRoom,
+				deletedAssetsCount: deleteAssetsResult.deletedCount,
+			});
 		} catch (err) {
-			res.status(500).json({ error: 'Internal Server Error' });
+			console.error("Error deleting room:", err);
+			res.status(500).json({ error: "Internal Server Error", details: err.message });
 		}
-	},
-
+	},	
+	  
 	getAssetByRoom: async (req, res) => {
 		try {
 			const roomId = req.params.id;

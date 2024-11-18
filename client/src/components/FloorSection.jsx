@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RoomCard from './RoomCard';
+import api from "../services/api";
 
 const getOrdinalIndicator = (number) => {
   const suffixes = ['th', 'st', 'nd', 'rd'];
@@ -7,12 +8,27 @@ const getOrdinalIndicator = (number) => {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
-const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
+const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRooms, setSuccessMessage }) => {
+  console.log('Rooms for floor:', rooms);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  const handleDeleteRoom = async (roomId) => {
+    try {
+        setRooms((prevRooms) =>
+            prevRooms.map((floor) => ({
+                ...floor,
+                rooms: floor.rooms.filter((room) => room.id !== roomId),
+            }))
+        );
+        setSuccessMessage("Room is deleted successfully.");
+    } catch (error) {
+        console.error("Error updating room state after deletion:", error);
+    }
+};
 
   const filteredRooms = rooms.filter(room => {
     if (selectedType && selectedStatus) {
@@ -42,7 +58,8 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {filteredRooms.map((room, index) => (
-                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} />
+                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage}/>
+              
               ))}
             </div>
           )}

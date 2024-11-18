@@ -18,6 +18,7 @@ function RoomPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const [state, setState] = useState({
@@ -41,6 +42,7 @@ function RoomPage() {
   const fetchRooms = async () => {
     try {
       const response = await api.get(`/api/rooms?building=${buildingId}`);
+      console.log(response.data); 
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -81,6 +83,33 @@ function RoomPage() {
 
   return (
     <div className="h-screen w-auto pb-20">
+    {/* Success message */}
+    {successMessage && (
+    <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+        {successMessage}
+        <button
+            onClick={() => setSuccessMessage("")}
+            className="ml-4 text-lg font-bold"
+        >
+            &times;
+        </button>
+    </div>
+    )}
+
+      {/* Error message */}
+      {state.apiError && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+          {state.apiError}
+          <button
+            onClick={() =>
+              setState((prevState) => ({ ...prevState, apiError: "" }))
+            }
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
       <div className="fixed top-16 left-0 right-0 z-10 bg-white shadow-md">
         <div className="flex items-center bg-primary p-1 max-w-screen-auto w-full">
           <button
@@ -209,6 +238,8 @@ function RoomPage() {
                 rooms={floor.rooms}
                 selectedType={selectedType}
                 selectedStatus={selectedStatus}
+                setRooms={setRooms}
+                setSuccessMessage={setSuccessMessage}
               />
             ))
           ) : (

@@ -66,9 +66,7 @@ const BuildingCard = ({ building, onDelete }) => {
       if (response.status === 200) {
         console.log('API delete success:', response.data);
         onDelete(_id);
-        setSuccessMessage(response.data.message || 'Building successfully deleted.');
-      } else {
-        throw new Error(`Unexpected response: ${response.status}`);
+        setSuccessMessage(response.data.message || "Building successfully deleted.");
       }
     } catch (error) {
       console.error('Delete error:', error.response || error.message);
@@ -76,7 +74,7 @@ const BuildingCard = ({ building, onDelete }) => {
     } finally {
       setShowDeleteModal(false);
     }
-  };
+  };  
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
@@ -85,8 +83,6 @@ const BuildingCard = ({ building, onDelete }) => {
   const handleModalClose = () => {
     setShowEditModal(false);
   };
-
-  
 
   return (
     <div className="w-[350px] h-[280px] md:h-[200px] my-8 md:my-15 flex flex-col relative">
