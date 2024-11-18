@@ -26,15 +26,8 @@ module.exports = {
         },
         'room-use': {
           'available': '#008000',
-          'notavailable': '#FF0000',
-          'maintenance': '#FFA500',
-        },
-        'room-type': {
-          'lab': '#d53e4f',
-          'office': '#f46d43',
-          'storage': '#fcc777',
-          'lecture': '#9e0142',
-          'conference': '#fdae61',
+          'notAvailable': '#FF0000',
+          'underMaintenance': '#FFA500',
         },
       },
     },
