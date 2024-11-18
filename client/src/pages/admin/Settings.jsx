@@ -405,7 +405,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
               >
                 <option value="">All Roles</option>
                 <option value="staff">Staff</option>
-                <option value="administrator">Administrator</option>
+                <option value="admin">Administrator</option>
                 <option value="guest">Guest</option>
               </select>
             </div>
