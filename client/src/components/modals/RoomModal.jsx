@@ -14,14 +14,9 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
 
   const colors = {
-    lab: "bg-room-type-lab",
-    storage: "bg-room-type-storage",
-    conference: "bg-room-type-conference",
-    'Lecture Hall': "bg-room-type-lecture",
-    office: "bg-room-type-office",
     available: "bg-room-use-available",
-    notavailable: "bg-room-use-notavailable",
-    maintenance: "bg-room-use-maintenance",
+    notAvailable: "bg-room-use-notAvailable",
+    underMaintenance: "bg-room-use-underMaintenance",
   };
 
   useEffect(() => {
@@ -159,7 +154,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
             <div className="flex flex-wrap">
               <p className="mr-2">Purpose:</p>
               <p
-                className={`px-3 py-1 text-white text-center mb-2 mr-2 rounded-xl ${room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase()) ? colors[room.purpose.toLowerCase()] : ""}`}
+                className={`px-3 py-1 text-black text-center mb-2 mr-2 rounded-xl ${room.purpose && colors.hasOwnProperty(room.purpose.toLowerCase()) ? colors[room.purpose.toLowerCase()] : ""}`}
               >
                 {room.purpose}
               </p>
