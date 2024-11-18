@@ -4,13 +4,32 @@ import 'jspdf-autotable';
 import templateImage from '../../assets/img/BatStateU Template.png';
 import Filter, { Filtermobile } from '../../components/Filter'; 
 
-const Reports = ({ data = [] }) => {
+const Reports = () => {
+  const [data, setData] = useState([]); // State to store fetched data
   const [formattedDate, setFormattedDate] = useState('');
   const [filters, setFilters] = useState({
     building: 'All Buildings', // Default filter is 'all' for buildings
   });
 
-  // current date
+  // Fetch data from the database
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/reports'); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Format current date
   useEffect(() => {
     const currentDate = new Date();
     const formatted = currentDate.toLocaleDateString('en-US', {

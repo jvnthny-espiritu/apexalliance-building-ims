@@ -200,22 +200,8 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
                 className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
               >
                 <option value="">All Category</option>
-                <option value="non-electronic">Non-electronic</option>
-                <option value="electronic">Electronic</option>
-              </select>
-            </div>
-            <div className="flex items-center">
-              <span className="text-black mr-2">Report:</span>
-              <select
-                value={selectedReport}
-                onChange={handleReportChange}
-                className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-              >
-                <option value="">All Reports</option>
-                <option value="Working">Working</option>
-                <option value="Not Working">Not Working</option>
-                <option value="Good">Good</option>
-                <option value="Bad">Bad</option>
+                <option value="non-electric">Non-electric</option>
+                <option value="electric">Electric</option>
               </select>
             </div>
             <div className="flex items-center">

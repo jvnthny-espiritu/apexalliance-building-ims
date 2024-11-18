@@ -12,7 +12,7 @@ const assetSchema = new mongoose.Schema({
     },
     report: {
         type: String,
-        enum: ['defective compressor', 'no AC', 'no ACU'],
+        required: true,
         default: ''
     },
     status: {
