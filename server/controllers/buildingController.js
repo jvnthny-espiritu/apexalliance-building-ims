@@ -5,20 +5,26 @@ const Asset = require('../models/Asset');
 module.exports = {
   getAllBuildings: async (req, res) => {
     try {
-      const { faciliites, campus } = req.query;
+      const { facilities, campus } = req.query;
       let query = {};
-      if (faciliites) {
+      if (facilities) {
         query.facilities = { $in: [facilities] };
       }
       if (campus) {
         query.campus = campus;
       }
-      const buildings = await Building.find(query).select('-createdAt -updatedAt');
+  
+      const buildings = await Building.find(query)
+        .select('-createdAt -updatedAt')
+        .populate('campus', 'name'); 
+  
       res.json(buildings);
     } catch (err) {
+      console.error('Error fetching buildings:', err);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+  
   
   createBuilding: async (req, res) => {
     const { buildingName, campus, numberOfFloors, yearBuilt, facilities } = req.body;
@@ -56,6 +62,7 @@ module.exports = {
   
   deleteBuilding: async (req, res) => {
     try {
+      
         const deletedBuilding = await Building.findByIdAndDelete(req.params.id);
         if (!deletedBuilding) {
             return res.status(404).json({ error: 'Building not found' });
@@ -66,26 +73,21 @@ module.exports = {
         let deletedAssetsCount = 0;
         if (rooms.length > 0) {
             const roomIds = rooms.map(room => room._id);
-            await Room.deleteMany({ building: id });
+
+            await Room.deleteMany({ building: req.params.id });
 
             const deletedAssets = await Asset.deleteMany({ location: { $in: roomIds } });
             deletedAssetsCount = deletedAssets.deletedCount;
         }
 
-        // if (req.user && req.user.id) {
-        //     logActivity(req.user.id, 'deleted a building', deletedBuilding._id, 'Building');
-        // } else {
-        //     console.warn('User not found or user ID is missing for activity logging.');
-        // }
-
-        res.json({
-            message: 'Building, related rooms, and assets deleted successfully',
+        res.status(200).json({
+            message: 'Building deleted successfully. Refresh.',
             deletedRoomsCount: rooms.length,
-            deletedAssetsCount: deletedAssetsCount
+            deletedAssetsCount: deletedAssetsCount,
         });
     } catch (err) {
         console.error('Error deleting building, rooms, or assets:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
   },
 

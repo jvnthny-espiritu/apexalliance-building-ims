@@ -3,14 +3,16 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
-import EditBuildingModal from '../components/modals/EditBuildingModal'; 
+import EditBuildingModal from '../components/modals/EditBuildingModal';
 
-const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) => {
+const BuildingCard = ({ building, onDelete }) => {
   const { _id, name, campus, yearBuilt, numberOfFloors, facilities } = building;
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); 
+  const [showEditModal, setShowEditModal] = useState(false);
   const [facilityColorMap, setFacilityColorMap] = useState({});
+  const [apiError, setApiError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     const facilityColors = [
@@ -22,58 +24,59 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
     ];
 
     const colorMap = {};
-    const facilityNames = Array.from(new Set(facilities)); // Get unique facility names
+    const facilityNames = Array.from(new Set(facilities)); 
 
     facilityNames.forEach((facility, index) => {
       colorMap[facility] = facilityColors[index % facilityColors.length];
     });
 
-    setFacilityColorMap(colorMap); // Set the mapping state
+    setFacilityColorMap(colorMap); 
   }, [facilities]);
 
-  // Toggle dropdown
   const toggleDropdown = (event) => {
     event.stopPropagation();
     event.preventDefault();
     setDropdownVisible(!dropdownVisible);
   };
 
-  // Handle Edit Action (show the modal)
   const handleEdit = (event) => {
-    event.stopPropagation(); 
-    event.preventDefault(); 
-    setDropdownVisible(false); 
-    setShowEditModal(true); 
+    event.stopPropagation();
+    event.preventDefault();
+    setDropdownVisible(false);
+    setShowEditModal(true);
   };
 
-  // Handle Delete Action 
   const handleDeleteClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
     setDropdownVisible(false);
-    setShowDeleteModal(true); 
+    setShowDeleteModal(true);
   };
 
-  // Handle Delete Confirmation
   const handleConfirmDelete = async () => {
     try {
-      await api.delete(`/api/buildings/${_id}`);
-      onDelete(_id); 
-      setShowDeleteModal(false); 
-      setSuccessMessage('Building successfully deleted.'); 
+      const response = await api.delete(`/api/buildings/${_id}`);
+      if (response.status === 200) {
+        console.log('API delete success:', response.data);
+        onDelete(_id); 
+        setSuccessMessage(response.data.message || 'Building successfully deleted.');
+      } else {
+        throw new Error(`Unexpected response: ${response.status}`);
+      }
     } catch (error) {
-      setApiError('Failed to delete building.');
-      setShowDeleteModal(false); 
+      console.error('Delete error:', error.response || error.message);
+      setApiError(error.response?.data?.error || 'Failed to delete building.');
+    } finally {
+      setShowDeleteModal(false);
     }
   };
 
-  // Cancel deletion
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
   const handleModalClose = () => {
-    setShowEditModal(false); 
+    setShowEditModal(false);
   };
 
   return (
@@ -116,7 +119,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
               {facilities && facilities.map((facility, index) => (
                 <li
                   key={index}
-                  className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${facilityColorMap[facility] || 'bg-primary'}`} // Use mapped color
+                  className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${facilityColorMap[facility] || 'bg-primary'}`}
                 >
                   {facility}
                 </li>
@@ -125,6 +128,32 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
           </div>
         </Link>
       </div>
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+          {successMessage}
+          <button
+            onClick={() => setSuccessMessage("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
+      {/* API Error Message */}
+      {apiError && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
+          {apiError}
+          <button
+            onClick={() => setApiError("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
@@ -141,7 +170,7 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
         facilities={facilities}
         onBuildingUpdated={() => {
           setSuccessMessage('Building successfully updated.');
-          setShowEditModal(false); 
+          setShowEditModal(false);
         }}
       />
     </div>
@@ -149,3 +178,4 @@ const BuildingCard = ({ building, onDelete, setSuccessMessage, setApiError }) =>
 };
 
 export default BuildingCard;
+

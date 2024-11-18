@@ -121,7 +121,7 @@ const UserAccount = () => {
         <hr className="mb-2 w-full mr-5" />
 
         {successMessage && (
-          <div className="fixed top-4 right-4 bg-green-500 text-black p-4 rounded shadow-md z-20">
+          <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
             {successMessage}
             <button
               onClick={() => setSuccessMessage("")}
@@ -132,7 +132,7 @@ const UserAccount = () => {
           </div>
         )}
         {apiError && (
-          <div className="fixed top-4 right-4 bg-red-500 text-black p-4 rounded shadow-md z-20">
+          <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
             {apiError}
             <button
               onClick={() => setApiError("")}
@@ -385,7 +385,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
         </p>
         <hr className="mb-2" />
         {successMessage && (
-          <div className="fixed top-4 right-4 bg-green-500 text-black p-4 rounded shadow-md z-20">
+          <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
             {successMessage}
             <button
               onClick={() => setSuccessMessage("")}

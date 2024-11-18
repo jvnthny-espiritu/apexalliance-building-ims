@@ -282,6 +282,11 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
               )}
             </>
           )}
+
+          {nonelectricAssets.length === 0 && electricAssets.length === 0 && (
+            <p className="text-grey text-lg mt-4">No assets found.</p>
+          )}
+          
         </div>
 
         <AddAssetModal 

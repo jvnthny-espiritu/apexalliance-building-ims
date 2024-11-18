@@ -115,6 +115,20 @@ function BuildingPage() {
     }
   }, [state.selectedCampus]);
 
+  const handleDeleteBuilding = async (buildingId) => {
+    try {
+      const response = await api.delete(`/api/buildings/${buildingId}`);
+      if (response.status === 200) {
+        setState((prevState) => ({
+          ...prevState,
+          buildings: prevState.buildings.filter((building) => building._id !== buildingId),
+        }));
+      }
+    } catch (error) {
+      console.error("Error deleting building:", error);
+    }
+  };  
+
   const filteredBuildings = useMemo(() => {
     return state.buildings.filter((building) =>
       building.name.toLowerCase().includes(state.searchQuery.toLowerCase())
@@ -304,6 +318,7 @@ function BuildingPage() {
                   key={building._id}
                   building={building}
                   onClick={() => handleBuildingClick(building)}
+                  onDelete={() => handleDeleteBuilding(building._id)}
                 />
               ))
             ) : (
