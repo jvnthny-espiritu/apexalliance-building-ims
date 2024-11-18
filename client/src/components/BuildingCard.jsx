@@ -13,6 +13,7 @@ const BuildingCard = ({ building, onDelete }) => {
   const [facilityColorMap, setFacilityColorMap] = useState({});
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [facilityDropdownVisible, setFacilityDropdownVisible] = useState(false);
 
   useEffect(() => {
     const facilityColors = [
@@ -24,13 +25,13 @@ const BuildingCard = ({ building, onDelete }) => {
     ];
 
     const colorMap = {};
-    const facilityNames = Array.from(new Set(facilities)); 
+    const facilityNames = Array.from(new Set(facilities));
 
     facilityNames.forEach((facility, index) => {
       colorMap[facility] = facilityColors[index % facilityColors.length];
     });
 
-    setFacilityColorMap(colorMap); 
+    setFacilityColorMap(colorMap);
   }, [facilities]);
 
   const toggleDropdown = (event) => {
@@ -53,12 +54,18 @@ const BuildingCard = ({ building, onDelete }) => {
     setShowDeleteModal(true);
   };
 
+  const toggleFacilityDropdown = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setFacilityDropdownVisible(!facilityDropdownVisible);
+  };
+
   const handleConfirmDelete = async () => {
     try {
       const response = await api.delete(`/api/buildings/${_id}`);
       if (response.status === 200) {
         console.log('API delete success:', response.data);
-        onDelete(_id); 
+        onDelete(_id);
         setSuccessMessage(response.data.message || 'Building successfully deleted.');
       } else {
         throw new Error(`Unexpected response: ${response.status}`);
@@ -79,8 +86,10 @@ const BuildingCard = ({ building, onDelete }) => {
     setShowEditModal(false);
   };
 
+  
+
   return (
-    <div className="w-[350px] h-[280px] md:h-[350px] my-8 md:my-15 flex flex-col relative">
+    <div className="w-[350px] h-[280px] md:h-[200px] my-8 md:my-15 flex flex-col relative">
       <div className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray">
         <Link to={`/catalog/rooms/${_id}`} className="p-3 md:p-5 flex flex-col flex-grow">
           <div className="building-name text-black text-[24px] md:text-2xl lg:text-[24px] font-black font-body mt-3">
@@ -114,17 +123,22 @@ const BuildingCard = ({ building, onDelete }) => {
             <p className="flex justify-between font-bold">Campus: <span className="font-normal">{campus.name}</span></p>
             <p className="flex justify-between font-bold">Year of Completion: <span className="font-normal">{yearBuilt}</span></p>
             <p className="flex justify-between font-bold">No. of Floors: <span className="font-normal">{numberOfFloors}</span></p>
-            <p className="flex justify-between font-bold">Facilities:</p>
-            <ul className="ml-1 md:ml-3">
-              {facilities && facilities.map((facility, index) => (
-                <li
-                  key={index}
-                  className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${facilityColorMap[facility] || 'bg-primary'}`}
-                >
-                  {facility}
-                </li>
-              ))}
-            </ul>
+            <p className="flex justify-between font-bold cursor-pointer" onClick={toggleFacilityDropdown}>
+              Facilities:
+              <span className="font-normal ml-2 text-blue-600">Show</span>
+            </p>
+            {facilityDropdownVisible && (
+              <ul className="ml-3 mt-2">
+                {facilities && facilities.map((facility, index) => (
+                  <li
+                    key={index}
+                    className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${facilityColorMap[facility] || 'bg-primary'}`}
+                  >
+                    {facility}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </Link>
       </div>
@@ -178,4 +192,3 @@ const BuildingCard = ({ building, onDelete }) => {
 };
 
 export default BuildingCard;
-
