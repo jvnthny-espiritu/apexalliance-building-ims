@@ -54,7 +54,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         if (!formData.building) errors.building = "Building is required.";
         if (!formData.floor) errors.floor = "Number of floors is required.";
         if (!formData.status) errors.status = "Status is required.";
-        if (!formData.purpose) errors.purpose = "Purpose are required."; // Validation for facilities
+        if (!formData.purpose) errors.purpose = "Purpose are required."; 
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
@@ -104,21 +104,21 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         }));
     };
 
-    const handleFacilitiesChange = (facility) => {
+    const handlePurposeChange = (purpose) => {
         setFormData((prevData) => ({
             ...prevData,
-            purpose: facility,
+            purpose: purpose,
         }));
     };
 
-    const getFacilityColor = (facility) => {
-        switch (facility) {
-            case "Classroom":
-                return formData.purpose === facility ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
+    const getPurposeColor = (purpose) => {
+        switch (purpose) {
+            case "Library":
+                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
             case "Laboratory":
-                return formData.purpose === facility ? "bg-blue-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Administrative":
-                return formData.purpose === facility ? "bg-primary text-white" : "border border-gray-600 text-gray-600";
+                return formData.purpose === purpose ? "bg-blue-600 text-white" : "border border-gray-600 text-gray-600";
+            case "Lecture Hall":
+                return formData.purpose === purpose ? "bg-primary text-white" : "border border-gray-600 text-gray-600";
             default:
                 return "";
         }
@@ -239,16 +239,16 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                 </div>
 
                                 <div className="flex flex-col w-full md:pr-2">
-                                    <label className="text-black mb-3 font-semibold">Facilities</label>
+                                    <label className="text-black mb-3 font-semibold">Purpose</label>
                                     <div className="flex gap-4 flex-wrap">
-                                        {["Classroom", "Laboratory", "Administrative"].map((facility) => (
+                                        {["Library", "Laboratory", "Lecture Hall"].map((purpose) => (
                                             <button
-                                                key={facility}
-                                                className={`px-4 py-2 rounded-md ${getFacilityColor(facility)}`}
-                                                onClick={() => handleFacilitiesChange(facility)}
+                                                key={purpose}
+                                                className={`px-4 py-2 rounded-md ${getPurposeColor(purpose)}`}
+                                                onClick={() => handlePurposeChange(purpose)}
                                                 type="button"
                                             >
-                                                {facility}
+                                                {purpose}
                                             </button>
                                         ))}
                                     </div>
