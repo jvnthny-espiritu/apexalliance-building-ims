@@ -10,10 +10,10 @@ const assetSchema = new mongoose.Schema({
         required: true,
         enum: ['electric', 'non-electric']
     },
-    condition: {
+    report: {
         type: String,
-        enum: ['new', 'good', 'fair', 'poor'],
-        default: 'good'
+        enum: ['defective compressor', 'no AC', 'no ACU'],
+        default: ''
     },
     status: {
         type: String,

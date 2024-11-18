@@ -8,7 +8,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
+  const [selectedReport, setSelectedReport] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
@@ -33,8 +33,8 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
           apiUrl += `&category=${selectedCategory}`;
         }
   
-        if (selectedCondition) {
-          apiUrl += `&condition=${selectedCondition}`;
+        if (selectedReport) {
+          apiUrl += `&report=${selectedReport}`;
         }
   
         if (selectedDate) {
@@ -54,7 +54,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
     };
   
     fetchAssets();
-  }, [room.id, selectedCategory, selectedCondition, selectedDate]);
+  }, [room.id, selectedCategory, selectedReport, selectedDate]);
 
   const filteredAssets = assets.filter((asset) =>
     asset.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -77,8 +77,8 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
     setSelectedCategory(e.target.value);
   };
 
-  const handleConditionChange = (e) => {
-    setSelectedCondition(e.target.value);
+  const handleReportChange = (e) => {
+    setSelectedReport(e.target.value);
   };
 
   const handleDateChange = (e) => {
@@ -91,7 +91,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
       <tr key={index} className="text-center text-black bg-white">
         <td>{item.name}</td>
         <td>{item.category}</td>
-        <td>{item.condition}</td>
+        <td>{item.report}</td>
         <td>{item.status}</td>
         <td>{item.location?.name || 'N/A'}</td>
         <td>{item.purchaseDate}</td>
@@ -117,7 +117,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
       <tr key={index} className="text-center bg-white">
         <td>{item.name}</td>
         <td>{item.category}</td>
-        <td>{item.condition}</td>
+        <td>{item.report}</td>
         <td>{item.status}</td>
         <td>{item.location?.name || 'N/A'}</td>
         <td>{item.purchaseDate}</td>
@@ -205,13 +205,13 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
               </select>
             </div>
             <div className="flex items-center">
-              <span className="text-black mr-2">Condition:</span>
+              <span className="text-black mr-2">Report:</span>
               <select
-                value={selectedCondition}
-                onChange={handleConditionChange}
+                value={selectedReport}
+                onChange={handleReportChange}
                 className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
               >
-                <option value="">All Conditions</option>
+                <option value="">All Reports</option>
                 <option value="Working">Working</option>
                 <option value="Not Working">Not Working</option>
                 <option value="Good">Good</option>
@@ -242,7 +242,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
                         <tr className="bg-primary text-white uppercase">
                           <th className="col px-3 sm:px-6 py-2">Name</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
-                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 e">Report</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
@@ -266,7 +266,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
                         <tr className="bg-primary text-white uppercase">
                           <th className="col px-3 sm:px-6 py-2">Name</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Category</th>
-                          <th scope className="col px-3 sm:px-6 py-2 e">Condition</th>
+                          <th scope className="col px-3 sm:px-6 py-2 e">Report</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Status</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Location</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Purchase Date</th>
@@ -289,7 +289,7 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
         toggleModal={toggleAssetModal} 
         onAssetAdded={() => {
           setSelectedCategory(''); 
-          setSelectedCondition(''); 
+          setSelectedReport(''); 
           setSelectedDate(''); 
           toggleModal();
         }} 
