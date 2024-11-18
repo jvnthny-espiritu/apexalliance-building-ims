@@ -117,17 +117,17 @@ function BuildingPage() {
 
   const handleDeleteBuilding = async (buildingId) => {
     try {
-      const response = await api.delete(`/api/buildings/${buildingId}`);
-      if (response.status === 200) {
-        setState((prevState) => ({
-          ...prevState,
-          buildings: prevState.buildings.filter((building) => building._id !== buildingId),
-        }));
-      }
+      setState((prevState) => ({
+        ...prevState,
+        buildings: prevState.buildings.filter((building) => building._id !== buildingId),
+        successMessage: "Building deleted successfully.",
+      }));
+      await fetchBuildings(); 
     } catch (error) {
-      console.error("Error deleting building:", error);
+      console.error("Error updating building state after deletion:", error);
     }
-  };  
+  };
+  
 
   const filteredBuildings = useMemo(() => {
     return state.buildings.filter((building) =>
@@ -319,6 +319,9 @@ function BuildingPage() {
                   building={building}
                   onClick={() => handleBuildingClick(building)}
                   onDelete={() => handleDeleteBuilding(building._id)}
+                  setSuccessMessage={(message) =>
+                    setState((prevState) => ({ ...prevState, successMessage: message }))
+                  }
                 />
               ))
             ) : (
