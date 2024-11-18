@@ -26,7 +26,7 @@ export default function NavBar() {
     return (
         <>
             {/* Sidebar for larger screens */}
-            <div className="hidden lg:block h-screen sticky top-0 transition-width ease-in-out duration-100 font-bold">
+            <div className="hidden lg:block h-screen fixed top-0 transition-width ease-in-out duration-100 font-bold">
                 <nav className='h-full flex flex-col justify-between bg-white text-black px-4 pt-20 w-60'>
                     <div className='mt-5'>
                         <ul className='justify-center'>
@@ -60,7 +60,7 @@ export default function NavBar() {
                                 </NavLink>
                             </li>
                             <li>
-                                <button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-'>
+                                <button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-20'>
                                     <MdExitToApp className='h-6 w-6 mx-4' />
                                     <span>Logout</span>
                                 </button>
@@ -115,6 +115,11 @@ export default function NavBar() {
                         <p className="text-xs">Logout</p>
                     </div>
                 </NavLink>
+            </div>
+
+            {/* Main content wrapper */}
+            <div className="lg:ml-60">
+                {/* Your main content goes here */}
             </div>
         </>
     );
