@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import templateImage from '../../assets/img/BatStateU Template.png';
+import Filter, { Filtermobile } from '../../components/Filter'; 
 
 const Reports = ({ data = [] }) => {
   const [formattedDate, setFormattedDate] = useState('');
+  const [filters, setFilters] = useState({
+    building: 'All Buildings', // Default filter is 'all' for buildings
+  });
 
   // current date
   useEffect(() => {
@@ -18,21 +22,27 @@ const Reports = ({ data = [] }) => {
     setFormattedDate(formatted);
   }, []);
 
+  // Filter the reports data based on selected filters
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      const matchesBuilding = filters.building === 'All Buildings' || item.building === filters.building;
+      return matchesBuilding;
+    });
+  }, [data, filters]);
+
   const downloadPDF = () => {
     const doc = new jsPDF();
-    const margin = 72; 
+    const margin = 72;
 
-    const primaryColor = "#FF0000";       
+    const primaryColor = "#FF0000"; 
     const primaryLight = "#ff2222";       
-    const darkGray = "#808080";     
+    const darkGray = "#808080";      
 
     doc.addImage(templateImage, 'PNG', 0, 0, 210, 297);
-
     doc.setFont('times');
     doc.setFontSize(12); 
     doc.text(formattedDate, 25, 56);  
     doc.text("Batangas State University - The National Engineering University, Alangilan Campus", 25, 61);
-
 
     const titleText = "STATUS REPORT";
     const titleXPos = (doc.internal.pageSize.width - doc.getTextWidth(titleText)) / 2;
@@ -40,12 +50,11 @@ const Reports = ({ data = [] }) => {
     doc.setFontSize(12); 
     doc.text(titleText, titleXPos, margin);
 
-
     doc.autoTable({
       startY: margin + 3, //add 3 para sa margin below the title
       margin: { horizontal: 25 },
       head: [['Building', 'Room', 'Units', 'Report', 'Status']],
-      body: data.map(item => [
+      body: filteredData.map(item => [
         item.building,
         item.room,
         item.units,
@@ -59,7 +68,7 @@ const Reports = ({ data = [] }) => {
         font: "Times New Roman",        
       },
       bodyStyles: {
-        textColor: darkGray,      // Dark gray text in body
+        textColor: darkGray,      // Dark gray text in body  
         fontSize: 10,  
         font: "Times New Roman",          
       },
@@ -67,8 +76,16 @@ const Reports = ({ data = [] }) => {
         fillColor: "#F5F5F5",     // Light gray background for alternate rows
       },
     });
-    
-    doc.output('dataurlnewwindow')  
+
+    doc.output('dataurlnewwindow');
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (key, value) => {
+    setFilters((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
   };
 
   return (
@@ -80,13 +97,42 @@ const Reports = ({ data = [] }) => {
             <p className="text-sm">{formattedDate}</p>  
             <p className="text-sm">Batangas State University - The National Engineering University, Alangilan Campus</p>
           </div>
-          <button
-            onClick={downloadPDF} 
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Download PDF
-          </button>
+          <div className="flex items-center gap-4">
+            {/* Filters Section */}
+            <div className="flex gap-4">
+              <div className="w-32">
+                <Filter
+                  options={['Building 1', 'Building 2', 'Building 3'].map(building => [building, building])}
+                  selectedValue={filters.building}
+                  onChange={(value) => handleFilterChange('building', value)}
+                  placeholder="All Buildings"
+                />
+              </div>
+            </div>
+
+            {/* Download PDF Button */}
+            <button
+              onClick={downloadPDF} 
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Download PDF
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Filters */}
+        <div className="md:hidden">
+          <div className="p-4">
+            <Filtermobile
+              options={['Building 1', 'Building 2', 'Building 3'].map(building => [building, building])}
+              selectedValue={filters.building}
+              onChange={(value) => handleFilterChange('building', value)}
+              placeholder="Select Building"
+            />
+          </div>
+        </div>
+
+        {/* Table displaying filtered data */}
         <table className="min-w-full bg-white">
           <thead>
             <tr>
@@ -98,8 +144,8 @@ const Reports = ({ data = [] }) => {
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((item, index) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-100">
                   <td className="py-2 px-4 border-b">{item.building}</td>
                   <td className="py-2 px-4 border-b">{item.room}</td>
@@ -118,6 +164,6 @@ const Reports = ({ data = [] }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Reports;
