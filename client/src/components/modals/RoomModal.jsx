@@ -204,15 +204,6 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
                 <option value="electric">Electric</option>
               </select>
             </div>
-            <div className="flex items-center">
-              <span className="text-black mr-2">Date:</span>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={handleDateChange}
-                className="border border-darkGray rounded-md px-2 py-1 focus:outline-none focus:border-blue-500 text-black"
-              />
-            </div>
           </div>
 
           {isLoading ? (
