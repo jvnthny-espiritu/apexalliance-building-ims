@@ -377,7 +377,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
   });
 
   return (
-    <div className="my-4 text-black relative mx-5 md:mx-5  h-full flex-grow overflow-hidden">
+    <div className="mt-2 text-black relative mx-5 md:mx-5 h-auto flex-grow overflow-hidden">
       <div className="max-w-screen-lg ml-2">
         <h3 className="font-bold text-4xl mb-1">Manage User</h3>
         <p className="text-sm mb-2 text-gray-500">
@@ -396,7 +396,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
           </div>
         )}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
-          <div className=" md:mt-0 flex items-center space-x-1 md:space-x-4">
+          <div className="md:mt-0 flex items-center space-x-1 md:space-x-4">
             <div className="mr-0 md:mr-0 flex-shrink-0 w-24">
               <select
                 value={filterRole}
@@ -443,57 +443,56 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
             </button>
           </div>
         </div>
-        {/* Table for Desktop View */}
-        <table className="hidden md:table min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
-                Campus
-              </th>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th className="px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredUsers.map((user) => (
-              <tr key={user._id}>
-                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  {user.fullname.firstName} {user.fullname.lastName}
-                </td>
-                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  {user.campus.name}
-                </td>
-                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  {user.role}
-                </td>
-                <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
-                  <button
-                    onClick={() => handleEdit(user._id)}
-                    className="text-indigo-600 hover:text-indigo-900"
-                  >
-                    Edit
-                  </button>
-                  <button
-                     onClick={() => handleDeleteClick(user._id)}
-                    className="ml-2 text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {/* Table for Mobile View */}
         <div className="overflow-y-auto h-[calc(100vh-320px)]">
-          {" "}
+          {/* Table for Desktop View */}
+          <table className="hidden md:table min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 ">
+              <tr>
+                <th className=" px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className=" px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
+                  Campus
+                </th>
+                <th className=" px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
+                  Role
+                </th>
+                <th className=" px-2 py-2 md:px-4 md:py-3 text-left text-xs md:text-sm font-bold text-black-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredUsers.map((user) => (
+                <tr key={user._id}>
+                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                    {user.fullname.firstName} {user.fullname.lastName}
+                  </td>
+                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                    {user.campus.name}
+                  </td>
+                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                    {user.role}
+                  </td>
+                  <td className="px-2 py-2 md:px-4 md:py-3 text-gray-500 text-xs md:text-sm">
+                    <button
+                      onClick={() => handleEdit(user._id)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(user._id)}
+                      className="ml-2 text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Table for Mobile View */}
           <div className="md:hidden space-y-4 items">
             {filteredUsers.map((user) => (
               <div
@@ -521,7 +520,7 @@ const ManageUser = ({ toggleAddUserModal, toggleEditUserModal }) => {
                         </li>
                         <li>
                           <button
-                             onClick={() => handleDeleteClick(user._id)}
+                            onClick={() => handleDeleteClick(user._id)}
                             className="block px-4 py-2 text-red-600 hover:bg-gray-100 w-full text-left"
                           >
                             Delete
@@ -595,13 +594,13 @@ const Settings = () => {
 
   return (
     <div className="flex-grow-1 h-screen overflow-y-auto flex flex-col">
-      <h2 className="font-body text-3xl font-extrabold mt-20 mb-5 px-10 bg-lightGray text-black">
+      <h2 className="font-body text-3xl font-extrabold mt-20 mb-2 px-10 bg-lightGray text-black">
         Settings
       </h2>
 
       {/* Mobile Navigation */}
       <div className="block md:hidden overflow-x-hidden sticky top-0">
-        <div className="flex flex-col mx-4 mb-10 bg-white">
+        <div className="h-screen mx-4  bg-white">
           <nav className="border-b border-black">
             <ul className="pl-5 pr-5 flex text-black font-semibold justify-between space-x-3">
               <li

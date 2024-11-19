@@ -66,6 +66,10 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
     setShowDeleteModal(false);
   };
   
+  const handleApiError = (errorMessage) => {
+    setApiError(errorMessage);
+  };
+  
   const getTypeClass = (purpose) => {
     switch (purpose) {
     }
@@ -152,7 +156,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
       {/* Room Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <RoomModal room={room} toggleModal={toggleModal} onSuccessMessage={(message) => setSuccessMessage(message)}/>
+          <RoomModal room={room} toggleModal={toggleModal} onSuccessMessage={(message) => setSuccessMessage(message)} onApiError={handleApiError} />
         </div>
       )}
 
