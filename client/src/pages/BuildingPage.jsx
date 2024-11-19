@@ -87,7 +87,7 @@ function BuildingPage() {
   const fetchFacilities = useCallback(async () => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
-      const campusId = state.selectedCampus === 'all' ? '' : `?campusId=${state.selectedCampus}`;
+      const campusId = `?campusId=${state.selectedCampus}`;
       const response = await api.get(`/api/buildings/facilities${campusId}`);
       const facilities = response.data.map((facility) => [facility, facility]);
       setState((prevState) => ({ ...prevState, purposes: facilities }));
@@ -133,10 +133,12 @@ function BuildingPage() {
   };
 
   const filteredBuildings = useMemo(() => {
-    return state.buildings.filter((building) =>
-      building.name.toLowerCase().includes(state.searchQuery.toLowerCase())
-    );
-  }, [state.buildings, state.searchQuery]);
+    return state.buildings.filter((building) => {
+        const matchesName = building.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+        const matchesFacility = state.selectedPurpose === 'all' || building.facilities.includes(state.selectedPurpose);
+        return matchesName && matchesFacility;
+    });
+  }, [state.buildings, state.searchQuery, state.selectedPurpose]);
 
   const handleBuildingClick = useCallback(
     (building) => {

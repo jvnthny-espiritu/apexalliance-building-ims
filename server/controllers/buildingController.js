@@ -97,10 +97,10 @@ module.exports = {
       if (campusId && campusId !== 'all') {
         const facilities = await Building.distinct('facilities', { campus: campusId });
         return res.json(facilities);
-      } else {
+    } else {
         const facilities = await Building.distinct('facilities');
         res.json(facilities);
-      }
+    }    
     } catch (err) {
       console.error('Error fetching facilities:', err);
       res.status(500).json({ error: 'Internal Server Error' });
