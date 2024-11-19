@@ -171,6 +171,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                             name="RoomName"
                                             value={formData.RoomName}
                                             onChange={handleChange}
+                                            placeholder="Enter Room Name"
                                             className="border-b-2 border-black p-3 outline-none"
                                         />
                                         {validationErrors.RoomName && (

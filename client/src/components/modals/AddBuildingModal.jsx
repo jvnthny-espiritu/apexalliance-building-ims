@@ -151,6 +151,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                       name="buildingName"
                       value={formData.buildingName}
                       onChange={handleChange}
+                      placeholder="Enter Building Name"
                       className="border-b-2 border-black p-3 outline-none"
                     />
                     {validationErrors.buildingName && (

@@ -114,6 +114,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  placeholder="Enter Building Name"
                   className="border-b-2 border-black p-2 outline-none w-full"
                 />
                 {validationErrors.name && <span className="text-red-500 text-sm">{validationErrors.name}</span>}

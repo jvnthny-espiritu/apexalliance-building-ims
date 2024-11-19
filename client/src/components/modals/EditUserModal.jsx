@@ -153,6 +153,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                     name="firstName"
                     value={formData.fullname.firstName}
                     onChange={handleChange}
+                    placeholder="Enter First Name"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                    {validationErrors.firstName && (
@@ -166,6 +167,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                     name="lastName"
                     value={formData.fullname.lastName}
                     onChange={handleChange}
+                    placeholder="Enter Last Name"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   {validationErrors.lastName && (
@@ -243,6 +245,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
+                  placeholder="Enter Userame"
                   className="border-b-2 border-black p-3 outline-none"
                 />
                 {validationErrors.username && (
@@ -257,6 +260,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
+                    placeholder="Enter Password"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   <p className="text-sm">• Must be at least 8 characters long.</p>
@@ -271,6 +275,7 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    placeholder="Enter Re-enter Password"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   {passwordError && <p className="text-red-500">{passwordError}</p>}

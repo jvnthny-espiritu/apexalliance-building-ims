@@ -177,6 +177,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                     name="firstName"
                     value={formData.fullname.firstName}
                     onChange={handleChange}
+                    placeholder="Enter First Name"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   {validationErrors.firstName && (
@@ -190,6 +191,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                     name="lastName"
                     value={formData.fullname.lastName}
                     onChange={handleChange}
+                    placeholder="Enter Last Name"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                   {validationErrors.lastName && (
@@ -259,6 +261,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
+                placeholder="Enter Username"
                 className="border-b-2 border-black p-3 outline-none"
               />
               {validationErrors.username && (
@@ -275,6 +278,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
+                    placeholder="Enter Password"
                     className="border-b-2 border-black p-3 outline-none w-full"
                   />
                   <button
@@ -298,6 +302,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    placeholder="Re-enter Password"
                     className="border-b-2 border-black p-3 outline-none w-full"
                   />
                   <button
