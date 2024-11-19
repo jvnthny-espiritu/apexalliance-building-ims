@@ -11,6 +11,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     numberOfFloors: "", 
     yearBuilt: "", 
   });
+  
 
   const [validationErrors, setValidationErrors] = useState({}); 
   const [campuses, setCampuses] = useState([]); 
@@ -44,6 +45,14 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     }));
   };
 
+  useEffect(() => {
+    console.log("Modal isOpen state:", isOpen); 
+  }, [isOpen]);
+
+  if (!isOpen) {
+    return null;
+  }
+
   const validateForm = () => {
     const errors = {};
     if (!formData.buildingName) errors.buildingName = "Building name is required.";
@@ -67,28 +76,27 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     const isValid = validateForm();
     if (!isValid) return;
 
-    console.log("Submitting form data:", formData); // Log the data being submitted
-
     try {
-      await api.post("/api/buildings", formData);
-      setSuccessMessage("Building successfully added!");
-      if (onBuildingAdded) {
-        onBuildingAdded();
-      }
-      setTimeout(() => {
-        handleClose();
-      }, 3000);
+        await api.post("/api/buildings", formData);
+        setSuccessMessage("Building successfully added!");
+        if (onBuildingAdded) {
+            onBuildingAdded(); 
+        }
+        setTimeout(() => {
+            handleClose(); 
+        }, 100); 
     } catch (error) {
-      console.error("Error adding building:", error.response?.data || error.message); // Log the error
-      if (error.response && error.response.status === 403) {
-        setApiError("You do not have permission to add a building.");
-      } else {
-        setApiError("Failed to add building. Please try again later.");
-      }
+        console.error("Error adding building:", error.response?.data || error.message);
+        if (error.response && error.response.status === 403) {
+            setApiError("You do not have permission to add a building.");
+        } else {
+            setApiError("Failed to add building. Please try again later.");
+        }
     }
-  };  
+  };
 
   const handleClose = () => {
+    console.log("Closing modal.");
     setFormData({
       buildingName: "",
       campus: "",
@@ -101,7 +109,6 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
       toggleModal();
     }
   };
-
 
   return (
     <>

@@ -81,6 +81,12 @@ function RoomPage() {
     },
   };
 
+  const handleAddRoomSuccess = () => {
+    fetchRooms(); // Refresh the list
+    setSuccessMessage("Room added successfully!");
+    setIsAddRoomOpen(false); // Close the modal
+  };
+
   return (
     <div className="h-screen w-auto pb-20">
     {/* Success message */}
@@ -225,7 +231,7 @@ function RoomPage() {
           <AddRoomModal
             isOpen={isAddRoomOpen}
             toggleModal={toggleAddRoomModalLocal}
-            onRoomAdded={handleAddRoom}
+            onRoomAdded={handleAddRoomSuccess} 
           />
         )}
 

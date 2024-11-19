@@ -38,7 +38,11 @@ function BuildingPage() {
       ...prevState,
       isAddBuildingOpen: !prevState.isAddBuildingOpen,
     }));
-  }, []);
+  }, []);  
+
+  useEffect(() => {
+    console.log("Modal isOpen state:", state.isAddBuildingOpen); 
+  }, [state.isAddBuildingOpen]);
 
   useEffect(() => {
     const fetchCampuses = async () => {
@@ -127,7 +131,6 @@ function BuildingPage() {
       console.error("Error updating building state after deletion:", error);
     }
   };
-  
 
   const filteredBuildings = useMemo(() => {
     return state.buildings.filter((building) =>
@@ -143,9 +146,14 @@ function BuildingPage() {
   );
 
   const handleAddBuilding = useCallback(() => {
-    fetchBuildings();
-    toggleAddBuildingModal();
-  }, [fetchBuildings, toggleAddBuildingModal]);
+    fetchBuildings(); 
+    setState((prevState) => ({
+      ...prevState,
+      successMessage: "Building successfully added!",
+      isAddBuildingOpen: false, 
+    }));
+  }, [fetchBuildings]);
+  
 
   const filterOptions = {
     purposes: {
