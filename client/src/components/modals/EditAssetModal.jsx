@@ -335,6 +335,26 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
                     <span className="text-red-500 text-sm">{validationErrors.purchaseDate}</span>
                   )}
                 </div>
+              </div>
+
+              <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+                <div className="flex flex-col w-full md:w-1/2 md:pr-2">
+                  <label className="text-black font-semibold">
+                    Value
+                    </label>
+                  <input
+                    type="number"
+                    name="value"
+                    value={formData.value}
+                    onChange={handleChange}
+                    className="border-b-2 border-black p-3 outline-none"
+                  />
+                  {validationErrors.value && (
+                    <span className="text-red-500 text-sm">
+                    {validationErrors.location}
+                  </span>
+                  )}
+                </div>
 
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black font-semibold">

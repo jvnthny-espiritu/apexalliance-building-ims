@@ -217,8 +217,8 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                   />
                   {validationErrors.name && (
                     <span className="text-red-500 text-sm">
-                      {validationErrors.name}
-                    </span>
+                    {validationErrors.name}
+                  </span>
                   )}
                 </div>
 
@@ -290,8 +290,8 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                   />
                   {validationErrors.location && (
                     <span className="text-red-500 text-sm">
-                      {validationErrors.location}
-                    </span>
+                    {validationErrors.location}
+                  </span>
                   )}
                 </div>
 
@@ -308,9 +308,27 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <span className="text-red-500 text-sm">{validationErrors.purchaseDate}</span>
                   )}
                 </div>
+              </div>
 
+              <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
-                  <label className="text-black font-semibold">
+                  <label className="text-black font-semibold">Value</label>
+                  <input
+                    type="number"
+                    name="value"
+                    value={formData.value}
+                    onChange={handleChange}
+                    min="0"
+                    className="border-b-2 border-black p-3 outline-none"
+                  />
+                  {validationErrors.value && (
+                    <span className="text-red-500 text-sm">
+                    {validationErrors.location}
+                  </span>
+                  )}
+                </div>
+                <div className="flex flex-col w-full md:w-1/2 md:pr-2">
+                <label className="text-black font-semibold">
                     Number of Units
                   </label>
                   <input
@@ -323,109 +341,105 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                   />
                   {validationErrors.numberOfUnits && (
                     <span className="text-red-500 text-sm">
-                      {validationErrors.numberOfUnits}
-                    </span>
+                    {validationErrors.numberOfUnits}
+                  </span>
                   )}
                 </div>
               </div>
 
               {formData.category === "electric" && (
-                <>
-                  <div className="flex flex-col mb-4 md:flex-row md:mb-8">
-                    <div className="flex flex-col w-full md:w-1/4 md:pr-2">
-                      <label className="text-black font-semibold">
+                <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+                  <div className="flex flex-col w-full md:w-1/4 md:pr-2">
+                  <label className="text-black font-semibold">
                         Voltage
                       </label>
-                      <input
-                        type="number"
-                        name="electricDetails.voltage"
-                        value={formData.electricDetails.voltage}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                      {validationErrors.electricDetails && (
+                    <input
+                      type="number"
+                      name="electricDetails.voltage"
+                      value={formData.electricDetails.voltage}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
+                    {validationErrors.electricDetails && (
                         <span className="text-red-500 text-sm">
-                          {validationErrors.electricDetails}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex flex-col w-full md:w-1/4 md:pr-2">
-                      <label className="text-black font-semibold">Power</label>
-                      <input
-                        type="number"
-                        name="electricDetails.power"
-                        value={formData.electricDetails.power}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col w-full md:w-1/4 md:pr-2">
-                      <label className="text-black font-semibold">
+                        {validationErrors.electricDetails}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col w-full md:w-1/4 md:pr-2">
+                    <label className="text-black font-semibold">Power</label>
+                    <input
+                      type="number"
+                      name="electricDetails.power"
+                      value={formData.electricDetails.power}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full md:w-1/4 md:pr-2">
+                  <label className="text-black font-semibold">
                         Manufacturer
                       </label>
-                      <input
-                        type="text"
-                        name="electricDetails.manufacturer"
-                        value={formData.electricDetails.manufacturer}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col w-full md:w-1/4 md:pr-2">
-                      <label className="text-black font-semibold">
+                    <input
+                      type="text"
+                      name="electricDetails.manufacturer"
+                      value={formData.electricDetails.manufacturer}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full md:w-1/4 md:pr-2">
+                  <label className="text-black font-semibold">
                         Warranty
                       </label>
-                      <input
-                        type="text"
-                        name="electricDetails.warranty"
-                        value={formData.electricDetails.warranty}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      name="electricDetails.warranty"
+                      value={formData.electricDetails.warranty}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
                   </div>
-                </>
+                </div>
               )}
 
               {formData.category === "non-electric" && (
-                <>
-                  <div className="flex flex-col mb-4 md:flex-row md:mb-8">
-                    <div className="flex flex-col w-full md:w-1/3 md:pr-2">
-                      <label className="text-black font-semibold">
+                <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+                  <div className="flex flex-col w-full md:w-1/3 md:pr-2">
+                  <label className="text-black font-semibold">
                         Material
                       </label>
-                      <input
-                        type="text"
-                        name="nonElectricDetails.material"
-                        value={formData.nonElectricDetails.material}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col w-full md:w-1/3 md:pr-2">
-                      <label className="text-black font-semibold">
+                    <input
+                      type="text"
+                      name="nonElectricDetails.material"
+                      value={formData.nonElectricDetails.material}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full md:w-1/3 md:pr-2">
+                  <label className="text-black font-semibold">
                         Dimensions
                       </label>
-                      <input
-                        type="text"
-                        name="nonElectricDetails.dimensions"
-                        value={formData.nonElectricDetails.dimensions}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col w-full md:w-1/3 md:pr-2">
-                      <label className="text-black font-semibold">Weight</label>
-                      <input
-                        type="number"
-                        name="nonElectricDetails.weight"
-                        value={formData.nonElectricDetails.weight}
-                        onChange={handleChange}
-                        className="border-b-2 border-black p-3 outline-none"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      name="nonElectricDetails.dimensions"
+                      value={formData.nonElectricDetails.dimensions}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
                   </div>
-                </>
+                  <div className="flex flex-col w-full md:w-1/3 md:pr-2">
+                    <label className="text-black font-semibold">Weight</label>
+                    <input
+                      type="number"
+                      name="nonElectricDetails.weight"
+                      value={formData.nonElectricDetails.weight}
+                      onChange={handleChange}
+                      className="border-b-2 border-black p-3 outline-none"
+                    />
+                  </div>
+                </div>
               )}
 
               {/* Submit and Cancel buttons */}
