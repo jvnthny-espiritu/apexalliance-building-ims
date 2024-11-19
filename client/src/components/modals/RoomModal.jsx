@@ -6,7 +6,7 @@ import AddAssetModal from '../modals/AddAssetModal';
 import EditAssetModal from '../modals/EditAssetModal'; 
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 
-const RoomModal = ({ room, toggleModal, onSuccessMessage }) => { 
+const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => { 
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -16,6 +16,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
   const [isEditAssetModalOpen, setEditAssetModalOpen] = useState(false); 
   const [successMessage, setSuccessMessage] = useState("");
+  const [apiError, setApiError] = useState(null);
   const [assetToEdit, setAssetToEdit] = useState(null); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
@@ -176,6 +177,10 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
         onSuccessMessage("Asset deleted successfully");
       } catch (error) {
         console.error("Error deleting asset:", error);
+        setApiError("Failed to delete asset.");
+        if (typeof onApiError === "function") {
+          onApiError("Failed to delete asset.");
+        }
       } finally {
         setIsDeleteModalOpen(false);
         setAssetToDelete(null);
