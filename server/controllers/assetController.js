@@ -95,10 +95,13 @@ module.exports = {
     try {
       const deletedAsset = await Asset.findByIdAndDelete(req.params.id);
       if (!deletedAsset) {
+        console.log("Asset not found for deletion.");
         return res.status(404).json({ error: 'Asset not found' });
       }
+      console.log("Asset deleted successfully:", deletedAsset);
       res.status(200).json({ message: 'Asset deleted successfully' });
     } catch (err) {
+      console.error("Error deleting asset:", err.message);
       res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
   }

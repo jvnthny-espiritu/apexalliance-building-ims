@@ -4,6 +4,7 @@ import api from "../../services/api.js";
 import AddButton from "../AddButton"; 
 import AddAssetModal from '../modals/AddAssetModal'; 
 import EditAssetModal from '../modals/EditAssetModal'; 
+import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 
 const RoomModal = ({ room, toggleModal, onSuccessMessage }) => { 
   const [assets, setAssets] = useState([]);
@@ -16,6 +17,8 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
   const [isEditAssetModalOpen, setEditAssetModalOpen] = useState(false); 
   const [successMessage, setSuccessMessage] = useState("");
   const [assetToEdit, setAssetToEdit] = useState(null); 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [assetToDelete, setAssetToDelete] = useState(null);
 
   const colors = {
     available: "bg-room-use-available",
@@ -118,7 +121,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
         </td>
         <td>
         <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
-        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDelete(item)}>Delete</button>
+        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
       </td>
       </tr>
     ));
@@ -149,7 +152,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
         </td>
         <td>
         <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
-        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDelete(item)}>Delete</button>
+        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
       </td>
       </tr>
     ));
@@ -160,14 +163,31 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
     setEditAssetModalOpen(true);
   };
 
-  const handleDelete = async (item) => {
-    try {
-      await api.delete(`/api/assets/${item.id}`);
-      setAssets(assets.filter(asset => asset.id !== item.id));
-      onSuccessMessage("Asset deleted successfully");
-    } catch (error) {
-      console.error("Error deleting asset:", error);
+  const handleDeleteClick = (item) => {
+    setAssetToDelete(item);
+    setIsDeleteModalOpen(true); 
+  };  
+
+  const confirmDelete = async () => {
+    if (assetToDelete && assetToDelete._id) { 
+      try {
+        await api.delete(`/api/assets/${assetToDelete._id}`); 
+        setAssets(assets.filter((asset) => asset._id !== assetToDelete._id)); 
+        onSuccessMessage("Asset deleted successfully");
+      } catch (error) {
+        console.error("Error deleting asset:", error);
+      } finally {
+        setIsDeleteModalOpen(false);
+        setAssetToDelete(null);
+      }
+    } else {
+      console.error("No asset selected for deletion or missing ID.");
     }
+  };   
+
+  const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setAssetToDelete(null);
   };
 
   const toggleAssetModal = () => {
@@ -337,6 +357,12 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
           roomName={room.name} 
         />
       )}
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />;
     </div>
   );
 };
