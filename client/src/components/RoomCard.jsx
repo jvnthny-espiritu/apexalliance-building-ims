@@ -5,7 +5,7 @@ import RoomModal from '../components/modals/RoomModal';
 import EditRoomModal from '../components/modals/EditRoomModal'; 
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 
-const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMessage }) => {
+const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
   const { id, building, name, floor, purpose, status } = room;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -13,6 +13,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -97,6 +98,17 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
         onClick={toggleModal}
       >
         <div className="flex flex-col justify-start items-start font-body px-2 py-1">
+        {successMessage && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+            {successMessage}
+            <button
+              onClick={() => setSuccessMessage("")} // Allow dismissing the message
+              className="ml-4 text-lg font-bold"
+            >
+              &times;
+            </button>
+          </div>
+        )}
           <div className="flex justify-between w-full">
             <h3 className="text-base md:text-xl text-black font-extrabold">{room.name}</h3>
             <span onClick={toggleDropdown} className="relative cursor-pointer">
@@ -140,7 +152,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus, setSuccessMess
       {/* Room Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <RoomModal room={room} toggleModal={toggleModal} />
+          <RoomModal room={room} toggleModal={toggleModal} onSuccessMessage={(message) => setSuccessMessage(message)}/>
         </div>
       )}
 

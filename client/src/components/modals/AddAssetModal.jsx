@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 
-const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
+const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     report: "",
     status: "good condition",
-    location: "Room ",
+    location: roomName || "",
     purchaseDate: "",
     value: "1000",
     numberOfUnits: 1,
@@ -61,6 +61,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
     if (!formData.name) errors.name = "Name is required.";
     if (!formData.category) errors.category = "Category is required.";
     if (!formData.location) errors.location = "Location is required.";
+    if (!formData.purchaseDate) errors.purchaseDate = "Purchase Date is required.";
     if (!formData.numberOfUnits || formData.numberOfUnits < 1)
       errors.numberOfUnits = "Number of units must be at least 1.";
     if (!formData.value || formData.value <= 0)
@@ -97,13 +98,15 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
     try {
       const newAsset = {
         ...formData,
-        location: formData.location,
+        location: formData.location, 
       };
-      await api.post("/Asset", newAsset);
-      setSuccessMessage("Asset successfully added!");
+      console.log("Submitting asset data:", newAsset); 
+      await api.post("/api/assets", newAsset);
+
       if (onAssetAdded) {
-        onAssetAdded();
+        onAssetAdded("Asset successfully added!");
       }
+      
       setTimeout(() => {
         handleClose();
       }, 3000);
@@ -167,17 +170,6 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
 
   return (
     <>
-      {successMessage && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
-          {successMessage}
-          <button
-            onClick={() => setSuccessMessage("")}
-            className="ml-4 text-lg font-bold"
-          >
-            &times;
-          </button>
-        </div>
-      )}
       {apiError && (
         <div className="fixed top-4 right-4 bg-red-500 text-white p-4 rounded shadow-md z-20">
           {apiError}
@@ -194,6 +186,17 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
           isOpen ? "" : "hidden"
         }`}
       >
+      {successMessage && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+          {successMessage}
+          <button
+            onClick={() => setSuccessMessage("")}
+            className="ml-4 text-lg font-bold"
+          >
+            &times;
+          </button>
+        </div>
+      )}
         <div className="relative bg-white text-black p-8 w-full max-w-4xl md:max-w-5xl lg:max-w-6xl overflow-auto max-h-[90vh] rounded-lg">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
@@ -289,6 +292,20 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded }) => {
                     <span className="text-red-500 text-sm">
                       {validationErrors.location}
                     </span>
+                  )}
+                </div>
+
+                <div className="flex flex-col w-full md:w-1/2 md:pl-2">
+                  <label className="text-black font-semibold">Purchase Date</label>
+                  <input
+                    type="date"
+                    name="purchaseDate"
+                    value={formData.purchaseDate}
+                    onChange={handleChange}
+                    className="border-b-2 border-black p-3 outline-none"
+                  />
+                  {validationErrors.purchaseDate && (
+                    <span className="text-red-500 text-sm">{validationErrors.purchaseDate}</span>
                   )}
                 </div>
 

@@ -1,53 +1,81 @@
 const Asset = require('../models/Asset');
+const Room = require('../models/Room'); 
 
 module.exports = {
   getAllAssets: async (req, res) => {
     try {
-      const { room, category, status, condition } = req.query;
-      
+      const { room, category, status, report } = req.query;
+
       if (!room) {
         return res.status(400).json({ error: 'Room parameter is required' });
       }
-      
+
       const filter = { location: room };
-      
-      if (category) {
-        filter.category = category;
-      }
-      if (status) {
-        filter.status = status;
-      }
-      if (condition) {
-        filter.condition = condition;
-      }
+      if (category) filter.category = category;
+      if (status) filter.status = status;
+      if (report) filter.report = report;
+
       const assets = await Asset.find(filter).populate('location');
-      
-      res.json(assets);
+      res.status(200).json(assets);
     } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
   },
 
   createAsset: async (req, res) => {
-    const { name, category, condition, status, location, purchaseDate, value, numberOfUnits, electricDetails, nonElectricDetails } = req.body;
+    const { 
+      name, 
+      category, 
+      report = '', 
+      status = 'good condition', 
+      location, 
+      purchaseDate, 
+      value, 
+      numberOfUnits = 1, 
+      electricDetails, 
+      nonElectricDetails 
+    } = req.body;
+
+    if (!name || !category || !location) {
+      return res.status(400).json({ error: 'Name, category, and location are required' });
+    }
 
     try {
-      const newAsset = await Asset.create({ name, category, condition, status, location, purchaseDate, value, numberOfUnits, electricDetails, nonElectricDetails });
+      const room = await Room.findOne({ name: location });
+      if (!room) {
+        return res.status(404).json({ error: `Room with name "${location}" not found` });
+      }
+
+      const newAsset = await Asset.create({ 
+        name, 
+        category, 
+        report, 
+        status, 
+        location: room._id, 
+        purchaseDate, 
+        value, 
+        numberOfUnits, 
+        electricDetails, 
+        nonElectricDetails 
+      });
+
       res.status(201).json(newAsset);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      console.error("Error during asset creation:", err.message); // Log the error
+      res.status(400).json({ error: 'Failed to create asset', details: err.message });
     }
-  },
+},
+
 
   getAssetById: async (req, res) => {
     try {
-      const asset = await Asset.findById(req.paramsid).populate('location');
+      const asset = await Asset.findById(req.params.id).populate('location');
       if (!asset) {
         return res.status(404).json({ error: 'Asset not found' });
       }
-      res.json(asset);
+      res.status(200).json(asset);
     } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
   },
 
@@ -57,9 +85,9 @@ module.exports = {
       if (!updatedAsset) {
         return res.status(404).json({ error: 'Asset not found' });
       }
-      res.json(updatedAsset);
+      res.status(200).json(updatedAsset);
     } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ error: 'Failed to update asset', details: err.message });
     }
   },
 
@@ -69,9 +97,9 @@ module.exports = {
       if (!deletedAsset) {
         return res.status(404).json({ error: 'Asset not found' });
       }
-      res.json({ message: 'Asset deleted' });
+      res.status(200).json({ message: 'Asset deleted successfully' });
     } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
   }
 };

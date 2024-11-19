@@ -4,7 +4,7 @@ import api from "../../services/api.js";
 import AddButton from "../AddButton"; 
 import AddAssetModal from '../modals/AddAssetModal'; 
 
-const RoomModal = ({ room, toggleModal, onAddAsset }) => { 
+const RoomModal = ({ room, toggleModal, onSuccessMessage }) => { 
   const [assets, setAssets] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -12,6 +12,8 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
+  const [successMessage, setSuccessMessage] = useState("");
+
 
   const colors = {
     available: "bg-room-use-available",
@@ -19,6 +21,10 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
     underMaintenance: "bg-room-use-underMaintenance",
   };
 
+  const fetchAssets = async () => {
+    const response = await api.get(`/api/assets?room=${room.id}`);
+    setAssets(response.data);
+  };
   useEffect(() => {
     const fetchAssets = async () => {
       try {
@@ -36,10 +42,10 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
           apiUrl += `&date=${selectedDate}`;
         }
 
-        console.log("API URL:", apiUrl); // Debugging: Check the URL being called
+        console.log("API URL:", apiUrl); 
   
         const response = await api.get(apiUrl);
-        console.log('Fetched assets:', response.data);  // Debug log for fetched assets
+        console.log('Fetched assets:', response.data);  
         setAssets(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -79,6 +85,11 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
+
+  const handleAssetAdded = (message) => {
+    setSuccessMessage(message); 
+    fetchAssets(); 
+  };  
 
   const renderNonElectricRows = (data) => {
     console.log(data);
@@ -140,6 +151,17 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
 
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50">
+    {successMessage && (
+      <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded shadow-md z-20">
+        {successMessage}
+        <button
+          onClick={() => setSuccessMessage("")} 
+          className="ml-4 text-lg font-bold"
+        >
+          &times;
+        </button>
+      </div>
+    )}
       <div className="relative bg-white text-darkGray p-6 sm:p-8 rounded-lg w-full max-w-2xl sm:max-w-3xl lg:max-w-5xl max-h-[80vh] overflow-y-auto">
         <button
           className={`absolute top-3 right-3 sm:top-5 sm:right-5 m-2 text-darkGray text-lg sm:text-xl md:text-2xl lg:text-3xl cursor-pointer hover:text-gray-300 transition duration-200 z-50 ${isAssetModalOpen ? 'hidden' : ''}`}
@@ -264,12 +286,19 @@ const RoomModal = ({ room, toggleModal, onAddAsset }) => {
         <AddAssetModal 
         isOpen={isAssetModalOpen} 
         toggleModal={toggleAssetModal} 
-        onAssetAdded={() => {
+        onAssetAdded={(message) => {
           setSelectedCategory(''); 
           setSelectedReport(''); 
           setSelectedDate(''); 
           toggleModal();
+          fetchAssets();
+          setAssetModalOpen(false); 
+          handleAssetAdded();
+          if (onSuccessMessage) {
+            onSuccessMessage(message); 
+         }
         }} 
+        roomName={room.name} 
       />  
     </div>
     </div>
