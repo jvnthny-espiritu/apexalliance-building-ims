@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 
-const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName }) => {
+const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) => {
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -24,6 +24,33 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName }) => {
       weight: "1",
     },
   });
+  
+    // Populate formData when asset changes or modal opens
+    useEffect(() => {
+      if (isOpen && asset) {
+        setFormData({
+          name: asset.name || "",
+          category: asset.category || "",
+          report: asset.report || "",
+          status: asset.status || "good condition",
+          location: roomName || "",
+          purchaseDate: asset.purchaseDate || "",
+          value: asset.value || "1000",
+          numberOfUnits: asset.numberOfUnits || 1,
+          electricDetails: {
+            voltage: asset.electricDetails?.voltage || "1",
+            power: asset.electricDetails?.power || "1",
+            manufacturer: asset.electricDetails?.manufacturer || "",
+            warranty: asset.electricDetails?.warranty || "",
+          },
+          nonElectricDetails: {
+            material: asset.nonElectricDetails?.material || "",
+            dimensions: asset.nonElectricDetails?.dimensions || "",
+            weight: asset.nonElectricDetails?.weight || "1",
+          },
+        });
+      }
+    }, [isOpen, asset, roomName]);
 
   const [validationErrors, setValidationErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");

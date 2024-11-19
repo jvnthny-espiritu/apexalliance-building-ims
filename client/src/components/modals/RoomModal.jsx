@@ -3,7 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import api from "../../services/api.js";
 import AddButton from "../AddButton"; 
 import AddAssetModal from '../modals/AddAssetModal'; 
-import EditAssetModal from '../modals/EditAssetModal'; // Import the EditAssetModal
+import EditAssetModal from '../modals/EditAssetModal'; 
 
 const RoomModal = ({ room, toggleModal, onSuccessMessage }) => { 
   const [assets, setAssets] = useState([]);
@@ -13,9 +13,9 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
-  const [isEditAssetModalOpen, setEditAssetModalOpen] = useState(false); // State for EditAssetModal
+  const [isEditAssetModalOpen, setEditAssetModalOpen] = useState(false); 
   const [successMessage, setSuccessMessage] = useState("");
-  const [assetToEdit, setAssetToEdit] = useState(null); // State for the asset to edit
+  const [assetToEdit, setAssetToEdit] = useState(null); 
 
   const colors = {
     available: "bg-room-use-available",
@@ -334,6 +334,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
           toggleModal={() => setEditAssetModalOpen(false)}
           asset={assetToEdit}
           onSuccessMessage={onSuccessMessage}
+          roomName={room.name} 
         />
       )}
     </div>
