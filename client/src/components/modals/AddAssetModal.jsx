@@ -5,7 +5,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
+    category: "non-electric",
     report: "",
     status: "good condition",
     location: roomName || "",
