@@ -121,30 +121,37 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) return;
-
+  
     try {
-      const newAsset = {
+      const updatedAsset = {
         ...formData,
-        location: formData.location, 
+        location: formData.location,
       };
-      console.log("Submitting asset data:", newAsset); 
-      await api.post("/api/assets", newAsset);
-
+  
+      console.log("Updating asset data:", updatedAsset);
+  
+      // Use PUT for updating an existing asset
+      await api.put(`/api/assets/${asset._id}`, updatedAsset); // Ensure `asset.id` is passed correctly.
+  
       if (onAssetEdit) {
         onAssetEdit("Asset successfully updated!");
       }
-      
+  
+      setSuccessMessage("Asset successfully updated!");
+  
+      // Optionally close the modal after success
       setTimeout(() => {
         handleClose();
       }, 3000);
     } catch (error) {
       console.error(
-        "Error editing Asset:",
+        "Error updating Asset:",
         error.response?.data || error.message
       );
       setApiError("Failed to update Asset. Please try again later.");
     }
   };
+  
 
   const handleClose = () => {
     resetForm();
