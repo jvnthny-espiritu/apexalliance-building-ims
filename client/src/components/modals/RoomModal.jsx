@@ -3,6 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import api from "../../services/api.js";
 import AddButton from "../AddButton"; 
 import AddAssetModal from '../modals/AddAssetModal'; 
+import EditAssetModal from '../modals/EditAssetModal'; // Import the EditAssetModal
 
 const RoomModal = ({ room, toggleModal, onSuccessMessage }) => { 
   const [assets, setAssets] = useState([]);
@@ -12,8 +13,9 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isAssetModalOpen, setAssetModalOpen] = useState(false); 
+  const [isEditAssetModalOpen, setEditAssetModalOpen] = useState(false); // State for EditAssetModal
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [assetToEdit, setAssetToEdit] = useState(null); // State for the asset to edit
 
   const colors = {
     available: "bg-room-use-available",
@@ -114,6 +116,10 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
             'N/A'
           )}
         </td>
+        <td>
+        <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
+        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDelete(item)}>Delete</button>
+      </td>
       </tr>
     ));
   };  
@@ -141,8 +147,27 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
             'N/A'
           )}
         </td>
+        <td>
+        <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
+        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDelete(item)}>Delete</button>
+      </td>
       </tr>
     ));
+  };
+
+  const handleEdit = (item) => {
+    setAssetToEdit(item);
+    setEditAssetModalOpen(true);
+  };
+
+  const handleDelete = async (item) => {
+    try {
+      await api.delete(`/api/assets/${item.id}`);
+      setAssets(assets.filter(asset => asset.id !== item.id));
+      onSuccessMessage("Asset deleted successfully");
+    } catch (error) {
+      console.error("Error deleting asset:", error);
+    }
   };
 
   const toggleAssetModal = () => {
@@ -243,6 +268,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
                           <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Non-Electric Details</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
                         </tr>
                         {renderNonElectricRows(nonelectricAssets)}
                       </tbody>
@@ -267,6 +293,7 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
                           <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Electric Details</th>
+                          <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
                         </tr>
                         {renderElectricRows(electricAssets)}
                       </tbody>
@@ -301,6 +328,14 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage }) => {
         roomName={room.name} 
       />  
     </div>
+    {isEditAssetModalOpen && (
+        <EditAssetModal
+          isOpen={isEditAssetModalOpen}
+          toggleModal={() => setEditAssetModalOpen(false)}
+          asset={assetToEdit}
+          onSuccessMessage={onSuccessMessage}
+        />
+      )}
     </div>
   );
 };

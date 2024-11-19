@@ -201,7 +201,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col">
               <h2 className="text-black text-xl font-bold mb-4">
-                CREATE ASSET
+                EDIT ASSET
               </h2>
 
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
