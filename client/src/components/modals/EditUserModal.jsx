@@ -181,14 +181,14 @@ const EditUserModal = ({ isOpen, toggleModal, user, onUserUpdated  }) => {
                   <div className="flex gap-4 flex-wrap">
                     <button
                       className={`px-4 py-2 ${
-                        formData.role === "administrator"
+                        formData.role === "admin"
                           ? "bg-indigo-500 text-white"
                           : "border border-primary text-black"
                       } rounded-lg`}
-                      onClick={() => handleRoleChange("administrator")}
+                      onClick={() => handleRoleChange("admin")}
                       type="button"
                     >
-                      Administrator
+                      Admin
                     </button>
                     <button
                       className={`px-4 py-2 ${

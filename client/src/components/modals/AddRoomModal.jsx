@@ -52,9 +52,9 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         const errors = {};
         if (!formData.RoomName) errors.RoomName = "Room name is required.";
         if (!formData.building) errors.building = "Building is required.";
-        if (!formData.floor) errors.floor = "Number of floors is required.";
+        if (!formData.floor) errors.floor = "Floor number is required.";
         if (!formData.status) errors.status = "Status is required.";
-        if (!formData.purpose) errors.purpose = "Purpose are required."; 
+        if (!formData.purpose) errors.purpose = "Purpose is required.";
 
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
@@ -64,7 +64,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         e.preventDefault();
         const isValid = validateForm();
         if (!isValid) return;
-
+        
         console.log("Submitting form data:", formData);
 
         try {
@@ -86,7 +86,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         setFormData({
             RoomName: "",
             building: "",
-            purpose: "", 
+            purpose: "",
             floor: "",
             status: "",
         });
@@ -104,38 +104,24 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
         }));
     };
 
-    const handlePurposeChange = (purpose) => {
+    const handlePurposeChange = (e) => {
         setFormData((prevData) => ({
             ...prevData,
-            purpose: purpose,
+            purpose: e.target.value,
         }));
     };
 
-    const getPurposeColor = (purpose) => {
-        switch (purpose) {
-            case "Conference Room":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600 ";
-            case "Lecture Hall":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Storage":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Lab":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Office":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Classroom":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            case "Library":
-                return formData.purpose === purpose ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600";
-            default:
-                return "";
-        }
-    };
-
     const getStatusColor = (status) => {
-        return formData.status === status
-            ? (status === "Available" ? "bg-blue-600 text-white" : "bg-primary text-white")
-            : "border border-gray-600 text-gray-600";
+        switch (status) {
+            case "Available":
+                return formData.status === "Available" ? "bg-green-600 text-white" : "border border-gray-600 text-gray-600"; 
+            case "Not Available":
+                return formData.status === "Not Available" ? "bg-red-600 text-white" : "border border-gray-600 text-gray-600"; 
+            case "Under Maintenance":
+                return formData.status === "Under Maintenance" ? "bg-yellow-500 text-white" : "border border-gray-600 text-gray-600"; 
+            default:
+                return "border border-gray-600 text-gray-600";
+        }
     };
 
     return (
@@ -170,6 +156,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                             <h2 className="text-black text-xl font-bold mb-4">
                                 CREATE Room
                             </h2>
+                            <hr className="border-b-4 border-black mb-4" />
                             <div className="mb-4">
                                 <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                                     <div className="flex flex-col w-full md:w-1/2 md:pr-2">
@@ -207,10 +194,52 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                 </div>
 
                                 <div className="flex flex-col mb-4 md:flex-row md:mb-8">
-                                    <div className="flex flex-col md:w-1/2 md:pr-2">
+                                <div className="flex flex-col md:w-1/2 md:pr-2">
+                                    <label className="text-black font-semibold">Purpose</label>
+                                    <select
+                                        name="purpose"
+                                        value={formData.purpose}
+                                        onChange={handlePurposeChange}
+                                        className="border-b-2 border-black p-3 outline-none"
+                                    >
+                                        <option value="" disabled>Select Purpose</option>
+                                        {["Conference Room", "Lecture Hall", "Storage", "Office", "Lab", "Classroom", "Library"].map((purpose) => (
+                                            <option key={purpose} value={purpose}>
+                                                {purpose}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {validationErrors.purpose && (
+                                        <span className="text-red-500 text-sm">{validationErrors.purpose}</span>
+                                    )}
+                                </div>
+
+                                    <div className="flex flex-col md:w-1/2 md:pl-2 md:ml-4">
+                                        <label className="text-black font-semibold">Floor No.</label>
+                                        <select
+                                            name="floor"
+                                            value={formData.floor}
+                                            onChange={handleChange}
+                                            className="border-b-2 border-black p-3 outline-none"
+                                        >
+                                            <option value=""disabled>Enter Floor Number</option>
+                                            {[1, 2, 3, 4, 5].map((num) => (
+                                                <option key={num} value={num}>
+                                                    {num}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {validationErrors.floor && (
+                                            <span className="text-red-500 text-sm">{validationErrors.floor}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex flex-col mb-4 md:flex-row md:mb-8">
+                            <div className="flex flex-col md:w-3/4 md:pr-2">
                                         <label className="text-black mb-3 font-semibold">Status</label>
                                         <div className="flex gap-4 flex-wrap">
-                                            {["Available", "Not Available"].map((status) => (
+                                            {["Available", "Not Available", "Under Maintenance"].map((status) => (
                                                 <button
                                                     key={status}
                                                     className={`px-4 py-2 rounded-md ${getStatusColor(status)}`}
@@ -225,47 +254,7 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
                                             <span className="text-red-500 text-sm">{validationErrors.status}</span>
                                         )}
                                     </div>
-
-                                    <div className="flex flex-col md:w-1/2 md:pl-2 md:ml-4">
-                                        <label className="text-black font-semibold">Floor No.</label>
-                                        <select
-                                            name="floor"
-                                            value={formData.floor}
-                                            onChange={handleChange}
-                                            className="border-b-2 border-black p-3 outline-none"
-                                        >
-                                            <option value=""></option>
-                                            {[1, 2, 3, 4, 5].map((num) => (
-                                                <option key={num} value={num}>
-                                                    {num}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {validationErrors.floor && (
-                                            <span className="text-red-500 text-sm">{validationErrors.floor}</span>
-                                        )}
-                                    </div>
                                 </div>
-
-                                <div className="flex flex-col w-full md:pr-2">
-                                    <label className="text-black mb-3 font-semibold">Purpose</label>
-                                    <div className="flex gap-4 flex-wrap">
-                                        {["Conference Room", "Lecture Hall", "Storage", "Office", "Lab", "Classroom", "Library",].map((purpose) => (
-                                            <button
-                                                key={purpose}
-                                                className={`px-4 py-2 rounded-md ${getPurposeColor(purpose)}`}
-                                                onClick={() => handlePurposeChange(purpose)}
-                                                type="button"
-                                            >
-                                                {purpose}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    {validationErrors.purpose && (
-                                        <span className="text-red-500 text-sm">{validationErrors.purpose}</span>
-                                    )}
-                                </div>
-                            </div>
 
                             <div className="flex justify-end">
                                 <button

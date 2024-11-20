@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
-    const [formData, setFormData] = useState({
-        name: room ? room.name : "",
-        status: room ? room.status : "",
-        type: room ? room.type : "",
-      });
+  const [formData, setFormData] = useState({
+    name: room.name,
+    status: room.status,
+    type: room.purpose,
+  });
 
   const [validationErrors, setValidationErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -37,10 +37,10 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
     }));
   };
 
-  const handleTypeChange = (type) => {
+  const handleTypeChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
-      type: type,
+      type: e.target.value,
     }));
   };
 
@@ -58,12 +58,12 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
     if (!isValid) return;
 
     setLoading(true);
-    setApiError(""); 
+    setApiError("");
 
     try {
-      
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       if (onRoomUpdated) {
         onRoomUpdated(formData);
       }
@@ -91,13 +91,27 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
     setApiError("");
   };
 
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'Available':
+        return 'bg-room-use-available';
+      case 'Not Available':
+        return 'bg-room-use-notAvailable';
+      case 'Under Maintenance':
+        return 'bg-room-use-underMaintenance';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className={`fixed top-0 left-0 flex items-center justify-center w-full h-full bg-darkGray bg-opacity-50 z-10 ${isOpen ? '' : 'hidden'}`}>
       <div className="relative bg-white p-8 w-full max-w-2xl overflow-auto">
         <form onSubmit={handleSubmit}>
           <h2 className="text-xl font-bold mb-4">EDIT ROOM</h2>
+          <hr className="border-b-4 border-black mb-4" />
           {apiError && <span className="text-red-500">{apiError}</span>}
-          {successMessage && <span className="text-green-500">{successMessage}</span>}
+          {successMessage && <span className="text-green-500">{successMessage}</span>}   
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <label>Room Name</label>
@@ -111,51 +125,48 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
               />
               {validationErrors.name && <span className="text-red-500 text-sm">{validationErrors.name}</span>}
             </div>
+            <div className="mb-4">
+            <label>Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="border-b-2 border-black p-2 outline-none w-full"
+            >
+              <option value="" disabled>Select Room Type</option>
+              <option value="Classroom">Classroom</option>
+              <option value="Library">Library</option>              
+              <option value="Lab">Lab</option>              
+              <option value="Storage">Storage</option>
+              <option value="Office">Office</option>              
+              <option value="Lecture Hall">Lecture Hall</option>
+              <option value="Conference Room">Conference Room</option>
+            </select>
           </div>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label>Status</label>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  className={`px-4 py-2 rounded ${formData.status === 'Available' ? 'bg-red-500 text-white' : 'border border-gray-500'}`}
-                  onClick={() => handleStatusChange('Available')}
-                >
-                  Available
-                </button>
-                <button
-                  type="button"
-                  className={`px-4 py-2 rounded ${formData.status === 'Not Available' ? 'bg-red-500 text-white' : 'border border-gray-500'}`}
-                  onClick={() => handleStatusChange('Not Available')}
-                >
-                  Not Available
-                </button>
-              </div>
-            </div>
           </div>
           <div className="mb-4">
-            <label>Type</label>
+            <label>Status</label>
             <div className="flex space-x-4">
               <button
                 type="button"
-                className={`px-4 py-2 rounded ${formData.type === 'Classroom' ? 'bg-red-500 text-white' : 'border border-gray-500'}`}
-                onClick={() => handleTypeChange('Classroom')}
+                className={`px-4 py-2 rounded ${formData.status === 'Available' ? 'bg-room-use-available text-white' : 'border border-gray-500'}`}
+                onClick={() => handleStatusChange('Available')}
               >
-                Classroom
+                Available
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 rounded ${formData.type === 'Laboratory' ? 'bg-red-500 text-white' : 'border border-gray-500'}`}
-                onClick={() => handleTypeChange('Laboratory')}
+                className={`px-4 py-2 rounded ${formData.status === 'Not Available' ? 'bg-room-use-notAvailable text-white' : 'border border-gray-500'}`}
+                onClick={() => handleStatusChange('Not Available')}
               >
-                Laboratory
+                Not Available
               </button>
               <button
                 type="button"
-                className={`px-4 py-2 rounded ${formData.type === 'Administration' ? 'bg-red-500 text-white' : 'border border-gray-500'}`}
-                onClick={() => handleTypeChange('Administration')}
+                className={`px-4 py-2 rounded ${formData.status === 'Under Maintenance' ? 'bg-room-use-underMaintenance text-white' : 'border border-gray-500'}`}
+                onClick={() => handleStatusChange('Under Maintenance')}
               >
-                Administration
+                Under Maintenance
               </button>
             </div>
           </div>

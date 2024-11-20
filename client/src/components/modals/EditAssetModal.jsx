@@ -237,7 +237,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
               <h2 className="text-black text-xl font-bold mb-4">
                 EDIT ASSET
               </h2>
-
+              <hr className="border-b-4 border-black mb-4" />
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black font-semibold">Name</label>

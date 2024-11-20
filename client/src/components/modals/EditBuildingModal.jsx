@@ -106,6 +106,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
         <div className="relative bg-white text-black p-8 w-full max-w-md md:max-w-3xl lg:max-w-4xl overflow-auto max-h-[90vh]">
           <form onSubmit={handleSubmit}>
             <h2 className="text-xl font-bold mb-4">{building ? "EDIT BUILDING" : "Add Building"}</h2>
+            <hr className="border-b-4 border-black mb-4" />
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="text-black">Building Name</label>
@@ -127,7 +128,7 @@ const EditBuildingModal = ({ isOpen, toggleModal, building, onBuildingUpdated })
                   onChange={handleChange}
                   className="border-b-2 border-black p-2 outline-none w-full"
                 >
-                  <option value="">Select Campus</option>
+                  <option value=""disabled>Select Campus</option>
                   {campuses.map((campus) => (
                     <option key={campus._id} value={campus._id}>
                       {campus.name}

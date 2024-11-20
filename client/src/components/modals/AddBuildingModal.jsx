@@ -7,16 +7,14 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     buildingName: "",
-    campus: user ? user.campus.name : "",
+    campus: "",
     numberOfFloors: "", 
     yearBuilt: "", 
   });
   
-
   const [validationErrors, setValidationErrors] = useState({}); 
   const [campuses, setCampuses] = useState([]); 
   const [successMessage, setSuccessMessage] = useState(""); 
-  // const [facilityColorMap, setFacilityColorMap] = useState({}); 
 
   useEffect(() => {
     const fetchCampuses = async () => {
@@ -55,9 +53,19 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
 
   const validateForm = () => {
     const errors = {};
+
+    // Validate building name
     if (!formData.buildingName) errors.buildingName = "Building name is required.";
-    if (!formData.campus) errors.campus = "Campus is required.";
+    
+    // Validate campus selection
+    if (!formData.campus || formData.campus === "") {
+      errors.campus = "Campus is required.";
+    }
+    
+    // Validate number of floors
     if (!formData.numberOfFloors) errors.numberOfFloors = "Number of floors is required.";
+    
+    // Validate year built
     if (!formData.yearBuilt) {
       errors.yearBuilt = "Year Built is required.";
     } else {
@@ -99,7 +107,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
     console.log("Closing modal.");
     setFormData({
       buildingName: "",
-      campus: "",
+      campus: "",  // Reset to empty string
       numberOfFloors: "", 
       yearBuilt: "", 
     });
@@ -142,6 +150,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
               <h2 className="text-black text-xl font-bold mb-4">
                 CREATE BUILDING
               </h2>
+              <hr className="border-b-4 border-black mb-4" />
               <div className="mb-4">
                 <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                   <div className="flex flex-col w-full md:w-1/2 md:pr-2">
@@ -166,7 +175,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
                     >
-                      <option value=""></option>
+                      <option value=""disabled>Select Campus</option> {/* Placeholder option */}
                       {campuses.length > 0 ? (
                         campuses.map((campus) => (
                           <option key={campus._id} value={campus._id}>
@@ -191,6 +200,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                       name="yearBuilt"
                       value={formData.yearBuilt}
                       onChange={handleChange}
+                      placeholder="Enter Building Date"
                       min="1950"
                       className="border-b-2 border-black p-3 outline-none"
                     />
@@ -207,7 +217,7 @@ const AddBuildingModal = ({ isOpen, toggleModal, onBuildingAdded }) => {
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
                     >
-                      <option value=""></option>
+                      <option value=""disabled>Select Number of Floors</option>
                       {[1, 2, 3, 4, 5].map((num) => (
                         <option key={num} value={num}>
                           {num}

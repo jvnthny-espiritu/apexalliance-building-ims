@@ -13,15 +13,15 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
     value: "1000",
     numberOfUnits: 1,
     electricDetails: {
-      voltage: "1",
-      power: "1",
+      voltage: "",
+      power: "",
       manufacturer: "",
       warranty: "",
     },
     nonElectricDetails: {
       material: "",
       dimensions: "",
-      weight: "1",
+      weight: "",
     },
   });
 
@@ -203,7 +203,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
               <h2 className="text-black text-xl font-bold mb-4">
                 CREATE ASSET
               </h2>
-
+              <hr className="border-b-4 border-black mb-4" />
               <div className="flex flex-col mb-4 md:flex-row md:mb-8">
                 <div className="flex flex-col w-full md:w-1/2 md:pr-2">
                   <label className="text-black font-semibold">Name</label>
@@ -255,7 +255,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     name="report"
                     value={formData.report}
                     onChange={handleChange}
-                    placeholder="Enter report"
+                    placeholder="Enter Report"
                     className="border-b-2 border-black p-3 outline-none"
                   />
                 </div>
@@ -356,6 +356,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="number"
                       name="electricDetails.voltage"
+                      placeholder="Enter Voltage (V)"
                       value={formData.electricDetails.voltage}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -371,6 +372,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="number"
                       name="electricDetails.power"
+                      placeholder="Enter Power (Hz)"
                       value={formData.electricDetails.power}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -383,6 +385,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="text"
                       name="electricDetails.manufacturer"
+                      placeholder="Enter Manufacturer"
                       value={formData.electricDetails.manufacturer}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -395,6 +398,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="text"
                       name="electricDetails.warranty"
+                      placeholder="Enter Warranty (Years)"
                       value={formData.electricDetails.warranty}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -412,6 +416,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="text"
                       name="nonElectricDetails.material"
+                      placeholder="Enter Material Used"
                       value={formData.nonElectricDetails.material}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -424,6 +429,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="text"
                       name="nonElectricDetails.dimensions"
+                      placeholder="Enter Dimensions (length x width x height) mm"
                       value={formData.nonElectricDetails.dimensions}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"
@@ -434,6 +440,7 @@ const AddAssetModal = ({ isOpen, toggleModal, onAssetAdded, roomName }) => {
                     <input
                       type="number"
                       name="nonElectricDetails.weight"
+                      placeholder="Enter Weight (Kilogram)"
                       value={formData.nonElectricDetails.weight}
                       onChange={handleChange}
                       className="border-b-2 border-black p-3 outline-none"

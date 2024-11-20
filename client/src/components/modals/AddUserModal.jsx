@@ -209,7 +209,7 @@ const AddUserModal = ({ isOpen, toggleModal, onUserAdded }) => {
                       onClick={() => handleRoleChange("admin")}
                       type="button"
                     >
-                      Administrator
+                      Admin
                     </button>
                     <button
                       className={`px-4 py-2 ${formData.role === "staff" ? "bg-red-500 text-white" : "border border-primary text-black"} rounded-lg`}
