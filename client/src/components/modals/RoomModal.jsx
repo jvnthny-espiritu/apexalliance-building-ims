@@ -359,7 +359,6 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
           toggleModal={() => setEditAssetModalOpen(false)}
           asset={assetToEdit}
           onSuccessMessage={onSuccessMessage}
-          roomName={room.name} 
         />
       )}
 

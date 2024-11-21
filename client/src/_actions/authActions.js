@@ -35,5 +35,20 @@ export const rehydrateAuth = () => async (dispatch) => {
     const decodedToken = jwtDecode(token);
     dispatch({ type: 'LOGIN_SUCCESS', payload: token });
     dispatch(fetchUserById(decodedToken.id));
+    setLogoutTimer(dispatch, decodedToken.exp);
   }
+};
+
+const setLogoutTimer = (dispatch, exp) => {
+  const currentTime = Date.now() / 1000;
+  const timeout = (exp - currentTime) * 1000;
+  setTimeout(() => {
+    dispatch(logout());
+  }, timeout);
+};
+
+export const logout = () => (dispatch) => {
+  localStorage.removeItem('token');
+  dispatch({ type: 'LOGOUT' });
+  window.location.href = '/login';
 };

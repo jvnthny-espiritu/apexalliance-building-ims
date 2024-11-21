@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 
-const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) => {
+const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, asset }) => {
+  console.log("Asset:", asset);
   const [apiError, setApiError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     report: "",
     status: "good condition",
-    location: roomName || "",
+    location: asset.location || "",
     purchaseDate: "",
     value: "1000",
     numberOfUnits: 1,
@@ -33,7 +34,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
           category: asset.category || "",
           report: asset.report || "",
           status: asset.status || "good condition",
-          location: roomName || "",
+          location: asset.location || "",
           purchaseDate: asset.purchaseDate || "",
           value: asset.value || "1000",
           numberOfUnits: asset.numberOfUnits || 1,
@@ -50,7 +51,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
           },
         });
       }
-    }, [isOpen, asset, roomName]);
+    }, [isOpen, asset]);
 
   const [validationErrors, setValidationErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -317,7 +318,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, roomName, asset }) =
                   <input
                     type="text"
                     name="location"
-                    value={formData.location}
+                    value={formData.location.name}
                     onChange={handleChange}
                     placeholder="Enter location"
                     className="border-b-2 border-black p-3 outline-none"

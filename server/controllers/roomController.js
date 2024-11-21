@@ -24,7 +24,9 @@ module.exports = {
 								id: '$_id',
 								name: '$name',
 								purpose: '$purpose',
-								status: '$status'
+								status: '$status',
+								floor: '$floor',
+								building: '$building'
 						}
 						}
 					}
@@ -67,7 +69,7 @@ module.exports = {
 			if (!updatedRoom) {
 				return res.status(404).json({ error: 'Room not found' });
 			}
-			await updateBuildingFacilities(newRoom	.building);
+			await updateBuildingFacilities(updatedRoom.building);
 			res.json(updatedRoom);
 		} catch (err) {
 			res.status(400).json({ error: err.message });

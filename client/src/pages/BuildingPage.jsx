@@ -14,9 +14,10 @@ import ModalFilter from "../components/modals/ModalFilter";
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
+  console.log("User:", user);
   const [state, setState] = useState({
     buildings: [],
-    selectedCampus: user ? user.campus._id : "",
+    selectedCampus: user ? user.campus.id : "all",
     selectedPurpose: "all",
     campuses: [],
     purposes: [],
@@ -72,7 +73,7 @@ function BuildingPage() {
     if (user) {
       setState((prevState) => ({
         ...prevState,
-        selectedCampus: user.campus._id,
+        selectedCampus: user.campus.id,
       }));
     }
   }, [user]);

@@ -66,15 +66,25 @@ module.exports = {
 
   getUserById: async (req, res) => {
     try {
-      const user = await User.findById(req.params.id).populate('campus');
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json(user);
+        const user = await User.findById(req.params.id)
+            .select('username fullname role campus')
+            .populate('campus', 'name _id');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({
+            username: user.username,
+            fullname: user.fullname,
+            role: user.role,
+            campus: {
+                id: user.campus._id,
+                name: user.campus.name
+            }
+        });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
-  },
+},
 
   updateUser: async (req, res) => {
     try {

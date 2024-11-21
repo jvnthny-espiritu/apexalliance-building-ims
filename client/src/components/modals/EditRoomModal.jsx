@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
+  // console.log('Room:', room);
   const [formData, setFormData] = useState({
+    id: room.id,
+    building: room.building,
     name: room.name,
     status: room.status,
-    type: room.purpose,
+    purpose: room.purpose,
+    floor: room.floor,
   });
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -15,9 +20,12 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
   useEffect(() => {
     if (room) {
       setFormData({
+        id: room.id,
+        building: room.building,
         name: room.name,
         status: room.status,
-        type: room.type,
+        purpose: room.purpose,
+        floor: room.floor,
       });
     }
   }, [room]);
@@ -40,7 +48,7 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
   const handleTypeChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
-      type: e.target.value,
+      purpose: e.target.value,
     }));
   };
 
@@ -59,15 +67,13 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
 
     setLoading(true);
     setApiError("");
+    console.log('Submitting form Data:', formData);
 
     try {
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await api.put(`/api/rooms/${formData.id}`, formData);
       if (onRoomUpdated) {
         onRoomUpdated(formData);
       }
-
       setSuccessMessage("Room updated successfully!");
       setTimeout(() => {
         toggleModal();
@@ -84,7 +90,7 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
     setFormData({
       name: room ? room.name : "",
       status: room ? room.status : "",
-      type: room ? room.type : "",
+      purpose: room ? room.purpose : "",
     });
     setValidationErrors({});
     setSuccessMessage("");
@@ -116,7 +122,7 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
             <div>
               <label>Room Name</label>
               <input
-                type="text"
+                purpose="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -128,8 +134,8 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
             <div className="mb-4">
             <label>Type</label>
             <select
-              name="type"
-              value={formData.type}
+              name="purpose"
+              value={formData.purpose}
               onChange={handleChange}
               className="border-b-2 border-black p-2 outline-none w-full"
             >
@@ -148,21 +154,21 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
             <label>Status</label>
             <div className="flex space-x-4">
               <button
-                type="button"
+                purpose="button"
                 className={`px-4 py-2 rounded ${formData.status === 'Available' ? 'bg-room-use-available text-white' : 'border border-gray-500'}`}
                 onClick={() => handleStatusChange('Available')}
               >
                 Available
               </button>
               <button
-                type="button"
+                purpose="button"
                 className={`px-4 py-2 rounded ${formData.status === 'Not Available' ? 'bg-room-use-notAvailable text-white' : 'border border-gray-500'}`}
                 onClick={() => handleStatusChange('Not Available')}
               >
                 Not Available
               </button>
               <button
-                type="button"
+                purpose="button"
                 className={`px-4 py-2 rounded ${formData.status === 'Under Maintenance' ? 'bg-room-use-underMaintenance text-white' : 'border border-gray-500'}`}
                 onClick={() => handleStatusChange('Under Maintenance')}
               >
@@ -171,10 +177,10 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
             </div>
           </div>
           <div className="flex justify-end space-x-4">
-            <button type="submit" className={`bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={loading}>
+            <button purpose="submit" className={`bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={loading}>
               {loading ? 'Updating...' : 'SUBMIT'}
             </button>
-            <button type="button" className="bg-gray-500 text-white rounded-lg px-4 py-2 hover:bg-gray-600" onClick={handleClose}>
+            <button purpose="button" className="bg-gray-500 text-white rounded-lg px-4 py-2 hover:bg-gray-600" onClick={handleClose}>
               CANCEL
             </button>
           </div>
