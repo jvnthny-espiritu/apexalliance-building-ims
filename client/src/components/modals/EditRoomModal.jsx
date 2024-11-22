@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
-const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
+const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated, onApiError }) => {
   // console.log('Room:', room);
   const [formData, setFormData] = useState({
     id: room.id,
@@ -66,24 +66,21 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
     if (!isValid) return;
 
     setLoading(true);
-    setApiError("");
-    console.log('Submitting form Data:', formData);
-
     try {
-      await api.put(`/api/rooms/${formData.id}`, formData);
-      if (onRoomUpdated) {
-        onRoomUpdated(formData);
-      }
-      setSuccessMessage("Room updated successfully!");
-      setTimeout(() => {
-        toggleModal();
-      }, 2000);
+        const response = await api.put(`/api/rooms/${formData.id}`, formData);
+        if (response.status === 200) {
+            onRoomUpdated(response.data, "Room updated successfully!"); // Pass success message
+        }
+        setSuccessMessage("Room updated successfully!");
     } catch (error) {
-      setApiError("Failed to update the room. Please try again.");
+        setApiError("Failed to update the room. Please try again.");
+        onApiError("Failed to update the room. Please try again."); // Pass error message
     } finally {
-      setLoading(false);
+        setLoading(false);
+        toggleModal();
     }
   };
+
 
   const handleClose = () => {
     toggleModal();
@@ -154,22 +151,34 @@ const EditRoomModal = ({ isOpen, toggleModal, room, onRoomUpdated }) => {
             <label>Status</label>
             <div className="flex space-x-4">
               <button
-                purpose="button"
-                className={`px-4 py-2 rounded ${formData.status === 'Available' ? 'bg-room-use-available text-white' : 'border border-gray-500'}`}
+                type="button"
+                className={`px-4 py-2 rounded ${
+                  formData.status === 'Available'
+                    ? 'bg-room-use-available text-white'
+                    : 'border border-gray-500'
+                }`}
                 onClick={() => handleStatusChange('Available')}
               >
                 Available
               </button>
               <button
-                purpose="button"
-                className={`px-4 py-2 rounded ${formData.status === 'Not Available' ? 'bg-room-use-notAvailable text-white' : 'border border-gray-500'}`}
+                type="button"
+                className={`px-4 py-2 rounded ${
+                  formData.status === 'Not Available'
+                    ? 'bg-room-use-notAvailable text-white'
+                    : 'border border-gray-500'
+                }`}
                 onClick={() => handleStatusChange('Not Available')}
               >
                 Not Available
               </button>
               <button
-                purpose="button"
-                className={`px-4 py-2 rounded ${formData.status === 'Under Maintenance' ? 'bg-room-use-underMaintenance text-white' : 'border border-gray-500'}`}
+                type="button"
+                className={`px-4 py-2 rounded ${
+                  formData.status === 'Under Maintenance'
+                    ? 'bg-room-use-underMaintenance text-white'
+                    : 'border border-gray-500'
+                }`}
                 onClick={() => handleStatusChange('Under Maintenance')}
               >
                 Under Maintenance

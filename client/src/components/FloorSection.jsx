@@ -8,7 +8,7 @@ const getOrdinalIndicator = (number) => {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
-const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRooms, setSuccessMessage }) => {
+const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRooms, setSuccessMessage, setApiError }) => {
   console.log('Rooms for floor:', rooms);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -58,8 +58,14 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRoom
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {filteredRooms.map((room, index) => (
-                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage}/>
-              
+                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} setRooms={setRooms} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage} setApiError={setApiError} 
+                   onRoomUpdated={(updatedRoom) => {
+                      const updatedRooms = rooms.map((r) =>
+                          r.id === updatedRoom.id ? { ...r, ...updatedRoom } : r
+                      );
+                      setRooms(updatedRooms);
+                      }}
+                />
               ))}
             </div>
           )}

@@ -14,6 +14,8 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [rooms, setRooms] = useState([]);
+
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -31,6 +33,18 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
     setDropdownVisible(false);
     setShowEditModal(true); 
   };
+
+  const handleRoomUpdate = (updatedRoom) => {
+    setRooms((prevRooms) =>
+        prevRooms.map((floor) => ({
+            ...floor,
+            rooms: floor.rooms.map((room) =>
+                room.id === updatedRoom.id ? { ...room, ...updatedRoom } : room
+            ),
+        }))
+    );
+  };
+
 
   // Handle Delete Action 
   const handleDeleteClick = (event) => {
@@ -186,10 +200,14 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
           isOpen={showEditModal}
           toggleModal={() => setShowEditModal(false)}
           room={room}
-          onRoomUpdated={() => {
-            console.log('Room updated successfully.');
-            setShowEditModal(false);
+          onRoomUpdated={(updatedRoom, successMessage) => {
+            handleRoomUpdate(updatedRoom); 
+            setRooms(updatedRoom);    
+            setSuccessMessage(successMessage);  
           }}
+          onApiError={(errorMessage) => {
+            setApiError(errorMessage); 
+        }}
         />
       )}
     </>

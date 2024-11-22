@@ -48,6 +48,17 @@ function RoomPage() {
       console.error("Error fetching rooms:", error);
     }
   };
+  
+  const handleRoomUpdate = (updatedRoom) => {
+    setRooms((prevRooms) =>
+        prevRooms.map((floor) => ({
+            ...floor,
+            rooms: floor.rooms.map((room) =>
+                room.id === updatedRoom.id ? { ...room, ...updatedRoom } : room
+            ),
+        }))
+    );
+  };
 
   useEffect(() => {
     fetchRooms();
@@ -246,6 +257,8 @@ function RoomPage() {
                 selectedStatus={selectedStatus}
                 setRooms={setRooms}
                 setSuccessMessage={setSuccessMessage}
+                onRoomUpdate={handleRoomUpdate}
+                setApiError={(error) => setState((prev) => ({ ...prev, apiError: error }))} 
               />
             ))
           ) : (
