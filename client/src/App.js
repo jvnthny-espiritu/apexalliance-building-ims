@@ -10,6 +10,7 @@ import Reports from "./pages/admin/Report";
 import DualBar from "./components/nav/dual";
 import TopBar from "./components/nav/top";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotAuthorized from "./pages/NotAuthorized";
 
 const App = () => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -33,7 +34,7 @@ const App = () => {
     }
   }, [isLoggedIn, location.pathname, navigate]);
 
-  const isLoginPage = location.pathname === "/login";
+  const isLoginPage = location.pathname === "/login" || location.pathname === "/not-authorized";
 
   return (
     <div className="flex flex-col h-full w-screen bg-lightGray">
@@ -46,12 +47,15 @@ const App = () => {
               path="/login"
               element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
             />
-            <Route element={<ProtectedRoute />}>
+            <Route path="/not-authorized" element={<NotAuthorized />} />
+            <Route element={<ProtectedRoute requiredRoles={['admin', 'staff', 'guest']} />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/catalog/buildings" element={<BuildingPage />} />
               <Route path="/catalog/rooms/:buildingId" element={<RoomPage />} />
+            </Route>
+            <Route element={<ProtectedRoute requiredRoles={['admin']} />}>
               <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>

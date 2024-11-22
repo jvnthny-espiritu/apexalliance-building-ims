@@ -11,10 +11,11 @@ import api from "../services/api";
 import AddBuildingModal from "../components/modals/AddBuildingModal";
 import Filter from "../components/Filter";
 import ModalFilter from "../components/modals/ModalFilter";
+import useRole from "../hooks/useRole";
 
 function BuildingPage() {
   const { user } = useSelector((state) => state.auth);
-  console.log("User:", user);
+  // console.log("User:", user);
   const [state, setState] = useState({
     buildings: [],
     selectedCampus: user ? user.campus.id : "all",
@@ -33,6 +34,7 @@ function BuildingPage() {
   });
 
   const navigate = useNavigate();
+  const hasRole = useRole(["admin", "staff"]);
 
   const toggleAddBuildingModal = useCallback(() => {
     setState((prevState) => ({
@@ -314,9 +316,11 @@ function BuildingPage() {
         </div>
 
         <div className="md:relative mx-5 md:mx-8 md:mt-24">
-          <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
-            <AddButton onClick={toggleAddBuildingModal} /> 
-          </div>
+          {hasRole && (
+            <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
+              <AddButton onClick={toggleAddBuildingModal} /> 
+            </div>
+          )}
 
           <h1 className="hidden md:block font-bold text-3xl text-black mt-18 py-6">
             Building Catalog

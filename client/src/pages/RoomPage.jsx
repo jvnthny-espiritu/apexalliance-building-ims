@@ -9,6 +9,7 @@ import AddButton from "../components/AddButton";
 import AddRoomModal from "../components/modals/AddRoomModal";
 import ModalFilter from "../components/modals/ModalFilter";
 import Filter from "../components/Filter"; // Assuming you have a Filter component
+import useRole from "../hooks/useRole";
 
 function RoomPage() {
   const { buildingId } = useParams();
@@ -30,6 +31,7 @@ function RoomPage() {
     isFilterModalOpen: false,
     isSearchBoxVisible: false,
   });
+  const hasRole = useRole(["admin", "staff"]);
 
   function toggleAddRoomModalLocal() {
     setIsAddRoomOpen((prev) => !prev);
@@ -41,12 +43,29 @@ function RoomPage() {
 
   const fetchRooms = async () => {
     try {
-      const response = await api.get(`/api/rooms?building=${buildingId}`);
+      const query = new URLSearchParams({
+        building: buildingId,
+        purpose: selectedType,
+        status: selectedStatus,
+      }).toString();
+
+      const response = await api.get(`/api/rooms?${query}`);
       console.log(response.data); 
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
+  };
+  
+  const handleRoomUpdate = (updatedRoom) => {
+    setRooms((prevRooms) =>
+        prevRooms.map((floor) => ({
+            ...floor,
+            rooms: floor.rooms.map((room) =>
+                room.id === updatedRoom.id ? { ...room, ...updatedRoom } : room
+            ),
+        }))
+    );
   };
 
   useEffect(() => {
@@ -180,21 +199,14 @@ function RoomPage() {
           <div className="hidden md:flex items-center space-x-4">
             <Filter
               options={state.type || []}
-              selectedValue={state.selectedType}
-              onChange={(value) =>
-                setState((prevState) => ({ ...prevState, selectedType: value }))
-              }
+              selectedValue={selectedType}
+              onChange={(value) => setSelectedType(value)}
               placeholder="All Type"
             />
             <Filter
               options={state.status || []}
-              selectedValue={state.selectedStatus}
-              onChange={(value) =>
-                setState((prevState) => ({
-                  ...prevState,
-                  selectedStatus: value,
-                }))
-              }
+              selectedValue={selectedStatus}
+              onChange={(value) => setSelectedStatus(value)}
               placeholder="All Status"
             />
             <div className="relative">
@@ -219,10 +231,11 @@ function RoomPage() {
 
       <div className="mx-4 md:mx-6">
         <div className="md:relative md:mt-24">
-          <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
-            <AddButton onClick={toggleAddRoomModalLocal} />
-          </div>
-
+          {hasRole && (
+            <div className="justify-end md:absolute top-0 right-0 py-8 mr-8 mt-24 md:mt-0">
+              <AddButton onClick={toggleAddRoomModalLocal} />
+            </div>
+          )}
           <h1 className="hidden md:block font-bold text-3xl text-black mt-18 py-6">
             Room Catalog
           </h1>
@@ -246,6 +259,8 @@ function RoomPage() {
                 selectedStatus={selectedStatus}
                 setRooms={setRooms}
                 setSuccessMessage={setSuccessMessage}
+                onRoomUpdate={handleRoomUpdate}
+                setApiError={(error) => setState((prev) => ({ ...prev, apiError: error }))} 
               />
             ))
           ) : (

@@ -6,7 +6,6 @@ const AssetChartCard = ({ assetData, campuses }) => {
     const [selectedCampus, setSelectedCampus] = useState('all');
     const [isMobile, setIsMobile] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedChart, setSelectedChart] = useState('all');
 
     useEffect(() => {
         const handleResize = () => {
@@ -40,7 +39,6 @@ const AssetChartCard = ({ assetData, campuses }) => {
 
     const filteredData = {
         category: transformDataForChart(assetData.categoryDistribution || [], selectedCampus),
-        condition: transformDataForChart(assetData.conditionDistribution || [], selectedCampus),
         status: transformDataForChart(assetData.statusDistribution || [], selectedCampus),
     };
 
@@ -82,113 +80,9 @@ const AssetChartCard = ({ assetData, campuses }) => {
                     </select>
                 )}
             </div>
-            <div className='flex justify-center mb-4'>
-                <button 
-                    onClick={() => setSelectedChart('all')} 
-                    className={`p-2 mx-2 rounded-lg ${selectedChart === 'all' ? ' text-primary text-opacity-100' : 'text-primary text-opacity-50'}`}
-                >
-                    All
-                </button>
-                <button 
-                    onClick={() => setSelectedChart('categoryData')} 
-                    className={`p-2 mx-2 rounded-lg ${selectedChart === 'categoryData' ? ' text-primary text-opacity-100' : 'text-primary text-opacity-50'}`}
-                >
-                    Category
-                </button>
-                <button 
-                    onClick={() => setSelectedChart('conditionData')} 
-                    className={`p-2 mx-2 rounded-lg ${selectedChart === 'conditionData' ? ' text-primary text-opacity-100' : 'text-primary text-opacity-50'}`}
-                >
-                    Condition
-                </button>
-                <button 
-                    onClick={() => setSelectedChart('statusData')} 
-                    className={`p-2 mx-2 rounded-lg ${selectedChart === 'statusData' ? ' text-primary text-opacity-100' : 'text-primary text-opacity-50'}`}
-                >
-                    Status
-                </button>
-            </div>
-            <div style={{ height: 400, width: '100%', position: 'relative' }}>
-                {selectedChart === 'all' && (
-                    <>
-                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }}>
-                            <ResponsivePie
-                                data={filteredData.category}
-                                margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-                                innerRadius={0.775}
-                                padAngle={0.7}
-                                cornerRadius={3}
-                                colors={{ scheme: 'nivo' }}
-                                borderWidth={1}
-                                borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                                enableArcLabels={false}
-                                arcLinkLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-                                arcLinkLabelsLinkColor={{ from: 'color' }}
-                                arcLinkLabelsOffset={4}
-                                arcLinkLabelsStraightLength={10}
-                                arcLinkLabelsDiagonalLength={16}
-                                theme={{
-                                    labels: {
-                                        text: {
-                                            fontWeight: 'bold',
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                        <div style={{ position: 'absolute', top: '10%', left: '10%', right: '10%', bottom: '10%', zIndex: 2 }}>
-                            <ResponsivePie
-                                data={filteredData.condition}
-                                margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-                                innerRadius={0.7}
-                                padAngle={0.7}
-                                cornerRadius={3}
-                                colors={{ scheme: 'category10' }}
-                                borderWidth={1}
-                                borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                                enableArcLabels={false}
-                                arcLinkLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-                                arcLinkLabelsLinkColor={{ from: 'color' }}
-                                arcLinkLabelsOffset={4}
-                                arcLinkLabelsStraightLength={10}
-                                arcLinkLabelsDiagonalLength={16}
-                                theme={{
-                                    labels: {
-                                        text: {
-                                            fontWeight: 'bold',
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                        <div style={{ position: 'absolute', top: '20%', left: '20%', right: '20%', bottom: '20%', zIndex: 3 }}>
-                            <ResponsivePie
-                                data={filteredData.status}
-                                margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-                                innerRadius={0}
-                                padAngle={0.7}
-                                cornerRadius={3}
-                                colors={{ scheme: 'set3' }}
-                                borderWidth={1}
-                                borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                                enableArcLabels={false}
-                                arcLinkLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-                                arcLinkLabelsLinkColor={{ from: 'color' }}
-                                arcLinkLabelsOffset={4}
-                                arcLinkLabelsStraightLength={10}
-                                arcLinkLabelsDiagonalLength={16}
-                                theme={{
-                                    labels: {
-                                        text: {
-                                            fontWeight: 'bold',
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                    </>
-                )}
-                {selectedChart === 'categoryData' && (
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} justify-center mb-4`}>
+                <div style={{ height: 400, width: isMobile ? '100%' : '50%', position: 'relative' }}>
+                    <p className='text-center font-semibold mb-2'>Category Distribution</p>
                     <ResponsivePie
                         data={filteredData.category}
                         margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
@@ -217,38 +111,9 @@ const AssetChartCard = ({ assetData, campuses }) => {
                             </div>
                         )}
                     />
-                )}
-                {selectedChart === 'conditionData' && (
-                    <ResponsivePie
-                        data={filteredData.condition}
-                        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-                        innerRadius={0}
-                        padAngle={0.7}
-                        cornerRadius={3}
-                        colors={{ scheme: 'category10' }}
-                        borderWidth={1}
-                        borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-                        enableArcLabels={false}
-                        arcLinkLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-                        arcLinkLabelsLinkColor={{ from: 'color' }}
-                        arcLinkLabelsOffset={4}
-                        arcLinkLabelsStraightLength={10}
-                        arcLinkLabelsDiagonalLength={16}
-                        theme={{
-                            labels: {
-                                text: {
-                                    fontWeight: 'bold',
-                                },
-                            },
-                        }}
-                        tooltip={({ datum }) => (
-                            <div style={{ padding: '5px', background: '#fff', border: '1px solid #ccc' }}>
-                                <strong>{datum.id}</strong>: {datum.value}
-                            </div>
-                        )}
-                    />
-                )}
-                {selectedChart === 'statusData' && (
+                </div>
+                <div style={{ height: 400, width: isMobile ? '100%' : '50%', position: 'relative' }}>
+                    <p className='text-center font-semibold mb-2'>Status Distribution</p>
                     <ResponsivePie
                         data={filteredData.status}
                         margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
@@ -277,7 +142,7 @@ const AssetChartCard = ({ assetData, campuses }) => {
                             </div>
                         )}
                     />
-                )}
+                </div>
             </div>
         </div>
     );

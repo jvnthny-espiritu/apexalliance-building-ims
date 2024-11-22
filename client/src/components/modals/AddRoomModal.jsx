@@ -6,9 +6,9 @@ const AddRoomModal = ({ isOpen, toggleModal, onRoomAdded }) => {
     const [formData, setFormData] = useState({
         RoomName: "",
         building: "",
-        purpose: "", // Change to a string for single selection
+        purpose: "", 
         floor: "",
-        status: "",
+        status: "Not Available",
     });
 
     const [validationErrors, setValidationErrors] = useState({});
