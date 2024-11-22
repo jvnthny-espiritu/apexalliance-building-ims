@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Skeleton } from '@mui/material';
 import { useSelector } from 'react-redux';
+import useRole from '../../hooks/useRole';
 
 
 export default function Dashboard() {
@@ -22,6 +23,7 @@ export default function Dashboard() {
     const [auditLogs, setAuditLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const hasRole = useRole(['admin']);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,12 +84,14 @@ export default function Dashboard() {
                     </div>
                 </div>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 mx-5'>
-                    <div className='col-span-1 lg:col-span-2'>
+                    <div className={`col-span-1  ${hasRole ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
                         {loading ? <Skeleton variant="rectangular" height={300} /> : <BuildingChartCard data={buildingDistribution} campuses={campuses} />}
                     </div>
-                    <div className='col-span-1'>
-                        {loading ? <Skeleton variant="rectangular" height={300} /> : <LogCard logs={auditLogs} loading={loading} />}
-                    </div>
+                    {hasRole && (
+                        <div className='col-span-1'>
+                            {loading ? <Skeleton variant="rectangular" height={300} /> : <LogCard logs={auditLogs} loading={loading} />}
+                        </div>
+                    )}
                 </div>
                 <div className='grid grid-cols-1 gap-4 mx-5 mb-5'>
                     <div className='col-span-1'>

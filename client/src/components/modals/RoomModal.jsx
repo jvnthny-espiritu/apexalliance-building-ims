@@ -5,6 +5,7 @@ import AddButton from "../AddButton";
 import AddAssetModal from '../modals/AddAssetModal'; 
 import EditAssetModal from '../modals/EditAssetModal'; 
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
+import useRole from "../../hooks/useRole";
 
 const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => { 
   const [assets, setAssets] = useState([]);
@@ -20,6 +21,8 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
   const [assetToEdit, setAssetToEdit] = useState(null); 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [assetToDelete, setAssetToDelete] = useState(null);
+  const isAdmin = useRole(["admin"]);
+  const isStaff = useRole(["staff"]);
 
   const colors = {
     available: "bg-room-use-available",
@@ -120,10 +123,14 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
             'N/A'
           )}
         </td>
-        <td>
-        <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
-        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
-      </td>
+        {(isAdmin || isStaff) && (
+          <td>
+          <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
+          {isAdmin && (
+            <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
+          )}
+          </td>
+        )}
       </tr>
     ));
   };  
@@ -151,10 +158,14 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
             'N/A'
           )}
         </td>
-        <td>
-        <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
-        <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
-      </td>
+        {(isAdmin || isStaff) && (
+          <td>
+          <button className="text-indigo-600 hover:text-indigo-900" onClick={() => handleEdit(item)}>Edit</button>
+          {isAdmin && (
+            <button className="ml-2 text-red-600 hover:text-red-900" onClick={() => handleDeleteClick(item)}>Delete</button>
+          )}
+          </td>
+        )}
       </tr>
     ));
   };
@@ -240,8 +251,9 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
               </p>
             </div>
           </div>
-
-          <AddButton onClick={toggleAssetModal} />
+          {(isAdmin || isStaff) &&
+            <AddButton onClick={toggleAssetModal} />
+          }
         </div>
 
         <hr className="border-darkGray w-full mt-4 mb-4" />
@@ -293,7 +305,9 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
                           <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Non-Electric Details</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
+                          {(isAdmin || isStaff) && (
+                            <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
+                          )}
                         </tr>
                         {renderNonElectricRows(nonelectricAssets)}
                       </tbody>
@@ -318,7 +332,9 @@ const RoomModal = ({ room, toggleModal, onSuccessMessage, onApiError }) => {
                           <th scope className="col px-3 sm:px-6 py-2 ">Value</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Number of Units</th>
                           <th scope className="col px-3 sm:px-6 py-2 ">Electric Details</th>
-                          <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
+                          {(isAdmin || isStaff) && (
+                            <th scope className="col px-3 sm:px-6 py-2 ">Actions</th>
+                          )}
                         </tr>
                         {renderElectricRows(electricAssets)}
                       </tbody>

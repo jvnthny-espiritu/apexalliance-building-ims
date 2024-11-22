@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import DeleteConfirmationModal from "../components/modals/DeleteConfirmationModal";
 import EditBuildingModal from "../components/modals/EditBuildingModal";
+import useRole from "../hooks/useRole";
 
 const BuildingCard = ({ building, onDelete }) => {
   const { _id, name, campus, yearBuilt, numberOfFloors, facilities } = building;
@@ -14,6 +15,8 @@ const BuildingCard = ({ building, onDelete }) => {
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [facilityDropdownVisible, setFacilityDropdownVisible] = useState(false);
+  const isAdmin = useRole(["admin"]);
+  const isStaff = useRole(["staff"]);
 
   useEffect(() => {
     const facilityColors = [
@@ -98,6 +101,7 @@ const BuildingCard = ({ building, onDelete }) => {
           <div className="building-name text-black text-[24px] md:text-2xl lg:text-[24px] font-black font-body mt-3">
             <span className="flex items-center justify-between">
               <span className="text-black">{name}</span>
+              {(isAdmin || isStaff) && (
               <span
                 onClick={toggleDropdown}
                 className="relative cursor-pointer"
@@ -114,15 +118,18 @@ const BuildingCard = ({ building, onDelete }) => {
                     >
                       Edit
                     </li>
-                    <li
-                      onClick={handleDeleteClick}
-                      className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
-                    >
-                      Delete
-                    </li>
+                    {isAdmin && (
+                      <li
+                        onClick={handleDeleteClick}
+                        className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
+                      >
+                        Delete
+                      </li>
+                    )}
                   </ul>
                 )}
               </span>
+              )}
             </span>
           </div>
           <div className="text-darkGray font-body text-sm md:text-base lg:text-[14px] mt-2 gap-2 flex-grow">

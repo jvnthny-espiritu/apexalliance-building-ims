@@ -2,11 +2,13 @@ import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { MdDashboard, MdBook, MdSettings, MdExitToApp, MdInfo } from 'react-icons/md';
+import useRole from '../../hooks/useRole';
 
 export default function NavBar() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const hasRole = useRole(['admin']);
 
     const handleLogout = () => {
         console.log("Logging out...");
@@ -42,23 +44,27 @@ export default function NavBar() {
                                     <span>Catalog</span>
                                 </NavLink>
                             </li>
-                            <li>
-                                <NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
-                                    <MdInfo className='h-6 w-6 mx-4' />
-                                    <span>Reports</span>
-                                </NavLink>
-                            </li>
+                            {hasRole && (
+                                <li>
+                                    <NavLink to='/reports' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Reports'>
+                                        <MdInfo className='h-6 w-6 mx-4' />
+                                        <span>Reports</span>
+                                    </NavLink>
+                                </li>
+                            )}
                         </ul>
                     </div>
                     <div>
                         <hr />
                         <ul className='mb-5'>
-                            <li>
-                                <NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
-                                    <MdSettings className='h-6 w-6 mx-4' />
-                                    <span>Settings</span>
-                                </NavLink>
-                            </li>
+                            {hasRole && (
+                                <li>
+                                    <NavLink to='/settings' className={({ isActive }) => isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses} title='Settings'>
+                                        <MdSettings className='h-6 w-6 mx-4' />
+                                        <span>Settings</span>
+                                    </NavLink>
+                                </li>
+                            )}
                             <li>
                                 <button onClick={handleLogout} className='flex items-center w-full mt-4 py-2 p-1.5 rounded-lg hover:bg-primary hover:bg-opacity-20'>
                                     <MdExitToApp className='h-6 w-6 mx-4' />

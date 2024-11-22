@@ -4,6 +4,7 @@ import api from '../services/api';
 import RoomModal from '../components/modals/RoomModal';
 import EditRoomModal from '../components/modals/EditRoomModal'; 
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
+import useRole from '../hooks/useRole';
 
 const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
   const { id, building, name, floor, purpose, status } = room;
@@ -15,6 +16,8 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [rooms, setRooms] = useState([]);
+  const isAdmin = useRole(['admin']);
+  const isStaff = useRole(['staff']);
 
 
   const toggleModal = () => {
@@ -129,28 +132,32 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
         )}
           <div className="flex justify-between w-full">
             <h3 className="text-base md:text-xl text-black font-extrabold">{room.name}</h3>
-            <span onClick={toggleDropdown} className="relative cursor-pointer">
-              <BsThreeDotsVertical className="w-5 h-5 md:w-6 md:h-6" />
-              {dropdownVisible && (
-                <ul
-                  className="absolute right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <li
-                    onClick={handleEdit}
-                    className="font-light text-base px-2 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+            {(isAdmin || isStaff) && (
+              <span onClick={toggleDropdown} className="relative cursor-pointer">
+                <BsThreeDotsVertical className="w-5 h-5 md:w-6 md:h-6" />
+                {dropdownVisible && (
+                  <ul
+                    className="absolute right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    Edit
-                  </li>
-                  <li
-                    onClick={handleDeleteClick}
-                    className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
-                  >
-                    Delete
-                  </li>
-                </ul>
-              )}
-            </span>
+                    <li
+                      onClick={handleEdit}
+                      className="font-light text-base px-2 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                    >
+                      Edit
+                    </li>
+                    {isAdmin && (
+                      <li
+                        onClick={handleDeleteClick}
+                        className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
+                      >
+                        Delete
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </span>
+            )}
           </div>
           <div className="flex justify-between w-full">
             <p className="mb-2">Type:</p>
