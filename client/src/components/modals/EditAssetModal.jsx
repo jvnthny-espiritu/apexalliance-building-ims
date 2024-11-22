@@ -35,7 +35,7 @@ const EditAssetModal = ({ isOpen, toggleModal, onAssetEdit, asset }) => {
           report: asset.report || "",
           status: asset.status || "good condition",
           location: asset.location || "",
-          purchaseDate: asset.purchaseDate || "",
+          purchaseDate: asset.purchaseDate ? new Date(asset.purchaseDate).toISOString().split('T')[0] : "",
           value: asset.value || "1000",
           numberOfUnits: asset.numberOfUnits || 1,
           electricDetails: {
