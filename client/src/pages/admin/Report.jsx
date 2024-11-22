@@ -3,33 +3,64 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import templateImage from '../../assets/img/BatStateU Template.png';
 import Filter, { Filtermobile } from '../../components/Filter'; 
+import api from '../../services/api';
+import Papa from 'papaparse';
 
 const Reports = () => {
-  const [data, setData] = useState([]); // State to store fetched data
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
   const [filters, setFilters] = useState({
-    building: 'All Buildings', // Default filter is 'all' for buildings
+    campus: '', 
+    building: '', 
+    room: '',
+    assetName: '',
+    assetUnits: '', 
+    assetCondition: '', 
+    assetStatus: '', 
+    reportType: 'building_room_assets',  
   });
 
-  // Fetch data from the database
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch('/api/reports'); // Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
+      setLoading(true);
+        try {
+          const queryParams = new URLSearchParams({
+            type: filters.reportType || 'building_room_assets',
+            campus: filters.campus || '',
+            building: filters.building || '',
+            room: filters.room || '',
+            assetName: filters.assetName || '',
+            assetUnits: filters.assetUnits || '',
+            assetCondition: filters.assetCondition || '',
+            assetStatus: filters.assetStatus || '',
+          });
+
+            const response = await api.get(`/api/reports/export?${queryParams.toString()}`, {
+                responseType: 'text',
+            });
+
+            if (response.status === 200 && typeof response.data === 'string') {
+                Papa.parse(response.data, {
+                    header: true,
+                    complete: (result) => {
+                        setData(result.data);
+                    },
+                });
+            } else {
+                setData([]);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setData([]);
+        } finally {
+          setLoading(false);
         }
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
     };
 
     fetchData();
-  }, []);
+}, [filters]);
 
-  // Format current date
   useEffect(() => {
     const currentDate = new Date();
     const formatted = currentDate.toLocaleDateString('en-US', {
@@ -41,23 +72,40 @@ const Reports = () => {
     setFormattedDate(formatted);
   }, []);
 
-  // Filter the reports data based on selected filters
+  const statusOptions = [
+    'good condition',
+    'not working',
+    'for replacement',
+    'under maintenance',
+  ];
+  const buildingOptions = useMemo(() => {
+    const buildings = [...new Set(data.map(item => item.Building).filter(Boolean))];
+    return buildings;
+  }, [data]);
+  const combinedOptions = useMemo(() => {
+    return ['All Buildings', ...buildingOptions, ...statusOptions];
+  }, [buildingOptions, statusOptions]);  
+
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      const matchesBuilding = filters.building === 'All Buildings' || item.building === filters.building;
-      return matchesBuilding;
+      if (!filters.buildingOrStatus) return true;
+  
+      const isBuildingMatch = item.Building === filters.buildingOrStatus;
+      const isStatusMatch = item.Status === filters.buildingOrStatus;
+      return isBuildingMatch || isStatusMatch;
     });
-  }, [data, filters]);
+  }, [data, filters]);  
+
 
   const downloadPDF = () => {
     const doc = new jsPDF();
     const margin = 72;
-
     const primaryColor = "#FF0000"; 
     const primaryLight = "#ff2222";       
-    const darkGray = "#808080";      
+    const darkGray = "#808080"; 
 
     doc.addImage(templateImage, 'PNG', 0, 0, 210, 297);
+
     doc.setFont('times');
     doc.setFontSize(12); 
     doc.text(formattedDate, 25, 56);  
@@ -69,43 +117,46 @@ const Reports = () => {
     doc.setFontSize(12); 
     doc.text(titleText, titleXPos, margin);
 
+    const tableData = filteredData.map(item => [
+      item.Building,
+      item.Room,
+      item.Asset,
+      item.Units,
+      item.Condition,
+      item.Status,
+  ]);
+
     doc.autoTable({
-      startY: margin + 3, //add 3 para sa margin below the title
+      startY: margin + 3, //add 3 for margin below the title
       margin: { horizontal: 25 },
-      head: [['Building', 'Room', 'Units', 'Report', 'Status']],
-      body: filteredData.map(item => [
-        item.building,
-        item.room,
-        item.units,
-        item.report,
-        item.status,
-      ]),
+      head: [['Building', 'Room', 'Asset', 'Units', 'Condition', 'Status']],
+      body: tableData,
       headStyles: {
-        fillColor: primaryLight,  // Using primary-light as header background
-        textColor: "#ffffff",     // White text
+        fillColor: primaryLight, 
+        textColor: "#ffffff",     
         fontSize: 12,    
         font: "Times New Roman",        
       },
       bodyStyles: {
-        textColor: darkGray,      // Dark gray text in body  
+        textColor: darkGray,      
         fontSize: 10,  
         font: "Times New Roman",          
       },
       alternateRowStyles: {
-        fillColor: "#F5F5F5",     // Light gray background for alternate rows
+        fillColor: "#F5F5F5",     
       },
     });
 
     doc.output('dataurlnewwindow');
   };
 
-  // Handle filter changes
   const handleFilterChange = (key, value) => {
     setFilters((prevState) => ({
       ...prevState,
-      [key]: value,
+      [key]: value === "All Buildings" ? "" : value,
     }));
   };
+  
 
   return (
     <div className="container mx-auto my-16 p-6">
@@ -121,10 +172,10 @@ const Reports = () => {
             <div className="flex gap-4">
               <div className="w-32">
                 <Filter
-                  options={['Building 1', 'Building 2', 'Building 3'].map(building => [building, building])}
-                  selectedValue={filters.building}
-                  onChange={(value) => handleFilterChange('building', value)}
-                  placeholder="All Buildings"
+                  options={combinedOptions.map(option => [option, option])}
+                  selectedValue={filters.buildingOrStatus}
+                  onChange={(value) => handleFilterChange('buildingOrStatus', value)}
+                  placeholder="Select a Building or Status"
                 />
               </div>
             </div>
@@ -143,43 +194,49 @@ const Reports = () => {
         <div className="md:hidden">
           <div className="p-4">
             <Filtermobile
-              options={['Building 1', 'Building 2', 'Building 3'].map(building => [building, building])}
-              selectedValue={filters.building}
-              onChange={(value) => handleFilterChange('building', value)}
-              placeholder="Select Building"
+              options={combinedOptions.map(option => [option, option])}
+              selectedValue={filters.buildingOrStatus}
+              onChange={(value) => handleFilterChange('buildingOrStatus', value)}
+              placeholder="Select a Building or Status"
             />
           </div>
         </div>
 
         {/* Table displaying filtered data */}
-        <table className="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b text-left">Building</th>
-              <th className="py-2 px-4 border-b text-left">Room</th>
-              <th className="py-2 px-4 border-b text-left">Units</th>
-              <th className="py-2 px-4 border-b text-left">Report</th>
-              <th className="py-2 px-4 border-b text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b">{item.building}</td>
-                  <td className="py-2 px-4 border-b">{item.room}</td>
-                  <td className="py-2 px-4 border-b">{item.units}</td>
-                  <td className="py-2 px-4 border-b">{item.report}</td>
-                  <td className="py-2 px-4 border-b">{item.status}</td>
-                </tr>
-              ))
-            ) : (
+        {loading ? (
+          <div className="text-center py-4">Loading...</div>
+        ) : (
+          <table className="min-w-full bg-white">
+            <thead>
               <tr>
-                <td colSpan="5" className="py-4 text-center">No data available</td>
+                <th className="py-2 px-4 border-b text-left">BUILDING</th>
+                <th className="py-2 px-4 border-b text-left">ROOM</th>
+                <th className="py-2 px-4 border-b text-left">ASSET</th>
+                <th className="py-2 px-4 border-b text-left">UNITS</th>
+                <th className="py-2 px-4 border-b text-left">REPORT</th>
+                <th className="py-2 px-4 border-b text-left">STATUS</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-100">
+                    <td className="py-2 px-4 border-b">{item.Building}</td>
+                    <td className="py-2 px-4 border-b">{item.Room}</td>
+                    <td className="py-2 px-4 border-b">{item.Asset}</td>
+                    <td className="py-2 px-4 border-b">{item.Units}</td>
+                    <td className="py-2 px-4 border-b">{item.Condition}</td>
+                    <td className="py-2 px-4 border-b">{item.Status}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="py-4 text-center">No data available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

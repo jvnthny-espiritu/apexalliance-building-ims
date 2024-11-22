@@ -1,8 +1,8 @@
 const { parse } = require('json2csv');
-const Room = require('../models/room');
-const Building = require('../models/building');
-const Campus = require('../models/campus');
-const Asset = require('../models/asset');
+const Room = require('../models/Room');
+const Building = require('../models/Building');
+const Campus = require('../models/Campus');
+const Asset = require('../models/Asset');
 
 async function getCampusId(campusName) {
     const campusData = await Campus.findOne({
@@ -59,6 +59,75 @@ exports.exportReport = async (req, res) => {
             res.attachment('buildings_report.csv');
             return res.send(csv);
         }
+
+        if (type === 'building_room_assets') {
+            let buildingQuery = {};
+        
+            if (campusFilter) {
+                const campusId = await getCampusId(campusFilter);
+                if (campusId) {
+                    buildingQuery.campus = campusId;
+                } else {
+                    console.log(`Campus "${campusFilter}" not found`);
+                    return res.status(404).json({ message: 'Campus not found' });
+                }
+            }
+        
+            if (buildingFilter) {
+                buildingQuery.name = buildingFilter;
+            }
+        
+            const buildings = await Building.find(buildingQuery);
+            if (!buildings.length) {
+                return res.status(404).json({ message: 'No buildings found for the specified filters' });
+            }
+        
+            const fields = ['Building', 'Room', 'Asset', 'Units', 'Condition', 'Status'];
+            const data = [];
+        
+            for (const building of buildings) {
+                const rooms = await Room.find({ building: building._id });
+        
+                for (const room of rooms) {
+                    const assets = await Asset.find({ location: room._id });
+        
+                    const groupedAssets = assets.reduce((acc, asset) => {
+                        const key = `${asset.name}-${asset.status}`;
+                        if (!acc[key]) {
+                            acc[key] = {
+                                name: asset.name,
+                                condition: asset.report || 'N/A',
+                                status: asset.status,
+                                count: 0,
+                            };
+                        }
+                        acc[key].count += asset.numberOfUnits || 1; // Default to 1 if `numberOfUnits` is undefined
+                        return acc;
+                    }, {});
+        
+                    for (const [key, group] of Object.entries(groupedAssets)) {
+                        data.push({
+                            'Building': building.name,
+                            'Room': room.name,
+                            'Asset': group.name,
+                            'Units': group.count,
+                            'Condition': group.condition,
+                            'Status': group.status,
+                        });
+                    }
+                }
+            }
+        
+            if (data.length === 0) {
+                console.log('No assets found for the specified filters');
+                return res.status(404).json({ message: 'No assets found for the specified filters' });
+            }
+        
+            const csv = parse(data, { fields });
+            res.header('Content-Type', 'text/csv');
+            res.attachment('building_room_assets_report.csv');
+            return res.send(csv);
+        }        
 
         if (type === 'building_with_rooms') {
             let buildingQuery = {};
