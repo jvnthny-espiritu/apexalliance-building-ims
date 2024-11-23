@@ -20,6 +20,7 @@ const Reports = () => {
     assetStatus: '', 
     reportType: 'building_room_assets',  
   });
+  const [allBuildings, setAllBuildings] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,21 +46,27 @@ const Reports = () => {
                     header: true,
                     complete: (result) => {
                         setData(result.data);
+                        const uniqueBuildings = [
+                          ...new Set(result.data.map((item) => item.Building).filter(Boolean)),
+                        ];
+                        setAllBuildings(uniqueBuildings);
                     },
                 });
             } else {
                 setData([]);
+                setAllBuildings([]);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
             setData([]);
+            setAllBuildings([]);
         } finally {
           setLoading(false);
         }
     };
 
     fetchData();
-}, [filters]);
+}, [filters.reportType]);
 
   useEffect(() => {
     const currentDate = new Date();
@@ -79,22 +86,18 @@ const Reports = () => {
     'under maintenance',
   ];
   const buildingOptions = useMemo(() => {
-    const buildings = [...new Set(data.map(item => item.Building).filter(Boolean))];
-    return buildings;
-  }, [data]);
-  const combinedOptions = useMemo(() => {
-    return ['All Buildings', ...buildingOptions, ...statusOptions];
-  }, [buildingOptions, statusOptions]);  
+    const options = ['All Buildings', ...allBuildings];
+    return options;
+  }, [allBuildings]);  
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      if (!filters.buildingOrStatus) return true;
-  
-      const isBuildingMatch = item.Building === filters.buildingOrStatus;
-      const isStatusMatch = item.Status === filters.buildingOrStatus;
-      return isBuildingMatch || isStatusMatch;
+      const isBuildingMatch = filters.building ? item.Building === filters.building : true;
+      const isStatusMatch = filters.assetStatus ? item.Status === filters.assetStatus : true;
+      return isBuildingMatch && isStatusMatch;
     });
-  }, [data, filters]);  
+  }, [data, filters.building, filters.assetStatus]);
+   
 
 
   const downloadPDF = () => {
@@ -150,13 +153,19 @@ const Reports = () => {
     doc.output('dataurlnewwindow');
   };
 
+
   const handleFilterChange = (key, value) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [key]: value === "All Buildings" ? "" : value,
-    }));
+    if (value === `Select a ${key.charAt(0).toUpperCase() + key.slice(1)}`) {
+      value = ""; 
+    }
+
+    setFilters((prevState) => {
+      const updatedFilters = { ...prevState };
+      updatedFilters[key] = value === `All ${key === 'building' ? 'Buildings' : 'Statuses'}` ? "" : value;
+      return updatedFilters;
+    });
   };
-  
+    
 
   return (
     <div className="container mx-auto my-16 p-6">
@@ -168,15 +177,28 @@ const Reports = () => {
             <p className="text-sm">Batangas State University - The National Engineering University, Alangilan Campus</p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Filters Section */}
             <div className="flex gap-4">
-              <div className="w-32">
-                <Filter
-                  options={combinedOptions.map(option => [option, option])}
-                  selectedValue={filters.buildingOrStatus}
-                  onChange={(value) => handleFilterChange('buildingOrStatus', value)}
-                  placeholder="Select a Building or Status"
-                />
+              {/* FILTERS SECTION */}
+              <div className="flex gap-4">
+                {/* Building Filter */}
+                <div className="w-32">
+                  <Filter
+                    options={buildingOptions.map(option => [option, option])}
+                    selectedValue={filters.building}
+                    onChange={(value) => handleFilterChange('building', value)}
+                    placeholder="Select a Building"
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div className="w-32">
+                  <Filter
+                    options={['All Statuses', ...statusOptions].map(option => [option, option])}
+                    selectedValue={filters.assetStatus}
+                    onChange={(value) => handleFilterChange('assetStatus', value)}
+                    placeholder="Select a Status"
+                  />
+                </div>
               </div>
             </div>
 
@@ -190,16 +212,29 @@ const Reports = () => {
           </div>
         </div>
 
-        {/* Mobile Filters */}
         <div className="md:hidden">
-          <div className="p-4">
-            <Filtermobile
-              options={combinedOptions.map(option => [option, option])}
-              selectedValue={filters.buildingOrStatus}
-              onChange={(value) => handleFilterChange('buildingOrStatus', value)}
-              placeholder="Select a Building or Status"
-            />
-          </div>
+          {/* MOBILE FILTERS */}
+          <div className="flex gap-4">
+                {/* Building Filter */}
+                <div className="w-32">
+                  <Filtermobile
+                    options={buildingOptions.map(option => [option, option])}
+                    selectedValue={filters.building}
+                    onChange={(value) => handleFilterChange('building', value)}
+                    placeholder="Select a Building"
+                  />
+                </div>
+
+                {/* Status Filter */}
+                <div className="w-32">
+                  <Filtermobile
+                    options={['All Statuses', ...statusOptions].map(option => [option, option])}
+                    selectedValue={filters.assetStatus}
+                    onChange={(value) => handleFilterChange('assetStatus', value)}
+                    placeholder="Select a Status"
+                  />
+                </div>
+              </div>
         </div>
 
         {/* Table displaying filtered data */}
