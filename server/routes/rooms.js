@@ -6,6 +6,7 @@ const auditLogger = require('../middleware/auditLogger');
 
 // Routes for rooms
 router.get('/', roomController.getAllRooms);
+router.get("/filter", roomController.getFilterOptions);
 router.get('/:id', roomController.getRoomById);
 router.get('/:id/assets', roomController.getAssetByRoom);
 router.post('/', authenticateJWT, authorizeRoles('admin', 'staff'), auditLogger('CREATE'), roomController.createRoom);
