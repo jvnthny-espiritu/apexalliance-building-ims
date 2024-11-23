@@ -8,7 +8,7 @@ const getOrdinalIndicator = (number) => {
   return number + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
-const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRooms, setSuccessMessage, setApiError }) => {
+const FloorSection = ({  floorName, rooms, selectedPurpose, selectedStatus, setRooms, setSuccessMessage, setApiError }) => {
   console.log('Rooms for floor:', rooms);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -31,10 +31,10 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRoom
 };
 
   const filteredRooms = rooms.filter(room => {
-    if (selectedType && selectedStatus) {
-      return room.type === selectedType && room.status === selectedStatus;
-    } else if (selectedType) {
-      return room.type === selectedType;
+    if (selectedPurpose && selectedStatus) {
+      return room.purpose === selectedPurpose && room.status === selectedStatus;
+    } else if (selectedPurpose) {
+      return room.purpose === selectedPurpose;
     } else if (selectedStatus) {
       return room.status === selectedStatus;
     } else {
@@ -58,7 +58,7 @@ const FloorSection = ({  floorName, rooms, selectedType, selectedStatus, setRoom
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
               {filteredRooms.map((room, index) => (
-                <RoomCard key={index} room={room} selectedType={selectedType} selectedStatus={selectedStatus} setRooms={setRooms} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage} setApiError={setApiError} 
+                <RoomCard key={index} room={room} selectedPurpose={selectedPurpose} selectedStatus={selectedStatus} setRooms={setRooms} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage} setApiError={setApiError} 
                    onRoomUpdated={(updatedRoom) => {
                       const updatedRooms = rooms.map((r) =>
                           r.id === updatedRoom.id ? { ...r, ...updatedRoom } : r

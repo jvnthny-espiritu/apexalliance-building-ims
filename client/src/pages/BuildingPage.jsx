@@ -10,7 +10,7 @@ import AddButton from "../components/AddButton";
 import api from "../services/api";
 import AddBuildingModal from "../components/modals/AddBuildingModal";
 import Filter from "../components/Filter";
-import ModalFilter from "../components/modals/ModalFilter";
+import ModalFilterBuilding from "../components/modals/ModalFilterBuilding";
 import useRole from "../hooks/useRole";
 
 function BuildingPage() {
@@ -354,7 +354,7 @@ function BuildingPage() {
         )}
 
         {state.isFilterModalOpen && (
-          <ModalFilter
+          <ModalFilterBuilding
             state={state}
             setState={setState}
             filterOptions={filterOptions}

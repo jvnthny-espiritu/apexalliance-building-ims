@@ -6,14 +6,13 @@ const updateBuildingFacilities = require('../utils/updateBuildingFacilities');
 module.exports = {
 	getAllRooms: async (req, res) => {
 		try {
-			const { building, purpose } = req.query;
+			const { building, purpose, status } = req.query;
 			if (!building) {
 				return res.status(400).json({ error: 'Building parameter is required' });
 			}
 			const filter = { building: new mongoose.Types.ObjectId(building) };
-			if (purpose) {
-				filter.purpose = purpose;
-			}
+			if (purpose) filter.purpose = purpose;
+			if (status) filter.status = status;
 			const rooms = await Room.aggregate([
 				{ $match: filter },
 				{
@@ -50,6 +49,17 @@ module.exports = {
 			res.status(400).json({ error: err.message });
 		}
 	},
+
+	getFilterOptions: async (req, res) => {
+        try {
+            const purpose = await Room.distinct("purpose");
+            const status = await Room.distinct("status");
+
+            res.status(200).json({ purpose, status });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
 
 	getRoomById: async (req, res) => {
 		try {

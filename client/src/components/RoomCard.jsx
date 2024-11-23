@@ -6,7 +6,7 @@ import EditRoomModal from '../components/modals/EditRoomModal';
 import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 import useRole from '../hooks/useRole';
 
-const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
+const RoomCard = ({ room, onDelete, selectedPurpose, selectedStatus }) => {
   const { id, building, name, floor, purpose, status } = room;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -48,7 +48,6 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
     );
   };
 
-
   // Handle Delete Action 
   const handleDeleteClick = (event) => {
     event.stopPropagation();
@@ -87,7 +86,7 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
     setApiError(errorMessage);
   };
   
-  const getTypeClass = (purpose) => {
+  const getPurposeClass = (purpose) => {
     switch (purpose) {
     }
   };
@@ -105,10 +104,10 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
     }
   };
 
-  const isMatchingType = selectedType ? room.purpose === selectedType : true;
+  const isMatchingPurpose = selectedPurpose ? room.purpose === selectedPurpose : true;
   const isMatchingStatus = selectedStatus ? room.status === selectedStatus : true;
 
-  if (!isMatchingType || !isMatchingStatus) {
+  if (!isMatchingPurpose || !isMatchingStatus) {
     return null;
   }
 
@@ -160,8 +159,8 @@ const RoomCard = ({ room, onDelete, selectedType, selectedStatus }) => {
             )}
           </div>
           <div className="flex justify-between w-full">
-            <p className="mb-2">Type:</p>
-            <p className={`px-3 text-center text-black mb-2 rounded-xl ${getTypeClass(room.purpose)}`}>
+            <p className="mb-2">Purpose:</p>
+            <p className={`px-3 text-center text-black mb-2 rounded-xl ${getPurposeClass(room.purpose)}`}>
               {room.purpose}
             </p>
           </div>

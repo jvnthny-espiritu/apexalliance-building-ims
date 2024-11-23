@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import FloorSection from "../components/FloorSection";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -7,14 +7,14 @@ import { FaArrowLeft } from "react-icons/fa";
 import api from "../services/api";
 import AddButton from "../components/AddButton";
 import AddRoomModal from "../components/modals/AddRoomModal";
-import ModalFilter from "../components/modals/ModalFilter";
-import Filter from "../components/Filter"; // Assuming you have a Filter component
+import ModalFilterRoom from "../components/modals/ModalFilterRoom";
+import Filter from "../components/Filter"; 
 import useRole from "../hooks/useRole";
 
 function RoomPage() {
   const { buildingId } = useParams();
   const [rooms, setRooms] = useState([]);
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedPurpose, setSelectedPurpose] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
@@ -23,11 +23,11 @@ function RoomPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [state, setState] = useState({
-    type: [],
+    purpose: [],
     status: [],
-    selectedType: "",
+    selectedPurpose: "",
     selectedStatus: "",
-    activeTab: "type",
+    activeTab: "purpose",
     isFilterModalOpen: false,
     isSearchBoxVisible: false,
   });
@@ -41,21 +41,18 @@ function RoomPage() {
     setIsFilterModalOpen((prev) => !prev);
   };
 
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
+    console.log("Fetching rooms with:", { selectedPurpose, selectedStatus });
     try {
-      const query = new URLSearchParams({
-        building: buildingId,
-        purpose: selectedType,
-        status: selectedStatus,
-      }).toString();
-
-      const response = await api.get(`/api/rooms?${query}`);
-      console.log(response.data); 
+      const response = await api.get(
+        `/api/rooms?building=${buildingId}&purpose=${selectedPurpose || ""}&status=${selectedStatus || ""}`
+      );
+      console.log("Rooms fetched:", response.data);
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
-  };
+  }, [buildingId, selectedPurpose, selectedStatus]);
   
   const handleRoomUpdate = (updatedRoom) => {
     setRooms((prevRooms) =>
@@ -70,11 +67,12 @@ function RoomPage() {
 
   useEffect(() => {
     fetchRooms();
-  }, [buildingId, selectedType, selectedStatus, location.search]);
+    fetchFilterOptions();
+  }, [buildingId, selectedPurpose, selectedStatus, location.search]);
 
   const filteredFloors = rooms.map((floor) => ({
     ...floor,
-    rooms: floor.rooms.filter((room) =>
+    rooms: (floor.rooms || []).filter((room) =>
       room.name.toLowerCase().includes(searchQuery.toLowerCase())
     ),
   }));
@@ -87,15 +85,29 @@ function RoomPage() {
     navigate(-1);
   };
 
+  const fetchFilterOptions = async () => {
+    try {
+      const response = await api.get("/api/rooms/filter");
+      console.log("Filter options response:", response.data);
+      setState((prevState) => ({
+        ...prevState,
+        purpose: response.data.purpose || [],
+        status: response.data.status || [],
+      }));
+    } catch (error) {
+      console.error("Error fetching filter options:", error);
+    }
+  };
+
   const filterOptions = {
-    type: {
-      options: state.type || [],
-      selectedValue: state.selectedType,
-      selectedValueKey: "selectedType",
+    purpose: {
+      options: state.purpose.map((purpose) => [purpose, purpose]),
+      selectedValue: selectedPurpose,
+      selectedValueKey: "selectedPurpose",
     },
     status: {
-      options: state.status || [],
-      selectedValue: state.selectedStatus,
+      options: state.status.map((status) => [status, status]),
+      selectedValue: selectedStatus,
       selectedValueKey: "selectedStatus",
     },
   };
@@ -198,15 +210,21 @@ function RoomPage() {
           )}
           <div className="hidden md:flex items-center space-x-4">
             <Filter
-              options={state.type || []}
-              selectedValue={selectedType}
-              onChange={(value) => setSelectedType(value)}
-              placeholder="All Type"
-            />
+                options={filterOptions.purpose.options}
+                selectedValue={filterOptions.purpose.selectedValue}
+                onChange={(value) => {
+                  console.log("Selected purpose:", value);
+                  setSelectedPurpose(value === "all" ? "" : value);
+                }}
+                placeholder="All Purpose"
+              />
             <Filter
-              options={state.status || []}
-              selectedValue={selectedStatus}
-              onChange={(value) => setSelectedStatus(value)}
+              options={filterOptions.status.options}
+              selectedValue={filterOptions.status.selectedValue}
+              onChange={(value) => {
+                console.log("Selected status:", value);
+                setSelectedStatus(value === "all" ? "" : value);
+              }}
               placeholder="All Status"
             />
             <div className="relative">
@@ -220,13 +238,6 @@ function RoomPage() {
             </div>
           </div>
         </div>
-        {state.isFilterModalOpen && (
-          <ModalFilter
-            state={state}
-            setState={setState}
-            filterOptions={filterOptions}
-          />
-        )}
       </div>
 
       <div className="mx-4 md:mx-6">
@@ -255,7 +266,7 @@ function RoomPage() {
                 key={index}
                 floorName={floor._id}
                 rooms={floor.rooms}
-                selectedType={selectedType}
+                selectedPurpose={selectedPurpose}
                 selectedStatus={selectedStatus}
                 setRooms={setRooms}
                 setSuccessMessage={setSuccessMessage}
@@ -269,13 +280,15 @@ function RoomPage() {
         </div>
       </div>
 
-      {state.isFilterModalOpen && (
-        <ModalFilter
-          state={state}
-          setState={setState}
-          filterOptions={filterOptions}
-        />
-      )}
+      <ModalFilterRoom
+        state={state}
+        setState={setState}
+        filterOptions={filterOptions}
+        applyFilters={(purpose, status) => {
+          setSelectedPurpose(purpose === "all" ? "" : purpose);
+          setSelectedStatus(status === "all" ? "" : status);
+        }}
+      />
     </div>
   );
 }

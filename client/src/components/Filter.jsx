@@ -21,17 +21,24 @@ function Filter({ options, selectedValue, onChange, placeholder }) {
 
 function Filtermobile({ options, selectedValue, onChange, placeholder }) {
 	return (
-	  <div className="bg-white">
-		<div className=" border border-gray-300 rounded-md">
-		  {/* Optional Placeholder Display */}
-		  <div className="px-2 py-1 font-bold">{placeholder}</div>
+	  <div className="w-full bg-white">
+		<div className="max-h-[200px] overflow-y-auto border border-gray-300 rounded-md bg-white relative z-10">
+		  {/* Placeholder for "All" */}
+		  <div
+			className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+			  selectedValue === "all" ? "bg-blue-100 font-semibold" : ""
+			}`}
+			onClick={() => onChange("all")}
+		  >
+			{placeholder}
+		  </div>
   
-		  {/* Dropdown options rendered directly */}
+		  {/* Render Dropdown Options */}
 		  {options.map(([label, value], index) => (
 			<div
 			  key={index}
-			  className={`px-2 py-1 hover:bg-primary-light cursor-pointer ${
-				selectedValue === value ? "bg-primary-dark font-semibold" : ""
+			  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+				selectedValue === value ? "bg-blue-100 font-semibold" : ""
 			  }`}
 			  onClick={() => onChange(value)}
 			>
@@ -42,7 +49,6 @@ function Filtermobile({ options, selectedValue, onChange, placeholder }) {
 	  </div>
 	);
   }
-
 
 export {Filtermobile} ;
 export default Filter;
