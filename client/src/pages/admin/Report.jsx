@@ -153,7 +153,7 @@ const Reports = () => {
     // Start the table rendering
     doc.autoTable({
       startY: margin + 3, // Start below the margin
-      margin: { horizontal: 25, bottom: 25, top: 60 },
+      margin: { horizontal: 25, bottom: 25, top: 30 },
       head: [["Building", "Room", "Asset", "Units", "Condition", "Status"]],
       body: tableData,
       headStyles: {
@@ -210,7 +210,7 @@ const Reports = () => {
     });
 
     // Output the PDF in a new window
-    doc.output("dataurlnewwindow");
+    doc.save("Report.pdf");
   };
 
   const handleFilterChange = (key, value) => {
