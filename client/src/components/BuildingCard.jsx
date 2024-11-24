@@ -92,7 +92,7 @@ const BuildingCard = ({ building, onDelete }) => {
   };
 
   return (
-    <div className="w-[350px] h-[280px] md:h-[200px] my-8 md:my-15 flex flex-col relative">
+    <div className="w-[300px] h-[210px] md:h-[210px] my-8 md:my-15 flex flex-col relative">
       <div className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray">
         <Link
           to={`/catalog/rooms/${_id}`}
@@ -102,33 +102,33 @@ const BuildingCard = ({ building, onDelete }) => {
             <span className="flex items-center justify-between">
               <span className="text-black">{name}</span>
               {(isAdmin || isStaff) && (
-              <span
-                onClick={toggleDropdown}
-                className="relative cursor-pointer"
-              >
-                <BsThreeDotsVertical className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 ml-2" />
-                {dropdownVisible && (
-                  <ul
-                    className="absolute right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <li
-                      onClick={handleEdit}
-                      className="font-light text-base px-2 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
+                <span
+                  onClick={toggleDropdown}
+                  className="relative cursor-pointer"
+                >
+                  <BsThreeDotsVertical className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 ml-2" />
+                  {dropdownVisible && (
+                    <ul
+                      className="absolute right-0 mt-2 w-36 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      Edit
-                    </li>
-                    {isAdmin && (
                       <li
-                        onClick={handleDeleteClick}
-                        className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
+                        onClick={handleEdit}
+                        className="font-light text-base px-2 py-2 hover:bg-blue-500 hover:text-white cursor-pointer"
                       >
-                        Delete
+                        Edit
                       </li>
-                    )}
-                  </ul>
-                )}
-              </span>
+                      {isAdmin && (
+                        <li
+                          onClick={handleDeleteClick}
+                          className="font-light text-base px-2 py-2 hover:bg-red-500 hover:text-white cursor-pointer"
+                        >
+                          Delete
+                        </li>
+                      )}
+                    </ul>
+                  )}
+                </span>
               )}
             </span>
           </div>
@@ -153,25 +153,31 @@ const BuildingCard = ({ building, onDelete }) => {
                 {facilityDropdownVisible ? "Unshow" : "Show"}
               </span>
             </p>
-            {facilityDropdownVisible && (
-              <ul className="ml-3 mt-2 absolute z-20 w-[290px]">
-              {" "}
-                {facilities && facilities.length > 0 ? (
-                  facilities.map((facility, index) => (
-                    <li
-                      key={index}
-                      className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${
-                        facilityColorMap[facility] || "bg-primary"
-                      }`}
-                    >
-                      {facility}
+            <p
+              className="flex justify-between font-bold cursor-pointer relative"
+              onClick={toggleFacilityDropdown}
+            >
+              {facilityDropdownVisible && (
+                <ul className="absolute z-30 w-[200px] bg-white border border-gray-400 rounded-lg shadow-lg p-2 bottom-auto top-0 left-0 transform -translate-y-full">
+                  {facilities && facilities.length > 0 ? (
+                    facilities.map((facility, index) => (
+                      <li
+                        key={index}
+                        className={`building-use rounded-full mt-1 md:mt-2 text-center text-white shadow-md hover:shadow-lg ${
+                          facilityColorMap[facility] || "bg-primary"
+                        }`}
+                      >
+                        {facility}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-center text-gray-500">
+                      No facilities found.
                     </li>
-                  ))
-                ) : (
-                  <li className="text-center text-gray-500">No facilities found.</li>
-                )}
-              </ul>
-            )}
+                  )}
+                </ul>
+              )}
+            </p>
           </div>
         </Link>
       </div>
