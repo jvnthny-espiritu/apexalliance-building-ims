@@ -153,7 +153,7 @@ const Reports = () => {
     // Start the table rendering
     doc.autoTable({
       startY: margin + 3, // Start below the margin
-      margin: { horizontal: 25, bottom: 25, top: 30 },
+      margin: { horizontal: 25, bottom: 25, top: 55 },
       head: [["Building", "Room", "Asset", "Units", "Condition", "Status"]],
       body: tableData,
       headStyles: {
