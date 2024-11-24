@@ -211,7 +211,7 @@ function RoomPage() {
                   console.log("Selected purpose:", value);
                   setSelectedPurpose(value === "all" ? "" : value);
                 }}
-                placeholder="All Purpose"
+                placeholder="All Purposes"
               />
             <Filter
               options={filterOptions.status.options}
@@ -220,7 +220,7 @@ function RoomPage() {
                 console.log("Selected status:", value);
                 setSelectedStatus(value === "all" ? "" : value);
               }}
-              placeholder="All Status"
+              placeholder="All Statuses"
             />
             <div className="relative">
               <input
