@@ -18,7 +18,6 @@ function RoomPage() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddRoomOpen, setIsAddRoomOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,10 +35,6 @@ function RoomPage() {
   function toggleAddRoomModalLocal() {
     setIsAddRoomOpen((prev) => !prev);
   }
-
-  const toggleFilterModal = () => {
-    setIsFilterModalOpen((prev) => !prev);
-  };
 
   const fetchRooms = useCallback(async () => {
     console.log("Fetching rooms with:", { selectedPurpose, selectedStatus });
@@ -280,15 +275,17 @@ function RoomPage() {
         </div>
       </div>
 
-      <ModalFilterRoom
-        state={state}
-        setState={setState}
-        filterOptions={filterOptions}
-        applyFilters={(purpose, status) => {
-          setSelectedPurpose(purpose === "all" ? "" : purpose);
-          setSelectedStatus(status === "all" ? "" : status);
-        }}
-      />
+      {state.isFilterModalOpen && (
+        <ModalFilterRoom
+          state={state}
+          setState={setState}
+          filterOptions={filterOptions}
+          applyFilters={(purpose, status) => {
+            setSelectedPurpose(purpose === "all" ? "" : purpose);
+            setSelectedStatus(status === "all" ? "" : status);
+          }}
+        />
+      )}
     </div>
   );
 }
