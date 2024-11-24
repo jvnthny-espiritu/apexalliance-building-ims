@@ -155,9 +155,8 @@ const BuildingCard = ({ building, onDelete }) => {
             </p>
             {facilityDropdownVisible && (
               <ul className="ml-3 mt-2 absolute z-20 w-[290px]">
-                {" "}
-                {/* Added z-20 to ensure it appears above other elements */}
-                {facilities &&
+              {" "}
+                {facilities && facilities.length > 0 ? (
                   facilities.map((facility, index) => (
                     <li
                       key={index}
@@ -167,7 +166,10 @@ const BuildingCard = ({ building, onDelete }) => {
                     >
                       {facility}
                     </li>
-                  ))}
+                  ))
+                ) : (
+                  <li className="text-center text-gray-500">No facilities found.</li>
+                )}
               </ul>
             )}
           </div>
