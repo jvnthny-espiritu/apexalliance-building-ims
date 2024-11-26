@@ -9,5 +9,8 @@
     "dependencies": {
         "dotenv": "^16.4.5",
         "concurrently": "^9.0.1"
+    },
+    "engines": {
+        "node": ">=22.8.0"
     }
 }
