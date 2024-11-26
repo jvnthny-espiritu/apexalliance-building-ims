@@ -2,11 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { MdArrowBack } from 'react-icons/md';
+import { useSelector } from "react-redux";
 
 export default function NotAuthorized() {
+    const { user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
     const handleGoBack = () => {
+        user?.role === 'guest' ? navigate('/'): navigate('/dashboard');
         navigate('/dashboard');
     };
 

@@ -13,7 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotAuthorized from "./pages/NotAuthorized";
 
 const App = () => {
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Checks if the screen is mobile size
@@ -30,9 +30,13 @@ const App = () => {
 
   useEffect(() => {
     if (location.pathname === "/login" && isLoggedIn) {
-      navigate("/dashboard");
+      if (user?.role === "guest") {
+        navigate("/catalog/buildings");
+      } else {
+        navigate("/dashboard");
+      }
     }
-  }, [isLoggedIn, location.pathname, navigate]);
+  }, [isLoggedIn, location.pathname, navigate, user?.role]);
 
   const isLoginPage = location.pathname === "/login" || location.pathname === "/not-authorized";
 
@@ -44,17 +48,29 @@ const App = () => {
         <main className="flex-1">
           <Routes>
             <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <Navigate to={user?.role === "guest" ? "/catalog/buildings" : "/dashboard"} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
               path="/login"
-              element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
+              element={isLoggedIn ? <Navigate to={user?.role === "guest" ? "/catalog/buildings" : "/dashboard"} /> : <Login />}
             />
             <Route path="/not-authorized" element={<NotAuthorized />} />
             <Route element={<ProtectedRoute requiredRoles={['admin', 'staff', 'guest']} />}>
-              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/catalog/buildings" element={<BuildingPage />} />
               <Route path="/catalog/rooms/:buildingId" element={<RoomPage />} />
             </Route>
+            <Route element={<ProtectedRoute requiredRoles={['admin', 'staff']} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
             <Route element={<ProtectedRoute requiredRoles={['admin']} />}>
-              <Route path="/reports" element={<Reports />} />
+]              <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
             <Route path="*" element={<Navigate to="/login" />} />
