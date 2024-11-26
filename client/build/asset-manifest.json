@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/static/css/main.da7e56a7.css",
+    "main.js": "/static/js/main.c1ca992e.js",
+    "static/js/239.eab0352a.chunk.js": "/static/js/239.eab0352a.chunk.js",
+    "static/js/213.fc3621de.chunk.js": "/static/js/213.fc3621de.chunk.js",
+    "static/js/732.4462740c.chunk.js": "/static/js/732.4462740c.chunk.js",
+    "static/media/BatStateU_Template.png": "/static/media/BatStateU_Template.44bff305f385608c9cdb.png",
+    "static/media/building.jpg": "/static/media/building.10f01678e172229b90d7.jpg",
+    "static/media/logo.png": "/static/media/logo.1e63098319dec6fb33b3.png",
+    "index.html": "/index.html",
+    "main.da7e56a7.css.map": "/static/css/main.da7e56a7.css.map",
+    "main.c1ca992e.js.map": "/static/js/main.c1ca992e.js.map",
+    "239.eab0352a.chunk.js.map": "/static/js/239.eab0352a.chunk.js.map",
+    "213.fc3621de.chunk.js.map": "/static/js/213.fc3621de.chunk.js.map",
+    "732.4462740c.chunk.js.map": "/static/js/732.4462740c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.da7e56a7.css",
+    "static/js/main.c1ca992e.js"
+  ]
+}
