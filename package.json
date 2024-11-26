@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "node server/server.js",
-        "heroku-postbuild": "cd client && npm install && npm run build"
+        "heroku-postbuild": "cd server && npm install && cd ../client && npm install && npm run build"
     },
     "dependencies": {
         "dotenv": "^16.4.5",
