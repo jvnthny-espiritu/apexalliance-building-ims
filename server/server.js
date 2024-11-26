@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 // CORS configuration
-const allowedOrigins = ['http://localhost:3000', 'https://batstate-u-bims-b87db44e916e.herokuapp.com'];
+const allowedOrigins = ['http://localhost:5000', 'https://batstate-u-bims-b87db44e916e.herokuapp.com'];
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
