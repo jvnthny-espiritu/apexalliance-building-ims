@@ -1,4 +1,4 @@
-`const { parse } = require('json2csv');
+const { parse } = require('json2csv');
 const Room = require('../models/Room');
 const Building = require('../models/Building');
 const Campus = require('../models/Campus');
