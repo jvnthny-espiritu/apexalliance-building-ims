@@ -174,20 +174,6 @@ export default function NavBar() {
         </NavLink>
 
         <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            isActive
-              ? `${bottomLinkClasses} ${activeBottomLinkClasses}`
-              : bottomLinkClasses
-          }
-        >
-        <div className="flex flex-col items-center">
-            <MdSettings className="h-6 w-6" />
-            <p className="text-xs">Settings</p>
-          </div>
-        </NavLink>
-
-        <NavLink
           to="/login"
           onClick={handleLogout}
           className={({ isActive }) =>
