@@ -14,7 +14,8 @@ export default function NavBar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const hasRole = useRole(["admin"]);
+  const isAdmin = useRole(["admin"]);
+  const isStaff = useRole(["staff"]);
 
   const handleLogout = () => {
     console.log("Logging out...");
@@ -42,20 +43,22 @@ export default function NavBar() {
         <nav className="h-full flex flex-col justify-between bg-white text-black px-4 pt-20 w-60">
           <div className="mt-5">
             <ul className="justify-center">
-              <li>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    isActive
-                      ? `${linkClasses} ${activeLinkClasses}`
-                      : linkClasses
-                  }
-                  title="Dashboard"
-                >
-                  <MdDashboard className="h-6 w-6 mx-4" />
-                  <span>Dashboard</span>
-                </NavLink>
-              </li>
+              {(isAdmin || isStaff) && (
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                      isActive
+                        ? `${linkClasses} ${activeLinkClasses}`
+                        : linkClasses
+                    }
+                    title="Dashboard"
+                  >
+                    <MdDashboard className="h-6 w-6 mx-4" />
+                    <span>Dashboard</span>
+                  </NavLink>
+                </li>
+              )}
               <li>
                 <NavLink
                   to="/catalog/buildings"
@@ -70,7 +73,7 @@ export default function NavBar() {
                   <span>Catalog</span>
                 </NavLink>
               </li>
-              {hasRole && (
+              {isAdmin && (
                 <li>
                   <NavLink
                     to="/reports"
@@ -91,7 +94,7 @@ export default function NavBar() {
           <div>
             <hr />
             <ul className="mb-5">
-              {hasRole && (
+              {isAdmin && (
                 <li>
                   <NavLink
                     to="/settings"
@@ -123,20 +126,22 @@ export default function NavBar() {
 
       {/* Bottom navigation for smaller screens */}
       <div className="lg:hidden fixed bottom-0 left-0 w-full bg-primary text-white flex justify-around z-10">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive
-              ? `${bottomLinkClasses} ${activeBottomLinkClasses}`
-              : bottomLinkClasses
-          }
-          end
-        >
-          <div className="flex flex-col items-center">
-            <MdDashboard className="h-6 w-6" />
-            <p className="text-xs">Dashboard</p>
-          </div>
-        </NavLink>
+        {(isAdmin || isStaff) && (
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? `${bottomLinkClasses} ${activeBottomLinkClasses}`
+                : bottomLinkClasses
+            }
+            end
+          >
+            <div className="flex flex-col items-center">
+              <MdDashboard className="h-6 w-6" />
+              <p className="text-xs">Dashboard</p>
+            </div>
+          </NavLink>
+        )}
 
         <NavLink
           to="/catalog/buildings"
@@ -165,20 +170,6 @@ export default function NavBar() {
           <div className="flex flex-col items-center">
             <MdInfo className="h-6 w-6" />
             <p className="text-xs">Reports</p>
-          </div>
-        </NavLink>
-
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            isActive
-              ? `${bottomLinkClasses} ${activeBottomLinkClasses}`
-              : bottomLinkClasses
-          }
-        >
-        <div className="flex flex-col items-center">
-            <MdSettings className="h-6 w-6" />
-            <p className="text-xs">Settings</p>
           </div>
         </NavLink>
 

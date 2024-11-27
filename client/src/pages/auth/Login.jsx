@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
-import { login } from '../../_actions/authActions';
+import { login,fetchUserById } from '../../_actions/authActions';
 import { useNavigate } from 'react-router-dom';
 import image from '../../assets/img/building.jpg';
 import logo from '../../assets/img/logo.png';
@@ -20,7 +20,16 @@ const Login = () => {
       const actionResult = await dispatch(login({ username, password }));
       if (actionResult.success) {
         localStorage.setItem('token', actionResult.token);
-        navigate('/');
+        const decodedToken = jwtDecode(actionResult.token);
+        const userResult = await dispatch(fetchUserById(decodedToken.id));
+        if (userResult.success) {
+          const user = userResult.user;
+          if (user.role === 'guest') {
+            navigate('/catalog/buildings');
+          } else {
+            navigate('/dashboard');
+          }
+        }
       } else {
         setErrorMessage(
           <>
