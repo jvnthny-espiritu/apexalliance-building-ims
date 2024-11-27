@@ -18,11 +18,36 @@ const Reports = () => {
     assetUnits: "",
     assetCondition: "",
     assetStatus: "",
-    reportType: "building_room_assets",
+    reportType: "",
   });
   const [allBuildings, setAllBuildings] = useState([]);
+  const [buildingNames, setBuildingNames] = useState([]);
 
   useEffect(() => {
+    const fetchBuildingNames = async () => {
+      try {
+        const response = await api.get("/api/reports/buildings"); 
+        if (response.status === 200) {
+          setBuildingNames(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching building names:", error);
+      }
+    };
+
+    fetchBuildingNames();
+  }, []);
+
+  useEffect(() => {
+    if (
+      !filters.building || filters.building === "Select Building" || 
+      !filters.assetStatus || filters.assetStatus === "Select Status"
+    ) {
+      setData([]); // Clear the data
+      setAllBuildings([]); // Clear the buildings list
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -71,7 +96,7 @@ const Reports = () => {
     };
 
     fetchData();
-  }, [filters.reportType]);
+  }, [filters]);
 
   useEffect(() => {
     const currentDate = new Date();
@@ -91,9 +116,9 @@ const Reports = () => {
     "under maintenance",
   ];
   const buildingOptions = useMemo(() => {
-    const options = ["All Buildings", ...allBuildings];
+    const options = buildingNames.length > 0 ? buildingNames : ["Select Building"];
     return options;
-  }, [allBuildings]);
+  }, [buildingNames]);
 
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -214,18 +239,12 @@ const Reports = () => {
   };
 
   const handleFilterChange = (key, value) => {
-    if (value === `Select a ${key.charAt(0).toUpperCase() + key.slice(1)}`) {
-      value = "";
-    }
-    setFilters((prevState) => {
-      const updatedFilters = { ...prevState };
-      updatedFilters[key] =
-        value === `All ${key === "building" ? "Buildings" : "Statuses"}`
-          ? ""
-          : value;
-      return updatedFilters;
-    });
+    setFilters((prevState) => ({
+      ...prevState,
+      [key]: value, 
+    }));
   };
+  
 
   return (
     <div className="container sm:mb-16 md:mx-auto mt-16 p-6">
@@ -247,23 +266,21 @@ const Reports = () => {
                 <div className="w-18 hidden md:flex">
                   <Filter
                     options={buildingOptions.map((option) => [option, option])}
-                    selectedValue={filters.building || "All Buildings"}
+                    selectedValue={filters.building}
                     onChange={(value) => handleFilterChange("building", value)}
-                    placeholder="Select Building"
+                    placeholder="Select Building (required)"
                   />
                 </div>
 
                 {/* Status Filter */}
                 <div className="w-18 hidden md:flex">
                   <Filter
-                    options={["All Statuses", ...statusOptions].map(
+                    options={[...statusOptions].map(
                       (option) => [option, option]
                     )}
-                    selectedValue={filters.assetStatus || "All Statuses"}
-                    onChange={(value) =>
-                      handleFilterChange("assetStatus", value)
-                    }
-                    placeholder="Select Status"
+                    selectedValue={filters.assetStatus}
+                    onChange={(value) => handleFilterChange("assetStatus", value)}
+                    placeholder="Select Status (required)"
                   />
                 </div>
               </div>
@@ -286,22 +303,21 @@ const Reports = () => {
             <div className="w-18 ml-10">
               <Filter
                 options={buildingOptions.map((option) => [option, option])}
-                selectedValue={filters.building || "All Buildings"}
+                selectedValue={filters.building}
                 onChange={(value) => handleFilterChange("building", value)}
-                placeholder="Select Building"
+                placeholder="Select Building (required)"
               />
             </div>
 
             {/* Status Filter */}
             <div className="w-18 mr-10 ">
               <Filter
-                options={["All Statuses", ...statusOptions].map((option) => [
-                  option,
-                  option,
-                ])}
-                selectedValue={filters.assetStatus || "All Statuses"}
+                options={[...statusOptions].map(
+                  (option) => [option, option]
+                )}
+                selectedValue={filters.assetStatus}
                 onChange={(value) => handleFilterChange("assetStatus", value)}
-                placeholder="Select Status"
+                placeholder="Select Status (required)"
               />
             </div>
           </div>
@@ -311,6 +327,26 @@ const Reports = () => {
         {loading ? (
           <div className="text-center py-4">Loading...</div>
         ) : (
+
+        <div className="p-4">
+          {/* Show message if both filters are not applied */}
+          {(!filters.building || filters.building === "Select Building" || 
+            !filters.assetStatus || filters.assetStatus === "Select Status") && (
+            <p className="text-red-500 font-medium py-4 text-center">
+              Please select both Building and Asset Status to view data.
+            </p>
+          )}
+
+          {/* If no data, show this message */}
+          {filteredData.length === 0 && filters.building && filters.building !== "Select Building" &&
+            filters.assetStatus && filters.assetStatus !== "Select Status" && (
+            <p className="py-4 text-center">
+              No data available for the selected Building and Asset Status.
+            </p>
+          )}
+
+          {/* Show table only if filters are applied */}
+          {filteredData.length > 0 && (
           <div className="overflow-x-auto h-[calc(100vh-90px] lg:overflow-y-auto h-[calc(100vh-240px)]">
             <table className=" md:min-w-full bg-white ">
               <thead>
@@ -324,8 +360,7 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.length > 0 ? (
-                  filteredData.map((item, index) => (
+                  {filteredData.map((item, index) => (
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="py-2 px-4 border-b">{item.Building}</td>
                       <td className="py-2 px-4 border-b">{item.Room}</td>
@@ -334,17 +369,13 @@ const Reports = () => {
                       <td className="py-2 px-4 border-b">{item.Condition}</td>
                       <td className="py-2 px-4 border-b">{item.Status}</td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="py-4 text-center">
-                      No data available
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
         )}
       </div>
     </div>
