@@ -12,7 +12,7 @@ async function getCampusId(campusName) {
     return campusData ? campusData._id : null;
 }
 
-exports.getUniqueBuildingNames = async (req, res) => {
+exports.exportReport = async (req, res) => {
     try {
         const {
             type,
