@@ -254,7 +254,7 @@ function RoomPage() {
           />
         )}
 
-        <div className="md:mx-3">
+        <div className="md:mx-3 mt-5">
           {filteredFloors.length > 0 ? (
             filteredFloors.map((floor, index) => (
               <FloorSection

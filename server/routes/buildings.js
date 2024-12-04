@@ -8,6 +8,7 @@ const auditLogger = require('../middleware/auditLogger');
 // Routes for buildings
 router.get('/', buildingController.getAllBuildings);
 router.get('/facilities', buildingController.getFacilities);
+router.get('/campus-buildings', buildingController.getBuildingsByCampus);
 router.get('/:id', buildingController.getBuildingById);
 router.get('/:id/rooms', buildingController.getRoomByFloor);
 router.post('/', authenticateJWT, authorizeRoles('admin', 'staff'), auditLogger('CREATE'), buildingController.createBuilding);

@@ -44,22 +44,20 @@ const FloorSection = ({  floorName, rooms, selectedPurpose, selectedStatus, setR
 
   return (
     <div >
-      <div className="flex items-center justify-between">
+      <button onClick={toggleCollapse} className="flex items-center justify-between w-full text-left">
         <h2 className="text-xl font-semibold">{getOrdinalIndicator(floorName)} Floor</h2>
-        <button onClick={toggleCollapse}>
-          {isCollapsed ? <span>&#9660;</span> : <span>&#9650;</span>}
-        </button>
-      </div>
+        {isCollapsed ? <span>&#9660;</span> : <span>&#9650;</span>}
+      </button>
       <hr className="my-4 border-gray-300" /> 
       {!isCollapsed && (
         <>
           {filteredRooms.length === 0 ? (
             <p className="text-gray-500">No rooms found.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 my-4">
               {filteredRooms.map((room, index) => (
                 <RoomCard key={index} room={room} selectedPurpose={selectedPurpose} selectedStatus={selectedStatus} setRooms={setRooms} onDelete={handleDeleteRoom} setSuccessMessage={setSuccessMessage} setApiError={setApiError} 
-                   onRoomUpdated={(updatedRoom) => {
+                  onRoomUpdated={(updatedRoom) => {
                       const updatedRooms = rooms.map((r) =>
                           r.id === updatedRoom.id ? { ...r, ...updatedRoom } : r
                       );
