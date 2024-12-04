@@ -18,7 +18,7 @@ const Reports = () => {
     assetUnits: "",
     assetCondition: "",
     assetStatus: "",
-    reportType: "",
+    reportType: "building_room_assets",
   });
   const [allBuildings, setAllBuildings] = useState([]);
   const [allCampuses, setAllCampuses] = useState([]);
@@ -63,15 +63,6 @@ useEffect(() => {
 }, [filters.campus]);
 
   useEffect(() => {
-    if (
-      !filters.building || filters.building === "Select Building" || 
-      !filters.assetStatus || filters.assetStatus === "Select Status"
-    ) {
-      setData([]); // Clear the data
-      setAllBuildings([]); // Clear the buildings list
-      return;
-    }
-
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -332,9 +323,9 @@ useEffect(() => {
                 <div className="w-18 hidden md:flex">
                   <Filter
                     options={buildingOptions.map((option) => [option, option])}
-                    selectedValue={filters.building}
+                    selectedValue={filters.building || "All Buildings"}
                     onChange={(value) => handleFilterChange("building", value)}
-                    placeholder="Select Building (required)"
+                    placeholder="Select Building"
                   />
                 </div>
 
@@ -375,21 +366,22 @@ useEffect(() => {
             <div className="w-18 ml-10">
               <Filter
                 options={buildingOptions.map((option) => [option, option])}
-                selectedValue={filters.building}
+                selectedValue={filters.building || "All Buildings"}
                 onChange={(value) => handleFilterChange("building", value)}
-                placeholder="Select Building (required)"
+                placeholder="Select Building"
               />
             </div>
 
             {/* Status Filter */}
             <div className="w-18 mr-10 ">
               <Filter
-                options={[...statusOptions].map(
-                  (option) => [option, option]
-                )}
-                selectedValue={filters.assetStatus}
+                options={["All Statuses", ...statusOptions].map((option) => [
+                  option,
+                  option,
+                ])}
+                selectedValue={filters.assetStatus || "All Statuses"}
                 onChange={(value) => handleFilterChange("assetStatus", value)}
-                placeholder="Select Status (required)"
+                placeholder="Select Status"
               />
             </div>
           </div>
@@ -399,26 +391,6 @@ useEffect(() => {
         {loading ? (
           <div className="text-center py-4">Loading...</div>
         ) : (
-
-        <div className="p-4">
-          {/* Show message if both filters are not applied */}
-          {(!filters.building || filters.building === "Select Building" || 
-            !filters.assetStatus || filters.assetStatus === "Select Status") && (
-            <p className="text-red-500 font-medium py-4 text-center">
-              Please select both Building and Asset Status to view data.
-            </p>
-          )}
-
-          {/* If no data, show this message */}
-          {filteredData.length === 0 && filters.building && filters.building !== "Select Building" &&
-            filters.assetStatus && filters.assetStatus !== "Select Status" && (
-            <p className="py-4 text-center">
-              No data available for the selected Building and Asset Status.
-            </p>
-          )}
-
-          {/* Show table only if filters are applied */}
-          {filteredData.length > 0 && (
           <div className="overflow-x-auto h-[calc(100vh-90px] lg:overflow-y-auto h-[calc(100vh-240px)]">
             <table className=" md:min-w-full bg-white ">
               <thead>
@@ -432,7 +404,8 @@ useEffect(() => {
                 </tr>
               </thead>
               <tbody>
-                  {filteredData.map((item, index) => (
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
                     <tr key={index} className="hover:bg-gray-100">
                       <td className="py-2 px-4 border-b">{item.Building}</td>
                       <td className="py-2 px-4 border-b">{item.Room}</td>
