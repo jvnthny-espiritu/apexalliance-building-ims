@@ -1,6 +1,7 @@
 const Building = require('../models/Building');
 const Room = require('../models/Room');
 const Asset = require('../models/Asset');
+const { getCampusId, getBuildingsByCampus } = require("../utils/campusBuildings");
 
 module.exports = {
   getAllBuildings: async (req, res) => {
@@ -24,8 +25,18 @@ module.exports = {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
-  
-  
+
+  getBuildingsByCampus: async (req, res) => {
+    try {
+      const { campus } = req.query;
+      const buildings = await getBuildingsByCampus(campus); 
+      res.json(buildings);
+    } catch (error) {
+      console.error("Error fetching buildings:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+
   createBuilding: async (req, res) => {
     const { buildingName, campus, numberOfFloors, yearBuilt, facilities } = req.body;
     try {

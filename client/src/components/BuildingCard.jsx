@@ -92,7 +92,7 @@ const BuildingCard = ({ building, onDelete }) => {
   };
 
   return (
-    <div className="h-[210px] md:h-[210px] flex flex-col relative">
+    <div className="w-[300px] h-[210px] md:h-[210px] my-8 md:my-15 flex flex-col relative">
       <div className="bg-white rounded-xl shadow-lg flex-shrink-0 flex flex-col h-full border border-darkGray">
         <Link
           to={`/catalog/rooms/${_id}`}
