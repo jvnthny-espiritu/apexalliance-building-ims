@@ -326,7 +326,7 @@ function BuildingPage() {
             Building Catalog
           </h1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-1 mt-5 wmd:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredBuildings.length > 0 ? (
               filteredBuildings.map((building) => (
                 <BuildingCard

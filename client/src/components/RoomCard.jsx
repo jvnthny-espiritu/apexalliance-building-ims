@@ -114,7 +114,7 @@ const RoomCard = ({ room, onDelete, selectedPurpose, selectedStatus }) => {
   return (
     <>
       <div
-        className="w-250 md:w-[300px] height: 'fit-content' p-3 text-darkGray shadow-md m-2 rounded-lg cursor-pointer bg-white border border-darkGray relative"
+        className=" height: 'fit-content' p-3 text-darkGray shadow-md rounded-lg cursor-pointer bg-white border border-darkGray relative"
         onClick={toggleModal}
       >
         <div className="flex flex-col justify-start items-start font-body px-2 py-1">
